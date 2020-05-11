@@ -45,8 +45,6 @@ BOOL IsTextUTF8(uint8_t * bytes, size_t length) {
     size_t errorIndex = SIZE_T_MAX;
     while (length - offset > 0 && SIZE_T_MAX == errorIndex) {
         uint8_t byte = bytes[offset];
-        uint8_t count = __XUtf8CharByteCountTable[byte >> 3];
-
         if (byte == 0x0) {
             //终止符
             end = offset;

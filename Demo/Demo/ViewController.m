@@ -58,6 +58,10 @@ BOOL IsTextUTF8(uint8_t * bytes, size_t length) {
                 errorIndex = offset;
                 break;
             }
+            if ((byte & 0x1F) == 0) {
+                errorIndex = offset;
+                break;
+            }
             uint8_t tmp = bytes[offset+1];
             if (byte == 0xC0 && tmp == 0x80) {
                 end = offset;
@@ -71,6 +75,10 @@ BOOL IsTextUTF8(uint8_t * bytes, size_t length) {
         } else if ((byte & 0xF0) == 0xE0) {
             //3
             if (offset > length-3) {
+                errorIndex = offset;
+                break;
+            }
+            if ((byte & 0xF) == 0) {
                 errorIndex = offset;
                 break;
             }
@@ -88,6 +96,10 @@ BOOL IsTextUTF8(uint8_t * bytes, size_t length) {
         } else if ((byte & 0xF8) == 0xF0) {
             //4
             if (offset > length-4) {
+                errorIndex = offset;
+                break;
+            }
+            if ((byte & 0x7) == 0) {
                 errorIndex = offset;
                 break;
             }
@@ -216,7 +228,7 @@ BOOL IsTextUTF8(uint8_t * bytes, size_t length) {
             printf("2, ");
         } else if ((byte & 0xF0) == 0xE0) {
             printf("3, ");
-        } else if ((i & 0xF8) == 0xF0) {
+        } else if ((byte & 0xF8) == 0xF0) {
             printf("4, ");
         }
         
@@ -224,7 +236,10 @@ BOOL IsTextUTF8(uint8_t * bytes, size_t length) {
     }
     printf("\n");
 
+    uint8_t bytes[] = {0xF1, 0x80, 0x80, 0xA1, 0};
     
+    NSString * str = [[NSString alloc] initWithBytes:bytes length:4 encoding:NSUTF8StringEncoding];
+    NSLog(@"%@", str);
 }
 
 

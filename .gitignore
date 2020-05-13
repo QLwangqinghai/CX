@@ -31,7 +31,7 @@ Thumbs.db
 ####################################
 ############# xcode #############
 ####################################
-**/xcuserdata/*
+*/**/xcuserdata/*
 */*.xcodeproj/xcuserdata/*
 */*.xcodeproj/project.xcworkspace/xcuserdata/*
 

@@ -1,0 +1,70 @@
+# Xcode
+#
+# gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+
+## Build generated
+build/
+DerivedData/
+
+####################################
+######## OS generated files ########
+####################################
+.DS_Store
+.DS_Store?
+*.swp
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+####################################
+############# packages #############
+####################################
+*.7z  
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+####################################
+############# xcode #############
+####################################
+*.xcuserstate
+project.xcworkspace
+*/xcuserdata/*
+UserInterfaceState.xcuserstate
+project.xcworkspace/
+xcuserdata/
+UserInterface.xcuserstate% 
+*.xcodeproj/xcuserdata/
+Pods/Pods.xcodeproj/xcuserdata/
+
+####################################
+###### Pods settings  ###########
+####################################
+# Pods/
+
+####################################
+###### Various settings  ###########
+####################################
+*/*.pbxuser
+!default.pbxuser
+*/*.mode1v3
+!default.mode1v3
+*/*.mode2v3
+!default.mode2v3
+*/*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+
+####################################
+############ Other #################
+####################################
+*/*.moved-aside
+*/*.xccheckout
+*/*.xcscmblueprint
+
+*/build/
+*/export/

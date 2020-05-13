@@ -31,15 +31,8 @@ Thumbs.db
 ####################################
 ############# xcode #############
 ####################################
-*.xcuserstate
-project.xcworkspace
-*/xcuserdata/*
-UserInterfaceState.xcuserstate
-project.xcworkspace/
-xcuserdata/
-UserInterface.xcuserstate% 
-*.xcodeproj/xcuserdata/
-Pods/Pods.xcodeproj/xcuserdata/
+*.xcodeproj/xcuserdata/*
+
 
 ####################################
 ###### Pods settings  ###########
@@ -65,6 +58,6 @@ xcuserdata/
 */*.moved-aside
 */*.xccheckout
 */*.xcscmblueprint
-.swiftpm
+*/.swiftpm
 */build/
 */export/

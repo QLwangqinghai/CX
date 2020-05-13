@@ -31,10 +31,13 @@ Thumbs.db
 ####################################
 ############# xcode #############
 ####################################
+xcuserdata/*
 */**/xcuserdata/*
 */*.xcodeproj/xcuserdata/
 */*.xcodeproj/project.xcworkspace/xcuserdata/
 
+X/X.xcodeproj/xcuserdata/*
+Demo/Demo.xcodeproj/project.xcworkspace/xcuserdata/*
 
 ####################################
 ###### Pods settings  ###########

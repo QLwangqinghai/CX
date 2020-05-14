@@ -177,71 +177,65 @@ static _XDate * _Nonnull __XRefAsDate(XDate _Nonnull ref, const char * _Nonnull 
 }
 
 void __XDateUnpack(XDate _Nonnull ref, XTimeInterval * _Nonnull valuePtr, const char * _Nonnull func) {
+    XTaggedType type = XRefGetTaggedType(ref);
+    if (XTaggedTypeMax < type) {
+        _XDate * date = __XRefAsDate(ref, func);
+        XTimeInterval content = date->content.time;
+        *valuePtr = content;
+        return;
+    }
+    XAssert(XTaggedTypeDate == type, func, "not Date instance");
+
 #if BUILD_TARGET_RT_64_BIT
     XUInt64 v = (XUInt64)((uintptr_t)ref);
-    if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
-        XUInt64 clsId = v & X_BUILD_TaggedObjectClassMask;
-        XAssert(X_BUILD_TaggedObjectClassDate == clsId, func, "not Date instance");
-        
-        XUInt64 tmp = (v >> 1) & X_BUILD_TaggedDateContentMask;
-        XUInt64 bits = 0;
-        if (tmp & X_BUILD_TaggedDateContentSignBit) {
-            bits = X_BUILD_TaggedDateContentSignHigh | tmp;
-        } else {
-            bits = tmp;
-        }
-        XSInt64 number = *(XSInt64 *)(&bits);
-        
-        if (X_BUILD_TaggedDateUnitFlagMillisecond == (X_BUILD_TaggedDateUnitMask & v)) {
+    XUInt64 tmp = (v >> 1) & X_BUILD_TaggedDateContentMask;
+    XUInt64 bits = 0;
+    if (tmp & X_BUILD_TaggedDateContentSignBit) {
+        bits = X_BUILD_TaggedDateContentSignHigh | tmp;
+    } else {
+        bits = tmp;
+    }
+    XSInt64 number = *(XSInt64 *)(&bits);
+    
+    if (X_BUILD_TaggedDateUnitFlagMillisecond == (X_BUILD_TaggedDateUnitMask & v)) {
+        XAssert(number >= X_BUILD_TaggedDateMillisecondMin, func, "date object error 1");
+        XAssert(number <= X_BUILD_TaggedDateMillisecondMax, func, "date object error 2");
+        number = number * 1000;
+    }
+    
+    XTimeInterval content = (XTimeInterval)number;
+    *valuePtr = content;
+    return;
+#else
+    XUInt32 v = (XUInt32)((uintptr_t)ref);
+    XUInt32 tmp = (v >> 1) & X_BUILD_TaggedDateContentMask;
+    XUInt32 bits = 0;
+    if (tmp & X_BUILD_TaggedDateContentSignBit) {
+        bits = X_BUILD_TaggedDateContentSignHigh | tmp;
+    } else {
+        bits = tmp;
+    }
+    XSInt32 number32 = *(XSInt32 *)(&bits);
+    XSInt64 number64 = (XSInt64)number32;
+
+    XUInt32 unit = (X_BUILD_TaggedDateUnitMask & v);
+    if (0 != unit) {
+        if (X_BUILD_TaggedDateUnitFlagMillisecond == unit) {
             XAssert(number >= X_BUILD_TaggedDateMillisecondMin, func, "date object error 1");
             XAssert(number <= X_BUILD_TaggedDateMillisecondMax, func, "date object error 2");
             number = number * 1000;
+        } else if (X_BUILD_TaggedDateUnitFlagSecond == unit) {
+            XAssert(number >= X_BUILD_TaggedDateSecondMin, func, "date object error 1");
+            XAssert(number <= X_BUILD_TaggedDateSecondMax, func, "date object error 2");
+            number = number * 1000000;
         }
-        
-        XTimeInterval content = (XTimeInterval)number;
-        memcpy(valuePtr, &content, sizeof(XTimeInterval));
-        return;
-    }
-#else
-    XUInt32 v = (XUInt32)((uintptr_t)ref);
-    if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
-        XUInt32 clsId = v & X_BUILD_TaggedObjectClassMask;
-        XAssert(X_BUILD_TaggedObjectClassDate == clsId, func, "not Date instance");
-        
-        XUInt32 tmp = (v >> 1) & X_BUILD_TaggedDateContentMask;
-        XUInt32 bits = 0;
-        if (tmp & X_BUILD_TaggedDateContentSignBit) {
-            bits = X_BUILD_TaggedDateContentSignHigh | tmp;
-        } else {
-            bits = tmp;
-        }
-        XSInt32 number32 = *(XSInt32 *)(&bits);
-        XSInt64 number64 = (XSInt64)number32;
-
-        XUInt32 unit = (X_BUILD_TaggedDateUnitMask & v);
-        if (0 != unit) {
-            if (X_BUILD_TaggedDateUnitFlagMillisecond == unit) {
-                XAssert(number >= X_BUILD_TaggedDateMillisecondMin, func, "date object error 1");
-                XAssert(number <= X_BUILD_TaggedDateMillisecondMax, func, "date object error 2");
-                number = number * 1000;
-            } else if (X_BUILD_TaggedDateUnitFlagSecond == unit) {
-                XAssert(number >= X_BUILD_TaggedDateSecondMin, func, "date object error 1");
-                XAssert(number <= X_BUILD_TaggedDateSecondMax, func, "date object error 2");
-                number = number * 1000000;
-            }
-        }
-
-        XTimeInterval content = (XTimeInterval)number64;
-        memcpy(valuePtr, &content, sizeof(XTimeInterval));
-        return;
     }
 
+    XTimeInterval content = (XTimeInterval)number64;
+    *valuePtr = content;
+    return;
 #endif
-//ptr
-    
-    _XDate * date = __XRefAsDate(ref, func);
-    XTimeInterval content = date->content.time;
-    memcpy(valuePtr, &content, sizeof(XTimeInterval));
+
 }
 
 XTimeInterval XDateGetValue(XDate _Nonnull ref) {

@@ -109,6 +109,19 @@ extern XClass _Nonnull XRefGetClass(XRef _Nonnull ref);
 extern XBool XRefIsMetaClass(XRef _Nonnull ref);
 
 
+
+
+typedef XUInt32 XTaggedType;
+extern const XTaggedType XTaggedTypeNumber;
+extern const XTaggedType XTaggedTypeString;
+extern const XTaggedType XTaggedTypeData;
+extern const XTaggedType XTaggedTypeDate;
+extern const XTaggedType XTaggedTypeMax;
+//others error
+
+extern XTaggedType XRefGetTaggedType(XRef _Nonnull ref);
+
+
 #if defined(__cplusplus)
 }  // extern C
 #endif

@@ -43,6 +43,12 @@ const XRefKind XRefKindClass = 2;
 const XRefKind XRefKindMetaClass = 3;
 
 
+const XTaggedType XTaggedTypeNumber = 0;
+const XTaggedType XTaggedTypeString = 1;
+const XTaggedType XTaggedTypeData = 2;
+const XTaggedType XTaggedTypeDate = 3;
+const XTaggedType XTaggedTypeMax = XTaggedTypeDate;
+
 const XCompressedType XCompressedTypeNone = 0;
 const XCompressedType XCompressedTypeNumber = 1;
 const XCompressedType XCompressedTypeString = 2;
@@ -443,3 +449,21 @@ XUInt32 _XELFHashBytes(XUInt8 * _Nullable bytes, XUInt32 length) {
 }
 
 #undef ELF_STEP
+
+
+extern XTaggedType XRefGetTaggedType(XRef _Nonnull ref) {
+#if BUILD_TARGET_RT_64_BIT
+    XUInt64 v = (XUInt64)((uintptr_t)ref);
+    if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
+        XUInt64 clsId = (v & X_BUILD_TaggedObjectClassMask) >> X_BUILD_TaggedObjectClassShift;
+        return (XTaggedType)clsId;
+    }
+#else
+    XUInt32 v = (XUInt32)((uintptr_t)ref);
+    if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
+        XUInt32 clsId = (v & X_BUILD_TaggedObjectClassMask) >> X_BUILD_TaggedObjectClassShift;
+        return (XTaggedType)clsId;
+    }
+#endif
+    return XUInt32Max;
+}

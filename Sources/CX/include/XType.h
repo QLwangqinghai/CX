@@ -63,6 +63,7 @@ typedef intptr_t XSIntptr;
 
     #define XSIntBitsCount 64
     #define XUIntBitsCount 64
+    #define XUIntHalfBitsCount 32
 
     #define XSIntMin INT64_MIN
     #define XSIntMax INT64_MAX
@@ -77,6 +78,7 @@ typedef intptr_t XSIntptr;
 
     #define XSIntBitsCount 32
     #define XUIntBitsCount 32
+    #define XUIntHalfBitsCount 16
 
     #define XSIntMin INT32_MIN
     #define XSIntMax INT32_MAX
@@ -85,6 +87,27 @@ typedef intptr_t XSIntptr;
     #define X_BUILD_UInt(value) value##UL
 
 #endif
+
+typedef XUInt XIndex;
+//#define XIndexNotFound XUIntMax
+static const XIndex XIndexNotFound = XUIntMax;
+typedef struct _XRange {
+    XIndex location;
+    XIndex length;
+} XRange;
+/*
+ 应该优先判断
+ (XIndexNotFound != location)
+ */
+
+
+static inline XRange XRangeMake(XIndex location, XIndex length) {
+    XRange r = {
+        .location = location,
+        .length = length,
+    };
+    return r;
+}
 
 typedef char XU8Char;
 typedef uint16_t XU16Char;

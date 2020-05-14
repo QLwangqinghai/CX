@@ -31,109 +31,7 @@ static const UInt8 __XUtf8CharByteCountTable[32] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1
  　　0400 0000~7FFF FFFF 1111110x 10xxxxxx ... 10xxxxxx
  */
 
-BOOL IsTextUTF8(uint8_t * bytes, size_t length) {
-    size_t begin = 0;
-    size_t end = length;
-    size_t offset = 0;
-    if (length >= 3) {
-        //check bom
-        if (0xEF == bytes[0] && 0xBB == bytes[1] && 0xBF == bytes[2]) {
-            begin = 3;
-            offset = 3;
-        }
-    }
-    size_t errorIndex = SIZE_T_MAX;
-    while (length - offset > 0 && SIZE_T_MAX == errorIndex) {
-        uint8_t byte = bytes[offset];
-        if (byte == 0x0) {
-            //终止符
-            end = offset;
-            break;
-        } else if (byte < 0x80) {
-            //1
-            offset += 1;
-        } else if ((byte & 0xE0) == 0xC0) {
-            //2
-            if (offset > length-2) {
-                errorIndex = offset;
-                break;
-            }
-            if ((byte & 0x1F) == 0) {
-                errorIndex = offset;
-                break;
-            }
-            uint8_t tmp = bytes[offset+1];
-            if (byte == 0xC0 && tmp == 0x80) {
-                end = offset;
-                break;
-            }
-            if (tmp >= 0x80 && tmp <= 0xBF) {
-                offset += 2;
-            } else {
-                errorIndex = offset;
-            }
-        } else if ((byte & 0xF0) == 0xE0) {
-            //3
-            if (offset > length-3) {
-                errorIndex = offset;
-                break;
-            }
-            if ((byte & 0xF) == 0) {
-                errorIndex = offset;
-                break;
-            }
-            uint16_t tmp = *(uint16_t *)(bytes + offset + 1);
-            if (byte == 0xE0 && tmp == 0x8080) {
-                end = offset;
-                break;
-            }
-            if ((tmp & 0xC0C0) == 0x8080) {
-                offset += 3;
-            } else {
-                errorIndex = offset;
-                break;
-            }
-        } else if ((byte & 0xF8) == 0xF0) {
-            //4
-            if (offset > length-4) {
-                errorIndex = offset;
-                break;
-            }
-            if ((byte & 0x7) == 0) {
-                errorIndex = offset;
-                break;
-            }
-            uint32_t tmp = *(uint32_t *)(bytes + offset);
-            
-            //大端
-            if ((tmp & 0xF8C0C0C0) == 0xF0808080) {
-                if (tmp == 0xF0808080) {
-                    end = offset;
-                    break;
-                }
-                offset += 4;
-            } else {
-                errorIndex = offset;
-                break;
-            }
-            
-            
-            //小端
-            if ((tmp & 0xC0C0C0F8) == 0x808080F0) {
-                if (tmp == 0x808080F0) {
-                    end = offset;
-                    break;
-                }
-                offset += 4;
-            } else {
-                errorIndex = offset;
-                break;
-            }
-        }
-    }
 
-    return true;
-}
 //
 //    uint8_t * str = bytes;
 //
@@ -236,10 +134,11 @@ BOOL IsTextUTF8(uint8_t * bytes, size_t length) {
     }
     printf("\n");
 
-    uint8_t bytes[] = {0xF1, 0x80, 0x80, 0xA1, 0};
+    uint8_t bytes[] = {0xFB, 0x80, 0x80, 0x80, 0x80, 0x80, 0};
     
     NSString * str = [[NSString alloc] initWithBytes:bytes length:4 encoding:NSUTF8StringEncoding];
     NSLog(@"%@", str);
+    NSLog(@"%ld", strlen(bytes));
 }
 
 

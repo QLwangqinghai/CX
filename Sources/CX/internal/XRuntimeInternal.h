@@ -365,12 +365,23 @@ typedef struct {
 #pragma pack(pop)
 #define _XByteStorageContentBufferSizeMin X_BUILD_UInt(245)
 
+
+#pragma pack(push, 1)
 typedef struct {
-    XUInt32 length;
-    XUInt32 hashCode;
-    XUInt8 tmp[sizeof(XUInt)];
-    XUInt8 * _Nonnull buffer;
-} _XByteStorageUnpacked_t;
+    XUInt8 content[sizeof(XUInt)];//content[0] 标识长度
+} _XByteStorageNano_t __attribute__((aligned(1)));
+#pragma pack(pop)
+
+typedef struct {
+    XUInt isString: 1;
+    XUInt contentType: (XUIntBitsCount - 1);//0 tagged; 1 small; 2 large
+    union XByteStorageUnpackedContent_u {
+        _XByteStorageContentLarge_t * _Nonnull large;
+        _XByteStorageContentSmall_t * _Nonnull small;
+        _XByteStorageNano_t nano;
+        XUInt __nano;
+    } content;
+} XByteStorageUnpacked_t;
 
 typedef struct {
     _XObjectCompressedBase _runtime;

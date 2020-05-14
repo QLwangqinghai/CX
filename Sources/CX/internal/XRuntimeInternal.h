@@ -194,10 +194,10 @@ typedef struct _XTypeIdentifier _XTypeIdentifier_s;
 typedef const struct _XTypeIdentifier * _XTypeIdentifierPtr;
 
 struct _XTypeIdentifier {
-    _XTypeIdentifierPtr _Nullable super;
     const char * _Nonnull name;
     XRefHashCode_f _Nullable hashCode;
     XRefEqualTo_f _Nonnull equalTo;
+    XRefCompare_f _Nullable compare;
 };
 
 

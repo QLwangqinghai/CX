@@ -66,19 +66,29 @@ XBool XValueEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
 
 #define _XTypeIdentifierMakeValue(Type) \
 {\
-    .super = NULL,\
     .name = #Type,\
     .hashCode = X##Type##Hash,\
     .equalTo = X##Type##Equal,\
-}\
+    .compare = NULL,\
+}
+
+#define _XTypeIdentifierMakeValue1(Type) \
+{\
+.name = #Type,\
+.hashCode = X##Type##Hash,\
+.equalTo = X##Type##Equal,\
+.compare = X##Type##Compare,\
+}
+
+
 
 #define _XTypeIdentifierMakeRootObject(Type) \
 {\
-    .super = NULL,\
     .name = #Type,\
     .hashCode = XObjectHash,\
     .equalTo = XObjectEqual,\
-}\
+    .compare = NULL,\
+}
 
 //要求指针类型必须8字节对齐， 不管是32 位机器 还是64位
 const _XTypeIdentifier_s _XTypeIdentifierTable[] __attribute__((aligned(8))) = {

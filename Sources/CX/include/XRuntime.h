@@ -102,6 +102,7 @@ typedef void (*XRefDeallocate_f)(_XAllocatorPtr _Nonnull allocator, XObject _Non
 
 typedef XBool (*XRefEqualTo_f)(XRef _Nonnull lhs, XRef _Nonnull rhs);
 typedef XHashCode (*XRefHashCode_f)(XObject _Nonnull obj);
+typedef XComparisonResult (*XRefCompare_f)(XRef _Nonnull lhs, XRef _Nonnull rhs);
 
 extern XRefKind XRefGetKind(XRef _Nonnull ref);
 extern XClassIdentifier _Nullable XRefGetIdentfierIfIsClass(XRef _Nonnull ref);

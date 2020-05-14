@@ -143,7 +143,7 @@ typedef XPtr XClassIdentifier;
 
 #pragma mark - CCHashCode
 
-typedef XUInt32 XHashCode;
+typedef XUInt XHashCode;
 
 #pragma mark - XTimeInterval
 

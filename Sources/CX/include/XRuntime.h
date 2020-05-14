@@ -121,6 +121,7 @@ extern const XTaggedType XTaggedTypeMax;
 
 extern XTaggedType XRefGetTaggedType(XRef _Nonnull ref);
 
+extern XHashCode XHash(XUInt8 * _Nullable bytes, XUInt length);
 
 #if defined(__cplusplus)
 }  // extern C

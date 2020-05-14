@@ -218,7 +218,7 @@ XValue _Nonnull XValueCreate(XUInt flag, XPtr _Nullable content, XSize contentSi
 
     valueRef->content.clearWhenDealloc = ((flag & XObjectFlagClearWhenDealloc) == XObjectFlagClearWhenDealloc) ? 1 : 0;
     valueRef->content.contentSize = (XUInt32)contentSize;
-    atomic_store(&(valueRef->content.hashCode), XHash32NoneFlag);
+    atomic_store(&(valueRef->content.hashCode), XValueHashNoneFlag);
     return ref;
 }
 static _XValue * _Nonnull __XRefAsValue(XValue _Nonnull ref, const char * _Nonnull func) {
@@ -236,7 +236,6 @@ static _XValue * _Nonnull __XRefAsValue(XValue _Nonnull ref, const char * _Nonnu
     const _XType_s * type = (const _XType_s *)info;
     XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Value - 1].base.identifier, func, "not Value instance");
     return (_XValue *)ref;
-
 #endif
 }
 XSize XValueGetSize(XValue _Nonnull ref) {
@@ -263,11 +262,19 @@ XHashCode XValueHash(XValue _Nonnull ref) {
     XAssert(NULL != ref, __func__, "require ref != NULL");
 
     _XValue * valueRef = __XRefAsValue(ref, __func__);
-    if (valueRef->content.hashCode >= XHash32NoneFlag) {
-        XUInt32 code = _XELFHashBytes(&(valueRef->content.extended[0]), MIN(valueRef->content.contentSize, XHashEverythingLimit));
-        valueRef->content.hashCode = (code & XHash32Mask);
+    XFastUInt32 code = atomic_load(&(valueRef->content.hashCode));
+    if (code >= XValueHashNoneFlag) {
+        code = _XELFHashBytes(&(valueRef->content.extended[0]), MIN(valueRef->content.contentSize, XValueHashLimit)) & XValueHashMask;
+        atomic_store(&(valueRef->content.hashCode), code);
     }
-    return valueRef->content.hashCode;
+    
+#if BUILD_TARGET_RT_64_BIT
+    XHashCode hashCode = valueRef->content.contentSize;
+    hashCode = (hashCode << 31ULL) + code;    
+    return hashCode;
+#else
+    return code;
+#endif
 }
 
 #pragma mark - XStorageRef

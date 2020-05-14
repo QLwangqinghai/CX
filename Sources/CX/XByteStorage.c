@@ -213,7 +213,7 @@ static XRef _Nonnull _XByteStorageCreate(XBool isString, XObjectFlag flag, const
         storageContent->offset = 0;
         storageContent->buffer = 0;
         storageContent->buffer = buf;
-        atomic_store(&(storageContent->hashCode), XHash32NoneFlag);
+        atomic_store(&(storageContent->hashCode), XByteStorageHashNoneFlag);
         return ref;
     } else {
         XUInt bufferSize = 4;
@@ -237,7 +237,7 @@ static XRef _Nonnull _XByteStorageCreate(XBool isString, XObjectFlag flag, const
     }
 }
 
-static _XByteStorage * _Nonnull _XByteStorageCreateWithBuffer(XBool isString, XObjectFlag flag, _XBuffer * _Nonnull xbuffer, XUInt offset, XUInt32 length, const char * _Nonnull func) {
+static _XByteStorage * _Nonnull _XByteStorageCreateWithBuffer(XBool isString, XObjectFlag flag, _XBuffer * _Nonnull xbuffer, XUInt32 offset, XUInt32 length, const char * _Nonnull func) {
     XAssert(NULL != xbuffer, func, "length > 0, buffer cannot NULL");
     XAssert(length <= xbuffer->size, func, "range error");
     XAssert(offset <= xbuffer->size - length, func, "range error");
@@ -390,6 +390,12 @@ XByteStorageUnpacked_t _XByteStorageUnpack(XPtr _Nonnull ref, const char * _Nonn
     }
 }
 
+XHashCode _XByteStorageHashByte(XUInt8 * _Nullable bytes, XUInt length, const char * _Nonnull func) {
+    if (length > 0) {
+        XAssert(NULL != bytes, func, "unknown error");
+    }
+    return XHash(bytes, length) & XByteStorageHashMask;
+}
 
 XHashCode _XByteStorageHash(XRef _Nonnull ref, XBool isString, const char * _Nonnull func) {
     XAssert(NULL != ref, func, "ref NULL error");
@@ -399,15 +405,18 @@ XHashCode _XByteStorageHash(XRef _Nonnull ref, XBool isString, const char * _Non
     XAssert(isStringValue == v.isString, func, desc);
     if (0 == v.contentType) {
         XUInt8 * bytes = &(v.content.nano.content[1]);
-        return _XELFHashBytes(bytes, MIN(XHashEverythingLimit, v.content.nano.content[0])) & XHash32Mask;
+        XUInt32 length = v.content.nano.content[0];
+        return _XByteStorageHashByte(bytes, length, func);
     } else if (1 == v.contentType) {
         XUInt8 * bytes = &(v.content.small->extended[0]);
-        return _XELFHashBytes(bytes, MIN(XHashEverythingLimit, v.content.small->length)) & XHash32Mask;
+        XUInt32 length = v.content.small->length;
+        return _XByteStorageHashByte(bytes, length, func);
     } else if (2 == v.contentType) {
-        XFastUInt32 hashCode = atomic_load(&(v.content.large->hashCode));
-        if ((hashCode & XHash32NoneFlag) == XHash32NoneFlag) {
+        XFastUInt hashCode = atomic_load(&(v.content.large->hashCode));
+        if ((hashCode & XByteStorageHashNoneFlag) == XByteStorageHashNoneFlag) {
             XUInt8 * bytes = &(v.content.large->buffer->content[v.content.large->offset]);
-            hashCode = _XELFHashBytes(bytes, MIN(XHashEverythingLimit, v.content.large->length)) & XHash32Mask;
+            XUInt32 length = v.content.large->length;
+            hashCode = _XByteStorageHashByte(bytes, length, func);
             atomic_store(&(v.content.large->hashCode), hashCode);
         }
         return hashCode;
@@ -497,9 +506,9 @@ XBool _XByteStorageEqual(XRef _Nonnull lhs, XRef _Nonnull rhs, XBool isString, c
     XAssert(isStringValue == right.isString, func, desc);
 
     if (2 == left.contentType && 2 == right.contentType) {
-        XFastUInt32 leftHashCode = atomic_load(&(left.content.large->hashCode));
-        XFastUInt32 rightHashCode = atomic_load(&(right.content.large->hashCode));
-        if ((leftHashCode & XHash32NoneFlag) != XHash32NoneFlag && (rightHashCode & XHash32NoneFlag) != XHash32NoneFlag) {
+        XFastUInt leftHashCode = atomic_load(&(left.content.large->hashCode));
+        XFastUInt rightHashCode = atomic_load(&(right.content.large->hashCode));
+        if (XByteStorageHashCodeIsValid(leftHashCode) && XByteStorageHashCodeIsValid(rightHashCode)) {
             if (leftHashCode != rightHashCode) {
                 return false;
             }
@@ -690,10 +699,10 @@ XString _Nullable XStringCreateByDecodeData(XObjectFlag flag, XData _Nonnull dat
                 if (XIndexNotFound == range.location) {
                     return NULL;
                 }
-                if (range.length < buffer->size / 2) {
+                if (range.length < buffer->size / 2 || range.location + offset > XUInt32Max) {
                     return _XByteStorageCreate(true, flag, bytes + range.location, (XUInt32)range.length, __func__);
                 } else {
-                    return _XByteStorageCreateWithBuffer(true, flag, buffer, range.location + offset, (XUInt32)range.length, __func__);
+                    return _XByteStorageCreateWithBuffer(true, flag, buffer, (XUInt32)(range.location + offset), (XUInt32)range.length, __func__);
                 }
             } else {
                 XAssert(false, __func__, "unknown error");
@@ -741,10 +750,10 @@ XData _Nullable XDataCreateByEncodeString(XObjectFlag flag, XString _Nonnull str
                 if (XIndexNotFound == range.location) {
                     return NULL;
                 }
-                if (range.length < buffer->size / 2) {
+                if (range.length < buffer->size / 2 || range.location + offset > XUInt32Max) {
                     return _XByteStorageCreate(false, flag, bytes + range.location, (XUInt32)range.length, __func__);
                 } else {
-                    return _XByteStorageCreateWithBuffer(false, flag, buffer, range.location + offset, (XUInt32)range.length, __func__);
+                    return _XByteStorageCreateWithBuffer(false, flag, buffer, (XUInt32)(range.location + offset), (XUInt32)range.length, __func__);
                 }
             } else {
                 XAssert(false, __func__, "unknown error");

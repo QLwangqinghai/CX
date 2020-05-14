@@ -421,10 +421,18 @@ XHashCode _XHashFloat64(XFloat64 d) {
     } else if (fractional > 0) {
         result += (XUInt64)fractional;
     }
-    return result;
+    return (XUInt32)result;
 }
 
-#define ELF_STEP(B) T1 = (H << 4) + B; T2 = T1 & 0xF0000000; if (T2) T1 ^= (T2 >> 24); T1 &= (~T2); H = T1;
+#define ELF_STEP32(B) T1 = (H << 4) + B; T2 = T1 & 0xF0000000; if (T2) T1 ^= (T2 >> 24); T1 &= (~T2); H = T1;
+#define ELF_STEP64(B) T1 = (H << 4) + B; T2 = T1 & 0xF000000000000000ULL; if (T2) T1 ^= (T2 >> 56); T1 &= (~T2); H = T1;
+
+#if BUILD_TARGET_RT_64_BIT
+    #define ELF_STEP ELF_STEP64
+#else
+    #define ELF_STEP ELF_STEP32
+#endif
+
 
 XUInt32 _XELFHashBytes(XUInt8 * _Nullable bytes, XUInt32 length) {
     if (length > 0) {
@@ -433,22 +441,65 @@ XUInt32 _XELFHashBytes(XUInt8 * _Nullable bytes, XUInt32 length) {
     XUInt32 H = 0, T1, T2;
     XUInt32 rem = length;
     while (3 < rem) {
-    ELF_STEP(bytes[length - rem]);
-    ELF_STEP(bytes[length - rem + 1]);
-    ELF_STEP(bytes[length - rem + 2]);
-    ELF_STEP(bytes[length - rem + 3]);
+    ELF_STEP32(bytes[length - rem]);
+    ELF_STEP32(bytes[length - rem + 1]);
+    ELF_STEP32(bytes[length - rem + 2]);
+    ELF_STEP32(bytes[length - rem + 3]);
     rem -= 4;
     }
     switch (rem) {
-    case 3:  ELF_STEP(bytes[length - 3]);
-    case 2:  ELF_STEP(bytes[length - 2]);
-    case 1:  ELF_STEP(bytes[length - 1]);
+    case 3:  ELF_STEP32(bytes[length - 3]);
+    case 2:  ELF_STEP32(bytes[length - 2]);
+    case 1:  ELF_STEP32(bytes[length - 1]);
     case 0:  ;
     }
     return H;
 }
 
+XHashCode XHash(XUInt8 * _Nullable bytes, XUInt length) {
+    if (length > 0) {
+        assert(bytes);
+    } else {
+        return 0;
+    }
+    XUInt H = 0, T1, T2;
+    XUInt rem = MIN(256, length);
+    
+    XUInt8 * lengthBytes = (XUInt8 *)(&length);
+    ELF_STEP(lengthBytes[0]);
+    ELF_STEP(lengthBytes[1]);
+    ELF_STEP(lengthBytes[2]);
+    ELF_STEP(lengthBytes[3]);
+
+#if BUILD_TARGET_RT_64_BIT
+    ELF_STEP(lengthBytes[4]);
+    ELF_STEP(lengthBytes[5]);
+    ELF_STEP(lengthBytes[6]);
+    ELF_STEP(lengthBytes[7]);
+#endif
+    
+    while (3 < rem) {
+        ELF_STEP(bytes[length - rem]);
+        ELF_STEP(bytes[length - rem + 1]);
+        ELF_STEP(bytes[length - rem + 2]);
+        ELF_STEP(bytes[length - rem + 3]);
+        rem -= 4;
+    }
+    switch (rem) {
+        case 3:  ELF_STEP(bytes[length - 3]);
+        case 2:  ELF_STEP(bytes[length - 2]);
+        case 1:  ELF_STEP(bytes[length - 1]);
+        case 0:  ;
+    }
+    return H;
+}
+
+#undef ELF_STEP32
+#undef ELF_STEP64
 #undef ELF_STEP
+
+
+
 
 
 extern XTaggedType XRefGetTaggedType(XRef _Nonnull ref) {

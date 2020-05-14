@@ -354,8 +354,8 @@ typedef struct {
 } _XByteStorageContentSmall_t;
 typedef struct {
     XUInt32 length;
-    _Atomic(XFastUInt32) hashCode;
-    XUInt offset;
+    XUInt32 offset;
+    _Atomic(XFastUInt) hashCode;
     _XBuffer * _Nonnull buffer;
 } _XByteStorageContentLarge_t;
 
@@ -467,11 +467,22 @@ extern XHashCode _XHashSInt64(XSInt64 i);
 extern XHashCode _XHashFloat64(XFloat64 d);
 extern XUInt32 _XELFHashBytes(XUInt8 * _Nullable bytes, XUInt32 length);
 
-#define XHashEverythingLimit 128
+#if BUILD_TARGET_RT_64_BIT
+    #define XByteStorageHashNoneFlag 0x8000000000000000ULL
+    #define XByteStorageHashMask 0x7FFFFFFFFFFFFFFFULL
+#else
+    #define XByteStorageHashNoneFlag 0x80000000UL
+    #define XByteStorageHashMask 0x7FFFFFFFUL
+#endif
+    
+#define XByteStorageHashCodeIsValid(h) (((h) & XByteStorageHashNoneFlag) != XByteStorageHashNoneFlag)
 
-#define XHash32NoneFlag 0x80000000UL
-#define XHash32Mask 0x7FFFFFFFUL
+    
+#define XValueHashLimit 128
+#define XValueHashNoneFlag 0x80000000UL
+#define XValueHashMask 0x7FFFFFFFUL
 
+    
 #if defined(__cplusplus)
 }  // extern C
 #endif

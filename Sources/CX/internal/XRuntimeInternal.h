@@ -354,11 +354,8 @@ typedef struct {
 } _XByteStorageContentSmall_t;
 typedef struct {
     XUInt32 length;
-    XUInt32 offset;
     _Atomic(XFastUInt32) hashCode;
-#if BUILD_TARGET_RT_64_BIT
-    XUInt32 __unuse;
-#endif
+    XUInt offset;
     _XBuffer * _Nonnull buffer;
 } _XByteStorageContentLarge_t;
 

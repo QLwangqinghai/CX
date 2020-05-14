@@ -10,6 +10,8 @@
 #include "internal/XAllocator.h"
 #include "XMemory.h"
 
+#pragma mark - _XBuffer
+
 #define _XBufferClearWhenDeallocFlag X_BUILD_UInt(1)
 #define _XBufferRcOne X_BUILD_UInt(2)
 #define _XBufferRcMax (XFastUIntMax-X_BUILD_UInt(1))
@@ -101,7 +103,7 @@ void _XBufferRelease(_XBuffer * _Nonnull buffer) {
     }
 }
 
-
+#pragma mark - _XByteStorage
 
 /*
  TaggedObject32
@@ -235,19 +237,12 @@ static XRef _Nonnull _XByteStorageCreate(XBool isString, XObjectFlag flag, const
     }
 }
 
-static _XByteStorage * _Nonnull _XByteStorageCreateWithBuffer(XCompressedType type, XObjectFlag flag, _XBuffer * _Nonnull xbuffer, XUInt32 offset, XUInt32 length, const char * _Nonnull func) {
+static _XByteStorage * _Nonnull _XByteStorageCreateWithBuffer(XBool isString, XObjectFlag flag, _XBuffer * _Nonnull xbuffer, XUInt offset, XUInt32 length, const char * _Nonnull func) {
     XAssert(NULL != xbuffer, func, "length > 0, buffer cannot NULL");
     XAssert(length <= xbuffer->size, func, "range error");
     XAssert(offset <= xbuffer->size - length, func, "range error");
     
-    const _XType_s * cls = NULL;
-    if (XCompressedTypeString == type) {
-        cls = _XClassString;
-    } else if (XCompressedTypeData == type) {
-        cls = _XClassData;
-    } else {
-        XAssert(false, func, "unknown error");
-    }
+    const _XType_s * cls = isString ? _XClassString : _XClassData;
     const _XAllocator_s * allocator = (const _XAllocator_s *)(cls->base.allocator);
     XSize size = sizeof(_XByteStorageContent_t);
     
@@ -396,12 +391,12 @@ XByteStorageUnpacked_t _XByteStorageUnpack(XPtr _Nonnull ref, const char * _Nonn
 }
 
 
-XString _Nullable _XStringCreateWithUtf8Bytes(XObjectFlag flag, const XUInt8 * _Nonnull bytes, XSize length, const char * _Nonnull func);
-
-XHashCode XStringHash(XRef _Nonnull ref) {
-    XAssert(NULL != ref, __func__, "ref NULL error");
-    XByteStorageUnpacked_t v = _XByteStorageUnpack(ref, __func__, "not String instance");
-    XAssert(1 == v.isString, __func__, "not String instance");
+XHashCode _XByteStorageHash(XRef _Nonnull ref, XBool isString, const char * _Nonnull func) {
+    XAssert(NULL != ref, func, "ref NULL error");
+    const char * desc = isString ? "not String instance" : "not Data instance";
+    XByteStorageUnpacked_t v = _XByteStorageUnpack(ref, func, desc);
+    uint32_t isStringValue = isString ? 1 : 0;
+    XAssert(isStringValue == v.isString, func, desc);
     if (0 == v.contentType) {
         XUInt8 * bytes = &(v.content.nano.content[1]);
         return _XELFHashBytes(bytes, MIN(XHashEverythingLimit, v.content.nano.content[0])) & XHash32Mask;
@@ -412,146 +407,118 @@ XHashCode XStringHash(XRef _Nonnull ref) {
         XFastUInt32 hashCode = atomic_load(&(v.content.large->hashCode));
         if ((hashCode & XHash32NoneFlag) == XHash32NoneFlag) {
             XUInt8 * bytes = &(v.content.large->buffer->content[v.content.large->offset]);
-                hashCode = _XELFHashBytes(bytes, MIN(XHashEverythingLimit, v.content.large->length)) & XHash32Mask;
+            hashCode = _XELFHashBytes(bytes, MIN(XHashEverythingLimit, v.content.large->length)) & XHash32Mask;
             atomic_store(&(v.content.large->hashCode), hashCode);
         }
         return hashCode;
     } else {
-        XAssert(false, __func__, "unknown error");
+        XAssert(false, func, "unknown error");
     }
 }
-XHashCode XDataHash(XRef _Nonnull ref) {
-    XAssert(NULL != ref, __func__, "ref NULL error");
-    XByteStorageUnpacked_t v = _XByteStorageUnpack(ref, __func__, "not Data instance");
-    XAssert(0 == v.isString, __func__, "not Data instance");
-    if (0 == v.contentType) {
-        XUInt8 * bytes = &(v.content.nano.content[1]);
-        return _XELFHashBytes(bytes, MIN(XHashEverythingLimit, v.content.nano.content[0])) & XHash32Mask;
-    } else if (1 == v.contentType) {
-        XUInt8 * bytes = &(v.content.small->extended[0]);
-        return _XELFHashBytes(bytes, MIN(XHashEverythingLimit, v.content.small->length)) & XHash32Mask;
-    } else if (2 == v.contentType) {
-        XFastUInt32 hashCode = atomic_load(&(v.content.large->hashCode));
-        if ((hashCode & XHash32NoneFlag) == XHash32NoneFlag) {
-            XUInt8 * bytes = &(v.content.large->buffer->content[v.content.large->offset]);
-                hashCode = _XELFHashBytes(bytes, MIN(XHashEverythingLimit, v.content.large->length)) & XHash32Mask;
-            atomic_store(&(v.content.large->hashCode), hashCode);
-        }
-        return hashCode;
+XUInt8 * _Nonnull _XByteStorageUnpackedGetByte(XByteStorageUnpacked_t * _Nonnull ptr, XUInt32 * _Nonnull lengthPtr, const char * _Nonnull func) {
+    XUInt32 length = 0;
+    XUInt8 * bytes = NULL;
+    if (0 == ptr->contentType) {
+        bytes = &(ptr->content.nano.content[1]);
+        length = ptr->content.nano.content[0];
+    } else if (1 == ptr->contentType) {
+        bytes = &(ptr->content.small->extended[0]);
+        length = ptr->content.small->length;
+    } else if (2 == ptr->contentType) {
+        bytes = &(ptr->content.large->buffer->content[ptr->content.large->offset]);
+        length = ptr->content.large->length;
     } else {
-        XAssert(false, __func__, "unknown error");
+        XAssert(false, func, "unknown error");
     }
+    *lengthPtr = length;
+    return bytes;
 }
 
-XData _Nonnull XDataCreate(XObjectFlag flag, XUInt8 * _Nullable bytes, XUInt32 length) {
-    if (length == 0) {
-        return XDataEmpty;
+
+
+XComparisonResult _XByteStorageUnpackedCompare(XByteStorageUnpacked_t * _Nonnull lhs, XByteStorageUnpacked_t * _Nonnull rhs, const char * _Nonnull func) {
+    XUInt32 leftLength = 0;
+    XUInt32 rightLength = 0;
+    XUInt8 * left = _XByteStorageUnpackedGetByte(lhs, &leftLength, func);
+    XUInt8 * right = _XByteStorageUnpackedGetByte(rhs, &rightLength, func);
+    
+    XSize size = MIN(leftLength, rightLength);
+    
+    XComparisonResult result = XMemoryCompare(left, right, size);
+    if (XCompareEqualTo == result) {
+        if (leftLength < rightLength) {
+            return XCompareLessThan;
+        } else if (leftLength > rightLength) {
+            return XCompareGreaterThan;
+        }
     }
-    return _XByteStorageCreate(false, flag, bytes, length, __func__);
+    return result;
 }
 
+XBool _XByteStorageUnpackedEqual(XByteStorageUnpacked_t * _Nonnull lhs, XByteStorageUnpacked_t * _Nonnull rhs, const char * _Nonnull func) {
+    XUInt32 leftLength = 0;
+    XUInt32 rightLength = 0;
+    XUInt8 * left = _XByteStorageUnpackedGetByte(lhs, &leftLength, func);
+    XUInt8 * right = _XByteStorageUnpackedGetByte(rhs, &rightLength, func);
+    if (leftLength != rightLength) {
+        return false;
+    }
+    XSize size = leftLength;
+    
+    XComparisonResult result = XMemoryCompare(left, right, size);
+    return (XCompareEqualTo == result);
+}
+
+
+XComparisonResult _XByteStorageCompare(XRef _Nonnull lhs, XRef _Nonnull rhs, XBool isString, const char * _Nonnull func) {
+    XAssert(NULL != lhs, func, "lhs NULL error");
+    XAssert(NULL != rhs, func, "rhs NULL error");
+    
+    const char * desc = isString ? "not String instance" : "not Data instance";
+    XByteStorageUnpacked_t left = _XByteStorageUnpack(lhs, func, desc);
+    XByteStorageUnpacked_t right = _XByteStorageUnpack(rhs, func, desc);
+    uint32_t isStringValue = isString ? 1 : 0;
+    XAssert(isStringValue == left.isString, func, desc);
+    XAssert(isStringValue == right.isString, func, desc);
+    return _XByteStorageUnpackedCompare(&left, &right, func);
+}
+
+
+
+XBool _XByteStorageEqual(XRef _Nonnull lhs, XRef _Nonnull rhs, XBool isString, const char * _Nonnull func) {
+    XAssert(NULL != lhs, func, "lhs NULL error");
+    XAssert(NULL != rhs, func, "rhs NULL error");
+
+    const char * desc = isString ? "not String instance" : "not Data instance";
+    XByteStorageUnpacked_t left = _XByteStorageUnpack(lhs, func, desc);
+    XByteStorageUnpacked_t right = _XByteStorageUnpack(rhs, func, desc);
+    uint32_t isStringValue = isString ? 1 : 0;
+    XAssert(isStringValue == left.isString, func, desc);
+    XAssert(isStringValue == right.isString, func, desc);
+
+    if (2 == left.contentType && 2 == right.contentType) {
+        XFastUInt32 leftHashCode = atomic_load(&(left.content.large->hashCode));
+        XFastUInt32 rightHashCode = atomic_load(&(right.content.large->hashCode));
+        if ((leftHashCode & XHash32NoneFlag) != XHash32NoneFlag && (rightHashCode & XHash32NoneFlag) != XHash32NoneFlag) {
+            if (leftHashCode != rightHashCode) {
+                return false;
+            }
+        }
+    }
+    return _XByteStorageUnpackedEqual(&left, &right, func);
+}
+
+
+#pragma mark - Common
 
 typedef XUInt32 XStringEncoding;
 
 static const XStringEncoding XStringEncodingUtf8 = 1;
 
-XData _Nullable XDataCreateByEncodeString(XObjectFlag flag, XString _Nonnull string, XStringEncoding encode) {
-    XAssert(NULL != string, __func__, "string is NULL");
-    XByteStorageUnpacked_t v = _XByteStorageUnpack(string, __func__, "not String instance");
-    XAssert(1 == v.isString, __func__, "not Data instance");
-    switch (encode) {
-        case XStringEncodingUtf8: {
-            if (0 == v.contentType) {
-                XUInt8 * bytes = &(v.content.nano.content[1]);
-                return XDataCreate(flag, bytes, v.content.nano.content[0]);
-            } else if (1 == v.contentType) {
-                XUInt8 * bytes = &(v.content.small->extended[0]);
-                return XDataCreate(flag, bytes, v.content.small->length);
-            } else if (2 == v.contentType) {
-                XUInt8 * bytes = &(v.content.large->buffer->content[v.content.large->offset]);
-                return XDataCreate(flag, bytes, v.content.large->length);
-            } else {
-                XAssert(false, __func__, "unknown error");
-            }
-        }
-            break;
-        default:
-            return NULL;
-            break;
-    }
 
-    return NULL;
-}
+#pragma mark - XString
 
-XString _Nullable XStringCreateByDecodeData(XObjectFlag flag, XData _Nonnull data, XStringEncoding encode) {
-    XAssert(NULL != data, __func__, "data is NULL");
-    XByteStorageUnpacked_t v = _XByteStorageUnpack(data, __func__, "not Data instance");
-    XAssert(0 == v.isString, __func__, "not Data instance");
-
-    switch (encode) {
-        case XStringEncodingUtf8: {
-            if (0 == v.contentType) {
-                XUInt8 * bytes = &(v.content.nano.content[1]);
-                return _XStringCreateWithUtf8Bytes(flag, bytes, v.content.nano.content[0], __func__);
-            } else if (1 == v.contentType) {
-                XUInt8 * bytes = &(v.content.small->extended[0]);
-                return _XStringCreateWithUtf8Bytes(flag, bytes, v.content.small->length, __func__);
-            } else if (2 == v.contentType) {
-                XUInt8 * bytes = &(v.content.large->buffer->content[v.content.large->offset]);
-                return _XStringCreateWithUtf8Bytes(flag, bytes, v.content.large->length, __func__);
-            } else {
-                XAssert(false, __func__, "unknown error");
-            }
-        }
-            break;
-        default:
-            return NULL;
-            break;
-    }
-    return NULL;
-}
-
-
-XRange _XRangeOfString(const XUInt8 * _Nonnull bytes, size_t length);
-
-XString _Nullable _XStringCreateWithUtf8Bytes(XObjectFlag flag, const XUInt8 * _Nonnull bytes, XSize length, const char * _Nonnull func) {
-    XRange range = _XRangeOfString(bytes, length);
-    XAssert(length < UINT32_MAX, func, "too large");
-    if (XIndexNotFound != range.location) {
-        return _XByteStorageCreate(true, flag, bytes + range.location, (XUInt32)range.length, __func__);
-    }
-    return NULL;
-}
-XString _Nonnull XStringCreateWithUtf8CString(XObjectFlag flag, const char * _Nonnull cString) {
-    XAssert(NULL != cString, __func__, "cString is NULL");
-    size_t length = strlen(cString);
-    if (length == 0) {
-        return XStringEmpty;
-    }
-    XString str = _XStringCreateWithUtf8Bytes(flag, (const XUInt8 *)cString, length, __func__);
-    XAssert(NULL != str, __func__, "cString error");
-    return str;
-}
-
-XString _Nullable XStringCreateWithBytes(XObjectFlag flag, const XUInt8 * _Nonnull bytes, XSize length, XStringEncoding encode) {
-    XAssert(NULL != bytes, __func__, "cString is NULL");
-    switch (encode) {
-        case XStringEncodingUtf8: {
-            if (length == 0) {
-                return XStringEmpty;
-            }
-            return _XStringCreateWithUtf8Bytes(flag, bytes, length, __func__);
-        }
-            break;
-        default:
-            return NULL;
-            break;
-    }
-}
-
-
-
-XRange _XRangeOfString(const XUInt8 * _Nonnull bytes, size_t length) {
+static XRange _XRangeOfString(const XUInt8 * _Nonnull bytes, size_t length) {
     XIndex begin = 0;
     XIndex end = length;
     XIndex offset = 0;
@@ -614,7 +581,7 @@ XRange _XRangeOfString(const XUInt8 * _Nonnull bytes, size_t length) {
                 break;
             }
 #endif
-
+            
             if ((tmp & 0xC0C0) == 0x8080) {
                 //10xxxxxx 10xxxxxx
                 offset += 3;
@@ -665,3 +632,136 @@ XRange _XRangeOfString(const XUInt8 * _Nonnull bytes, size_t length) {
         return XRangeMake(begin, end - begin);
     }
 }
+
+XString _Nullable _XStringCreateWithUtf8Bytes(XObjectFlag flag, const XUInt8 * _Nonnull bytes, XSize length, const char * _Nonnull func) {
+    XRange range = _XRangeOfString(bytes, length);
+    XAssert(length < UINT32_MAX, func, "too large");
+    if (XIndexNotFound != range.location) {
+        return _XByteStorageCreate(true, flag, bytes + range.location, (XUInt32)range.length, __func__);
+    }
+    return NULL;
+}
+XString _Nonnull XStringCreateWithUtf8CString(XObjectFlag flag, const char * _Nonnull cString) {
+    XAssert(NULL != cString, __func__, "cString is NULL");
+    size_t length = strlen(cString);
+    if (length == 0) {
+        return XStringEmpty;
+    }
+    XString str = _XStringCreateWithUtf8Bytes(flag, (const XUInt8 *)cString, length, __func__);
+    XAssert(NULL != str, __func__, "cString error");
+    return str;
+}
+
+XString _Nullable XStringCreateWithBytes(XObjectFlag flag, const XUInt8 * _Nonnull bytes, XSize length, XStringEncoding encode) {
+    XAssert(NULL != bytes, __func__, "cString is NULL");
+    switch (encode) {
+        case XStringEncodingUtf8: {
+            if (length == 0) {
+                return XStringEmpty;
+            }
+            return _XStringCreateWithUtf8Bytes(flag, bytes, length, __func__);
+        }
+            break;
+        default:
+            return NULL;
+            break;
+    }
+}
+
+XString _Nullable XStringCreateByDecodeData(XObjectFlag flag, XData _Nonnull data, XStringEncoding encode) {
+    XAssert(NULL != data, __func__, "data is NULL");
+    XByteStorageUnpacked_t v = _XByteStorageUnpack(data, __func__, "not Data instance");
+    XAssert(0 == v.isString, __func__, "not Data instance");
+    
+    switch (encode) {
+        case XStringEncodingUtf8: {
+            if (0 == v.contentType) {
+                XUInt8 * bytes = &(v.content.nano.content[1]);
+                return _XStringCreateWithUtf8Bytes(flag, bytes, v.content.nano.content[0], __func__);
+            } else if (1 == v.contentType) {
+                XUInt8 * bytes = &(v.content.small->extended[0]);
+                return _XStringCreateWithUtf8Bytes(flag, bytes, v.content.small->length, __func__);
+            } else if (2 == v.contentType) {
+                _XBuffer * buffer = v.content.large->buffer;
+                XUInt offset = v.content.large->offset;
+                XUInt8 * bytes = &(buffer->content[offset]);
+                XUInt32 length = v.content.large->length;
+                XRange range = _XRangeOfString(bytes, length);
+                if (XIndexNotFound == range.location) {
+                    return NULL;
+                }
+                if (range.length < buffer->size / 2) {
+                    return _XByteStorageCreate(true, flag, bytes + range.location, (XUInt32)range.length, __func__);
+                } else {
+                    return _XByteStorageCreateWithBuffer(true, flag, buffer, range.location + offset, (XUInt32)range.length, __func__);
+                }
+            } else {
+                XAssert(false, __func__, "unknown error");
+            }
+        }
+            break;
+        default:
+            return NULL;
+            break;
+    }
+    return NULL;
+}
+
+XHashCode XStringHash(XRef _Nonnull ref) {
+    return _XByteStorageHash(ref, true, __func__);
+}
+
+#pragma mark - Data
+
+XData _Nonnull XDataCreate(XObjectFlag flag, XUInt8 * _Nullable bytes, XUInt32 length) {
+    if (length == 0) {
+        return XDataEmpty;
+    }
+    return _XByteStorageCreate(false, flag, bytes, length, __func__);
+}
+
+XData _Nullable XDataCreateByEncodeString(XObjectFlag flag, XString _Nonnull string, XStringEncoding encode) {
+    XAssert(NULL != string, __func__, "string is NULL");
+    XByteStorageUnpacked_t v = _XByteStorageUnpack(string, __func__, "not String instance");
+    XAssert(1 == v.isString, __func__, "not Data instance");
+    switch (encode) {
+        case XStringEncodingUtf8: {
+            if (0 == v.contentType) {
+                XUInt8 * bytes = &(v.content.nano.content[1]);
+                return XDataCreate(flag, bytes, v.content.nano.content[0]);
+            } else if (1 == v.contentType) {
+                XUInt8 * bytes = &(v.content.small->extended[0]);
+                return XDataCreate(flag, bytes, v.content.small->length);
+            } else if (2 == v.contentType) {
+                _XBuffer * buffer = v.content.large->buffer;
+                XUInt offset = v.content.large->offset;
+                XUInt8 * bytes = &(buffer->content[offset]);
+                XUInt32 length = v.content.large->length;
+                XRange range = _XRangeOfString(bytes, length);
+                if (XIndexNotFound == range.location) {
+                    return NULL;
+                }
+                if (range.length < buffer->size / 2) {
+                    return _XByteStorageCreate(false, flag, bytes + range.location, (XUInt32)range.length, __func__);
+                } else {
+                    return _XByteStorageCreateWithBuffer(false, flag, buffer, range.location + offset, (XUInt32)range.length, __func__);
+                }
+            } else {
+                XAssert(false, __func__, "unknown error");
+            }
+        }
+            break;
+        default:
+            return NULL;
+            break;
+    }
+
+    return NULL;
+}
+
+XHashCode XDataHash(XRef _Nonnull ref) {
+    return _XByteStorageHash(ref, false, __func__);
+}
+
+
+

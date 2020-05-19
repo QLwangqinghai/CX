@@ -46,7 +46,7 @@ typedef XUInt32 XNumberType;
 #define X_BUILD_CompressedType_Data X_BUILD_UInt(3)
 #define X_BUILD_CompressedType_Date X_BUILD_UInt(4)
 #define X_BUILD_CompressedType_Value X_BUILD_UInt(5)
-#define X_BUILD_CompressedType_Storage X_BUILD_UInt(6)
+#define X_BUILD_CompressedType_Package X_BUILD_UInt(6)
 #define X_BUILD_CompressedType_Array X_BUILD_UInt(7)
 #define X_BUILD_CompressedType_Map X_BUILD_UInt(8)
 #define X_BUILD_CompressedType_Set X_BUILD_UInt(9)
@@ -58,24 +58,33 @@ extern const XCompressedType XCompressedTypeString;
 extern const XCompressedType XCompressedTypeData;
 extern const XCompressedType XCompressedTypeDate;
 extern const XCompressedType XCompressedTypeValue;
+extern const XCompressedType XCompressedTypeObject;
 extern const XCompressedType XCompressedTypeArray;
 extern const XCompressedType XCompressedTypeMap;
 extern const XCompressedType XCompressedTypeSet;
-extern const XCompressedType XCompressedTypeStorage;
+extern const XCompressedType XCompressedTypeMax;
+
+extern XCompressedType XCompressedTypeOfClass(XClass _Nonnull cls);
 
 typedef XUInt XObjectRcFlag;
 extern const XObjectRcFlag XObjectRcFlagReadOnly;
 extern const XObjectRcFlag XObjectRcFlagStatic;
-
 
 typedef XUInt XObjectFlag;
 
 //初始化单例对象， 不进行引用计数、一直不释放
 extern const XObjectFlag XObjectFlagStatic;
 
-//对象释放时clear内存, XString、XData、XValue、XStorage 支持
+//对象释放时clear内存, XString、XData、XValue、XObject 支持
 extern const XObjectFlag XObjectFlagClearWhenDealloc;
 
+static inline XObjectRcFlag XObjectRcFlagFromObjectFlag(XObjectFlag flag) {
+    XObjectRcFlag rcFlag = 0;
+    if ((flag & XObjectFlagStatic) == XObjectFlagStatic) {
+        rcFlag |= XObjectRcFlagStatic;
+    }
+    return rcFlag;
+}
 
 
 
@@ -88,7 +97,7 @@ extern const XClass _Nonnull XClassString;//4
 extern const XClass _Nonnull XClassData;//5
 extern const XClass _Nonnull XClassDate;//6
 extern const XClass _Nonnull XClassValue;//7
-extern const XClass _Nonnull XClassStorage;//8
+extern const XClass _Nonnull XClassPackage;//8
 
 extern const XClass _Nonnull XClassArray;//9
 extern const XClass _Nonnull XClassMap;//10

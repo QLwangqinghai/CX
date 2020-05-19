@@ -12,6 +12,7 @@
 #include "XRef.h"
 #include "XObject.h"
 
+_Static_assert(sizeof(_XByteStorageContentLarge_t) == sizeof(XUInt32) * 2 + sizeof(_Atomic(XFastUInt)) + sizeof(_XBuffer *), "unknown error");
 _Static_assert(sizeof(XUInt) == sizeof(size_t), "unknown error");
 _Static_assert(sizeof(_Atomic(uintptr_t)) == sizeof(XUInt), "unknown error");
 _Static_assert(sizeof(_Atomic(XFastUInt32)) == sizeof(XUInt32), "unknown error");
@@ -55,10 +56,13 @@ const XCompressedType XCompressedTypeString = 2;
 const XCompressedType XCompressedTypeData = 3;
 const XCompressedType XCompressedTypeDate = 4;
 const XCompressedType XCompressedTypeValue = 5;
-const XCompressedType XCompressedTypeStorage = 6;
+const XCompressedType XCompressedTypeObject = 6;
 const XCompressedType XCompressedTypeArray = 7;
 const XCompressedType XCompressedTypeMap = 8;
 const XCompressedType XCompressedTypeSet = 9;
+const XCompressedType XCompressedTypeMax = XCompressedTypeSet;
+
+
 
 XBool XStringEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
 XBool XDataEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
@@ -151,7 +155,7 @@ const _XType_s _XMetaClassStorage __attribute__((aligned(8))) = {
         .domain = 0,
         .tableSize = 0,
         .super = (uintptr_t)NULL,
-        .allocator = &_XClassAllocator,
+        .allocator = &_XConstantClassAllocator,
         .deinit = NULL,
         .describe = NULL,
     },
@@ -231,6 +235,24 @@ const _XType_s _XClassTable[] __attribute__((aligned(8))) = {
     _XCompressedValueClassMake(Set),
 };
 
+
+extern XCompressedType XCompressedTypeOfClass(XClass _Nonnull cls) {
+    uintptr_t base = (uintptr_t)(&(_XClassTable[0]));
+    uintptr_t end = base + sizeof(_XClassType);
+    uintptr_t c = (uintptr_t)cls;
+    if (c < base || c >= end) {
+        return XUIntMax;
+    } else {
+        uintptr_t offset = c - base;
+        if (offset % sizeof(_XType_s) == 0) {
+            return offset / sizeof(_XType_s);
+        } else {
+            return XUIntMax;
+        }
+    }
+}
+
+
 const _XType_s _XClassNullStorage __attribute__((aligned(8))) = _XConstantValueClassMake(Null);
 const _XType_s _XClassBooleanStorage __attribute__((aligned(8))) = _XConstantValueClassMake(Boolean);
 
@@ -244,7 +266,7 @@ const XClass _Nonnull XClassString = (XClass)&(_XClassTable[X_BUILD_CompressedTy
 const XClass _Nonnull XClassData = (XClass)&(_XClassTable[X_BUILD_CompressedType_Data - 1]);//5
 const XClass _Nonnull XClassDate = (XClass)&(_XClassTable[X_BUILD_CompressedType_Date - 1]);//6
 const XClass _Nonnull XClassValue = (XClass)&(_XClassTable[X_BUILD_CompressedType_Value - 1]);//7
-const XClass _Nonnull XClassStorage = (XClass)&(_XClassTable[X_BUILD_CompressedType_Storage - 1]);//8
+const XClass _Nonnull XClassPackage = (XClass)&(_XClassTable[X_BUILD_CompressedType_Package - 1]);//8
 
 const XClass _Nonnull XClassArray = (XClass)&(_XClassTable[X_BUILD_CompressedType_Array - 1]);//9
 const XClass _Nonnull XClassMap = (XClass)&(_XClassTable[X_BUILD_CompressedType_Map - 1]);//10
@@ -260,7 +282,7 @@ const _XType_s * _Nonnull _XClassString = &(_XClassTable[X_BUILD_CompressedType_
 const _XType_s * _Nonnull _XClassData = &(_XClassTable[X_BUILD_CompressedType_Data - 1]);//5
 const _XType_s * _Nonnull _XClassDate = &(_XClassTable[X_BUILD_CompressedType_Date - 1]);//6
 const _XType_s * _Nonnull _XClassValue = &(_XClassTable[X_BUILD_CompressedType_Value - 1]);//7
-const _XType_s * _Nonnull _XClassStorage = &(_XClassTable[X_BUILD_CompressedType_Storage - 1]);//8
+const _XType_s * _Nonnull _XClassPackage = &(_XClassTable[X_BUILD_CompressedType_Package - 1]);//8
 
 const _XType_s * _Nonnull _XClassArray = &(_XClassTable[X_BUILD_CompressedType_Array - 1]);//9
 const _XType_s * _Nonnull _XClassMap = &(_XClassTable[X_BUILD_CompressedType_Map - 1]);//10

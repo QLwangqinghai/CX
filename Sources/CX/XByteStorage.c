@@ -10,6 +10,20 @@
 #include "internal/XAllocator.h"
 #include "XMemory.h"
 
+
+#pragma mark - base
+
+#if BUILD_TARGET_RT_64_BIT
+    #define XByteStorageHashNoneFlag 0x8000000000000000ULL
+    #define XByteStorageHashMask 0x7FFFFFFFFFFFFFFFULL
+#else
+    #define XByteStorageHashNoneFlag 0x80000000UL
+    #define XByteStorageHashMask 0x7FFFFFFFUL
+#endif
+
+#define XByteStorageHashCodeIsValid(h) (((h) & XByteStorageHashNoneFlag) != XByteStorageHashNoneFlag)
+
+
 #pragma mark - _XBuffer
 
 #define _XBufferClearWhenDeallocFlag X_BUILD_UInt(1)
@@ -17,9 +31,9 @@
 #define _XBufferRcMax (XFastUIntMax-X_BUILD_UInt(1))
 
 _XBuffer * _Nonnull _XBufferAllocate(XPtr _Nonnull content, XUInt size, XBool clearWhenDealloc) {
-    XAssert(size <= (XUIntMax - X_BUILD_UInt(0xf)), __func__, "size to large");
+    XAssert(size <= (XUIntMax - X_BUILD_UInt(0x10)), __func__, "size to large");
     XUInt bufferSize = (size + 15) & (~X_BUILD_UInt(0xf));
-    _XBuffer * buffer = XAlignedAllocate(bufferSize, 16);
+    _XBuffer * buffer = XAlignedAllocate(bufferSize + sizeof(_XBuffer), 16);
     buffer->size = bufferSize;
     _Atomic(XFastUInt) * rcPtr = &(buffer->_refCount);
     XFastUInt rc = _XBufferRcOne;
@@ -30,7 +44,7 @@ _XBuffer * _Nonnull _XBufferAllocate(XPtr _Nonnull content, XUInt size, XBool cl
     memcpy(&(buffer->content[0]), content, size);
     
     if (bufferSize > size) {
-        memset(&(buffer->content[size]), 0, bufferSize - size);
+        bzero(&(buffer->content[size]), bufferSize - size);
     }
     return buffer;
 }
@@ -42,6 +56,10 @@ void __XBufferDeallocate(_XBuffer * _Nonnull buffer) {
 XPtr _Nonnull _XBufferGetContent(_XBuffer * _Nonnull buffer) {
     assert(buffer);
     return &(buffer->content);
+}
+
+void __XBufferClear(_XBuffer * _Nonnull buffer) {
+
 }
 
 
@@ -98,7 +116,10 @@ void _XBufferRelease(_XBuffer * _Nonnull buffer) {
         assert(rcInfo >= _XBufferRcOne);
         newRcInfo = rcInfo - _XBufferRcOne;
     } while (!atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
-    if (newRcInfo == 0) {
+    if (newRcInfo < _XBufferRcOne) {
+        if ((newRcInfo & _XBufferClearWhenDeallocFlag) == _XBufferClearWhenDeallocFlag) {
+            __XBufferClear(buffer);
+        }
         __XBufferDeallocate(buffer);
     }
 }
@@ -155,11 +176,11 @@ static void _XByteStorageDistory(_XByteStorage * _Nonnull storage) {
             XUInt bufferSize = (length - 1) & (~X_BUILD_UInt(0x3));
             size += bufferSize;
         }
-        memset(&(storage->content), 0, size);
+        bzero(&(storage->content), size);
     } else {
         _XByteStorageContentLarge_t * content = (_XByteStorageContentLarge_t *)&(storage->content);
         _XBufferRelease(content->buffer);
-        memset(&(storage->content), 0, sizeof(_XByteStorageContentLarge_t));
+        bzero(&(storage->content), sizeof(_XByteStorageContentLarge_t));
     }
 }
 
@@ -231,7 +252,7 @@ static XRef _Nonnull _XByteStorageCreate(XBool isString, XObjectFlag flag, const
         }
 
         if (bufferSize > length) {
-            memset(&(storageContent->extended[length]), 0, bufferSize - length);
+            bzero(&(storageContent->extended[length]), bufferSize - length);
         }
         return ref;
     }
@@ -281,7 +302,7 @@ static _XByteStorage * _Nonnull _XByteStorageCreateWithBuffer(XBool isString, XO
             memcpy(&(storageContent->extended[0]), buffer, length);
         }
         if (bufferSize > length) {
-            memset(&(storageContent->extended[length]), 0, bufferSize - length);
+            bzero(&(storageContent->extended[length]), bufferSize - length);
         }
         return ref;
     }

@@ -134,7 +134,7 @@ typedef XRef XValue;
 
 //对象类型， 默认hash是对对象地址的hash， 比较是对对象地址的比较
 typedef XRef XObject;
-typedef XObject XStorageRef;
+typedef XObject XPackageRef;
 typedef XRef XArrayRef;
 typedef XRef XMapRef;
 typedef XRef XSetRef;

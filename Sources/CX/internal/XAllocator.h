@@ -54,16 +54,21 @@ extern const _XAllocator_s _XCompressedObjectAllocator;
 extern const _XAllocator_s _XObjectAllocator;
 
 
-//动态class
-extern const _XAllocator_s _XClassAllocator;
+//动态class not support
+//extern const _XAllocator_s _XClassAllocator;
+
 
 //静态class
 extern const _XAllocator_s _XConstantClassAllocator;
 
-
 //Boolean Null
 extern const _XAllocator_s _XConstantAllocator;
 
+
+
+XRef _Nonnull _XRefRetain(XRef _Nonnull ref, const char * _Nonnull func);
+XRef _Nullable _XRefTryRetain(XRef _Nonnull ref, const char * _Nonnull func);
+void _XRefRelease(XRef _Nonnull ref, const char * _Nonnull func);
 
 
 #if defined(__cplusplus)

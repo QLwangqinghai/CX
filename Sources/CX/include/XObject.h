@@ -28,7 +28,7 @@ extern XHashCode XObjectHash(XRef _Nonnull ref);
 
 
 
-extern XPtr _Nonnull XObjectGetContent(XObject _Nonnull obj);
+extern XPtr _Nonnull XPackageGetContent(XObject _Nonnull obj);
 
 
 #if defined(__cplusplus)

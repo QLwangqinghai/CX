@@ -28,9 +28,7 @@ typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
     #pragma pack(push, 8)
 #else
     #pragma pack(push, 4)
-
 #endif
-
 
 
 /*
@@ -50,7 +48,6 @@ flag: 1, value = 1
 
 /*
  TaggedObject32
-
  refType: 1, value = 1
  taggedContent: {
     class: 2
@@ -61,7 +58,6 @@ flag: 1, value = 1
 
 /*
  TaggedObject64
-
  refType: 2, value = 1
  taggedContent: 61 {
     class: 2
@@ -73,19 +69,16 @@ flag: 1, value = 1
 
 /*
  TaggedIsa64
- 
  refType: 2, value = 2
  taggedContent: 61 {
     isa: 6
-    counter: 51
-    counterFlag: 4
+    counter: 55
  }
  flag: 1, value = 1
  */
 
 
 /*
- 
  XObjectFlagclearWhenDealloc
  XObjectFlagNoRc
  */
@@ -149,12 +142,12 @@ flag: 1, value = 1
 #if BUILD_TARGET_RT_64_BIT
 
 typedef struct {
-    _Atomic(uintptr_t) typeInfo;
+    _Atomic(XFastUInt) rcInfo;
 } _XObjectCompressedBase;
 
 typedef struct {
-    _Atomic(uintptr_t) typeInfo;
     _Atomic(XFastUInt) rcInfo;
+    _Atomic(uintptr_t) typeInfo;
 } _XObjectBase;
 
 //
@@ -162,7 +155,7 @@ typedef struct {
 
 /* flagBegin:2 type:6 rcInfo:55 flagEnd:1  */
 #define _XConstantObjectCompressedBaseMake(type) {\
-    .typeInfo = ATOMIC_VAR_INIT((uintptr_t)(X_BUILD_TypeInfoConstantCompressed | (((type) & 0x3f) << 56))),\
+    .rcInfo = ATOMIC_VAR_INIT((uintptr_t)(X_BUILD_TypeInfoConstantCompressed | (((type) & 0x3f) << 56))),\
 }
 
 #else
@@ -178,7 +171,6 @@ typedef _XObjectCompressedBase _XObjectBase;
     .typeInfo = ATOMIC_VAR_INIT((uintptr_t)(type)),\
     .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
 }
-
 
 #endif
 
@@ -245,7 +237,7 @@ extern const _XType_s * _Nonnull _XClassString;
 extern const _XType_s * _Nonnull _XClassData;
 extern const _XType_s * _Nonnull _XClassDate;
 extern const _XType_s * _Nonnull _XClassValue;
-extern const _XType_s * _Nonnull _XClassStorage;
+extern const _XType_s * _Nonnull _XClassPackage;
 extern const _XType_s * _Nonnull _XClassArray;
 extern const _XType_s * _Nonnull _XClassMap;
 extern const _XType_s * _Nonnull _XClassSet;
@@ -342,6 +334,13 @@ typedef struct {
 //} _XByteStorageContent_t;
 
 
+typedef struct {
+    XUInt32 length;
+    XUInt32 offset;
+    _Atomic(XFastUInt) hashCode;
+    _XBuffer * _Nonnull buffer;
+} _XByteStorageContentLarge_t;
+
 #pragma pack(push, 4)
 
 typedef struct {
@@ -352,22 +351,14 @@ typedef struct {
     XUInt32 length;
     XUInt8 extended[4];/* 可能有0、16、48、112、 240 5种可能 */
 } _XByteStorageContentSmall_t;
-typedef struct {
-    XUInt32 length;
-    XUInt32 offset;
-    _Atomic(XFastUInt) hashCode;
-    _XBuffer * _Nonnull buffer;
-} _XByteStorageContentLarge_t;
 
 #pragma pack(pop)
 #define _XByteStorageContentBufferSizeMin X_BUILD_UInt(245)
 
 
-#pragma pack(push, 1)
 typedef struct {
     XUInt8 content[sizeof(XUInt)];//content[0] 标识长度
-} _XByteStorageNano_t __attribute__((aligned(1)));
-#pragma pack(pop)
+} _XByteStorageNano_t;
 
 typedef struct {
     XUInt isString: 1;
@@ -431,21 +422,37 @@ typedef struct {
     _XValueContent_t content;
 } _XValue;
 
+
+#pragma mark - XPackage
+
 typedef struct {
-    XSize contentSize;
-    XStorageClear_f _Nullable clear;
+    XU8Char * _Nonnull typeName;
+    XSize clearWhenDealloc: 1;
+    XSize paddingSize: 6;
+    XSize contentSize: (XUIntBitsCount - 7);
+    XPackageDeinit_f _Nullable deinit;
     XUInt8 extended[0];
-} _XStorageContent_t;
+} _XPackageContent_t;
 
 typedef struct {
     _XObjectCompressedBase _runtime;
-    _XStorageContent_t content;
-} _XStorage;
+    _XPackageContent_t content;
+} _XPackage;
 
-#if BUILD_TARGET_RT_64_BIT
-#else
+#pragma mark - XCollection
+typedef struct {
+    _XObjectCompressedBase _runtime;
+    XPtr _Nonnull content;
+} _XCollection;
 
-#endif
+#pragma mark - XArray
+typedef _XCollection _XArray;
+
+#pragma mark - XMap
+typedef _XCollection _XMap;
+
+#pragma mark - XSet
+typedef _XCollection _XSet;
 
 
 #pragma pack(pop)
@@ -467,22 +474,8 @@ extern XHashCode _XHashSInt64(XSInt64 i);
 extern XHashCode _XHashFloat64(XFloat64 d);
 extern XUInt32 _XELFHashBytes(XUInt8 * _Nullable bytes, XUInt32 length);
 
-#if BUILD_TARGET_RT_64_BIT
-    #define XByteStorageHashNoneFlag 0x8000000000000000ULL
-    #define XByteStorageHashMask 0x7FFFFFFFFFFFFFFFULL
-#else
-    #define XByteStorageHashNoneFlag 0x80000000UL
-    #define XByteStorageHashMask 0x7FFFFFFFUL
-#endif
-    
-#define XByteStorageHashCodeIsValid(h) (((h) & XByteStorageHashNoneFlag) != XByteStorageHashNoneFlag)
 
-    
-#define XValueHashLimit 128
-#define XValueHashNoneFlag 0x80000000UL
-#define XValueHashMask 0x7FFFFFFFUL
 
-    
 #if defined(__cplusplus)
 }  // extern C
 #endif

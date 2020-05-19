@@ -12,7 +12,6 @@
 
 typedef XPtr _XDescriptionBuffer;
 
-typedef void (*XObjectDeinit_f)(XObject _Nonnull obj);
 typedef void (*XObjectDescribe_f)(XObject _Nonnull obj, _XDescriptionBuffer buffer);
 typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
 

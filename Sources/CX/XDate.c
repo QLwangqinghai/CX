@@ -178,7 +178,7 @@ static _XDate * _Nonnull __XRefAsDate(XDate _Nonnull ref, const char * _Nonnull 
 
 void __XDateUnpack(XDate _Nonnull ref, XTimeInterval * _Nonnull valuePtr, const char * _Nonnull func) {
     XTaggedType type = XRefGetTaggedType(ref);
-    if (XTaggedTypeMax < type) {
+    if (type > XTaggedTypeMax) {
         _XDate * date = __XRefAsDate(ref, func);
         XTimeInterval content = date->content.time;
         *valuePtr = content;

@@ -8,6 +8,7 @@
 
 #include "include/XRef.h"
 #include "internal/XRuntimeInternal.h"
+#include "internal/XAllocator.h"
 
 
 //XBool XStringEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
@@ -179,6 +180,10 @@ const XData _Nonnull XDataEmpty = (XData)&_XDataEmpty;
 
 #pragma mark - XValue
 
+#define XValueHashLimit 128
+#define XValueHashNoneFlag 0x80000000UL
+#define XValueHashMask 0x7FFFFFFFUL
+
 const XSize XValueSizeMax = X_BUILD_ValueSizeMax;
 
 const _XValue _XValueEmpty = {
@@ -277,43 +282,42 @@ XHashCode XValueHash(XValue _Nonnull ref) {
 #endif
 }
 
-#pragma mark - XStorageRef
+#pragma mark - XPackageRef
 
-const XSize XStorageSizeMax = X_BUILD_StorageSizeMax;
+const XSize XPackageSizeMax = X_BUILD_PackageSizeMax;
 
 
-static inline XSize __XStorageSizeAligned(XSize size) {
-    #if BUILD_TARGET_RT_64_BIT
-        XSize s = (size + 7) & (~X_BUILD_UInt(0x7));
-    #else
-        XSize s = (size + 3) & (~X_BUILD_UInt(0x3));
-
-    #endif
+static inline XSize __XPackageContentSizeAligned(XSize size) {
+#if BUILD_TARGET_RT_64_BIT
+    XSize s = (size + 7) & (~X_BUILD_UInt(0x7));
+#else
+    XSize s = (size + 3) & (~X_BUILD_UInt(0x3));
+#endif
     return s;
 };
-extern XStorageRef _Nonnull XStorageCreate(XUInt flag, XSize size, XStorageClear_f _Nullable clear, XPtr _Nullable content, XSize contentSize) {
-    if (contentSize > 0) {
-        XAssert(NULL != content, __func__, "contentSize>0, but content is NULL");
-        XAssert(contentSize <= X_BUILD_ValueSizeMax, __func__, "contentSize too large");
-    } else {
-        XAssert(contentSize == 0, __func__, "contentSize < 0");
-        return XValueEmpty;
-    }
-    const _XAllocator_s * allocator = (const _XAllocator_s *)(_XClassStorage->base.allocator);
-//    typedef XRef _Nonnull (*XRefAllocate_f)(_XAllocatorPtr _Nonnull allocator, XClass _Nonnull cls, XSize contentSize, XObjectRcFlag flag);
 
-    XObjectRcFlag rcFlag = 0;
-    
-    XRef ref = allocator->allocateRef((_XAllocatorPtr)allocator, XClassStorage, __XStorageSizeAligned(contentSize), rcFlag);
-    _XStorage * storageRef = (_XStorage *)(ref);
 
-//    storageRef->content.clearWhenDealloc = ((flag & XObjectFlagClearWhenDealloc) == XObjectFlagClearWhenDealloc) ? 1 : 0;
-//    storageRef->content.hasHashCode = 0;
-    storageRef->content.contentSize = (XUInt32)contentSize;
-//    storageRef->content.hashCode = 0;
+XPackageRef _Nonnull XPackageCreate(XUInt flag, XU8Char * _Nonnull typeName, XSize size, XPackageDeinit_f _Nullable deinit) {
+    XAssert(size <= X_BUILD_PackageSizeMax, __func__, "");
+    XAssert(size > 0, __func__, "size == 0");
+
+    XAssert(NULL != typeName, __func__, "typeName NULL");
+    const _XAllocator_s * allocator = (const _XAllocator_s *)(_XClassPackage->base.allocator);
+    XObjectRcFlag rcFlag = XObjectRcFlagFromObjectFlag(flag);
+    XSize contentSize = __XPackageContentSizeAligned(size);
+    XSize s = contentSize + sizeof(_XPackageContent_t);
+    XRef ref = allocator->allocateRef((_XAllocatorPtr)allocator, XClassPackage, s, rcFlag);
+    _XPackageContent_t * content = &(((_XPackage *)ref)->content);
+    content->typeName = typeName;
+    content->deinit = deinit;
+    content->clearWhenDealloc = ((flag & XObjectFlagClearWhenDealloc) == XObjectFlagClearWhenDealloc) ? 1 : 0;
+    content->contentSize = size;
+    content->paddingSize = contentSize - size;
+    bzero(&(content->extended[0]), contentSize);
     return ref;
 }
-static _XStorage * _Nonnull __XRefAsStorage(XValue _Nonnull ref, const char * _Nonnull func) {
+
+static _XPackage * _Nonnull __XRefAsPackage(XPackageRef _Nonnull ref, const char * _Nonnull func) {
     XCompressedType compressedType = XCompressedTypeNone;
     
 #if BUILD_TARGET_RT_64_BIT
@@ -322,28 +326,38 @@ static _XStorage * _Nonnull __XRefAsStorage(XValue _Nonnull ref, const char * _N
     XClass info = _XRefGetUnpackedType(ref, &compressedType, func);
     
 #if BUILD_TARGET_RT_64_BIT
-    XAssert(XCompressedTypeStorage == compressedType, func, "not Value instance");
-    return (_XStorage *)ref;
+    XAssert(XCompressedTypeObject == compressedType, func, "not Object instance");
+    return (_XPackage *)ref;
 #else
     const _XType_s * type = (const _XType_s *)info;
-    XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Storage - 1].base.identifier, func, "not Value instance");
-    return (_XStorage *)ref;
-
+    XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Package - 1].base.identifier, func, "not Object instance");
+    return (_XPackage *)ref;
 #endif
 }
-XSize XStorageGetSize(XStorageRef _Nonnull ref) {
+
+XSize XPackageGetSize(XPackageRef _Nonnull ref) {
     XAssert(NULL != ref, __func__, "require ref != NULL");
-    _XStorage * storageRef = __XRefAsStorage(ref, __func__);
+    _XPackage * storageRef = __XRefAsPackage(ref, __func__);
     return storageRef->content.contentSize;
 }
 
-XPtr _Nullable XStorageGetContent(XStorageRef _Nonnull ref) {
+XPtr _Nonnull XPackageGetContent(XPackageRef _Nonnull ref) {
     XAssert(NULL != ref, __func__, "require ref != NULL");
-    _XStorage * storageRef = __XRefAsStorage(ref, __func__);
-    if (storageRef->content.contentSize == 0) {
-        return NULL;
-    }
+    _XPackage * storageRef = __XRefAsPackage(ref, __func__);
     return &(storageRef->content.extended[0]);
+}
+void XPackageUnpack(XPackageRef _Nonnull ref, XPackageContent_t * _Nonnull contentPtr) {
+    XAssert(NULL != ref, __func__, "require ref != NULL");
+    XAssert(NULL != contentPtr, __func__, "require contentPtr != NULL");
+
+    _XPackage * storageRef = __XRefAsPackage(ref, __func__);
+    _XPackageContent_t * content = &(storageRef->content);
+    XPackageContent_t result = {
+        .typeName = content->typeName,
+        .contentSize = content->contentSize,
+        .content = &(content->extended[0]),
+    };
+    memcpy(contentPtr, &result, sizeof(XPackageContent_t));
 }
 
 
@@ -379,13 +393,28 @@ XPtr _Nullable XStorageGetContent(XStorageRef _Nonnull ref) {
 #pragma mark - XRef
 
 XRef _Nonnull XRefRetain(XRef _Nonnull ref) {
-    return ref;
+    XAssert(NULL != ref, __func__, "ref is Null");
+    XTaggedType type = XRefGetTaggedType(ref);
+    if (type < XTaggedTypeMax) {
+        return ref;
+    }
+    return _XRefRetain(ref, __func__);
 }
 XRef _Nullable XRefTryRetain(XRef _Nonnull ref) {
-    return ref;
+    XAssert(NULL != ref, __func__, "ref is Null");
+    XTaggedType type = XRefGetTaggedType(ref);
+    if (type < XTaggedTypeMax) {
+        return ref;
+    }
+    return _XRefTryRetain(ref, __func__);
 }
 void XRefRelease(XRef _Nonnull ref) {
-    
+    XAssert(NULL != ref, __func__, "ref is Null");
+    XTaggedType type = XRefGetTaggedType(ref);
+    if (type < XTaggedTypeMax) {
+        return;
+    }
+    _XRefRelease(ref, __func__);
 }
 
 

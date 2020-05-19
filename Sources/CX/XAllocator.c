@@ -7,8 +7,254 @@
 
 #include "internal/XAllocator.h"
 #include "internal/XRuntimeInternal.h"
+#include "XMemory.h"
 
 
+//#if BUILD_TARGET_RT_64_BIT
+//
+//#define X_BUILD_TaggedDateUnitMask 0x800000000000000ULL
+//#define X_BUILD_TaggedDateUnitFlagMillisecond 0x800000000000000ULL
+//
+//#define X_BUILD_TaggedDateMax  0x1FFFFFFFFFFFFFFLL
+//#define X_BUILD_TaggedDateMin -0x200000000000000LL
+//#define X_BUILD_TaggedDateContentMask 0x3FFFFFFFFFFFFFFULL
+//
+//#define X_BUILD_TaggedDateContentSignBit    0x200000000000000ULL
+//#define X_BUILD_TaggedDateContentSignHigh  0xFC00000000000000ULL
+//
+//#else
+//
+//#define X_BUILD_TaggedDateUnitMask 0xC000000UL
+//#define X_BUILD_TaggedDateUnitFlagMillisecond 0x4000000UL
+//#define X_BUILD_TaggedDateUnitFlagSecond 0x8000000UL
+//
+//#define X_BUILD_TaggedDateMax  0xFFFFFFLL
+//#define X_BUILD_TaggedDateMin -0x1000000LL
+//#define X_BUILD_TaggedDateContentMask 0x1FFFFFFUL
+//
+//#define X_BUILD_TaggedDateContentSignBit    0x1000000UL
+//#define X_BUILD_TaggedDateContentSignHigh  0xFE000000UL
+//
+//
+//#endif
+
+
+/*
+流传状态
+
+>= rcBase 的才可以retain
+
+0  -> rcBase -> hasWeak -> retain -> release -> release ->
+
+
+*/
+
+
+#if BUILD_TARGET_RT_64_BIT
+    #define X_BUILD_CompressedRcHasWeakMask 0x2ULL
+    #define X_BUILD_CompressedRcHasWeakFlag 0x2ULL
+
+    //析构中， 不允许retain
+    #define X_BUILD_RcDeallocing 0x4ULL
+
+    //将要dealloc， 可以tryRetain
+    #define X_BUILD_RcWillDealloc 0x8ULL
+
+    #define X_BUILD_RcBase 0xCULL
+    #define X_BUILD_RcOne 0x4ULL
+    #define X_BUILD_RcMax 0xFFFFFFFFFFFFFFFCULL
+
+/* compressed == 1
+ counter
+ type: 6
+ compressed: 1
+ */
+
+/* compressed == 0
+counter
+weak: 1
+compressed: 1
+*/
+
+    #define X_BUILD_CompressedRcMask 0x1ULL
+    #define X_BUILD_CompressedRcFlag 0x1ULL
+
+    #define X_BUILD_CompressedRcTypeMask 0x7EULL
+    #define X_BUILD_CompressedRcTypeShift 0x1ULL
+
+    #define X_BUILD_CompressedRcDeallocing 0x8ULL
+    #define X_BUILD_CompressedRcBase 0x10ULL
+    #define X_BUILD_CompressedRcOne 0x8ULL
+    #define X_BUILD_CompressedRcMax 0xFFFFFFFFFFFFFFF8ULL
+
+#else
+/*
+counter
+weak: 1
+*/
+#define X_BUILD_CompressedRcHasWeakMask 0x1UL
+#define X_BUILD_CompressedRcHasWeakFlag 0x1UL
+
+#define X_BUILD_RcDeallocing 0x2UL
+
+//将要dealloc， 可以tryRetain
+#define X_BUILD_RcWillDealloc 0x4UL
+
+#define X_BUILD_RcBase 0x6UL
+#define X_BUILD_RcOne 0x2UL
+#define X_BUILD_RcMax 0xFFFFFFFEUL
+
+#endif
+
+
+
+
+
+
+
+#pragma mark - rc
+
+
+
+XRef _Nonnull _XRefRetain(XRef _Nonnull ref, const char * _Nonnull func) {
+    _XObjectCompressedBase * cbase = (_XObjectCompressedBase *)ref;
+    _Atomic(XFastUInt) * rcInfoPtr = &(cbase->rcInfo);
+    XFastUInt rcInfo = 0;
+    XFastUInt newRcInfo = 0;
+    
+    do {
+        rcInfo = atomic_load(rcInfoPtr);
+        
+#if BUILD_TARGET_RT_64_BIT
+        if ((rcInfo & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag) {
+            if (rcInfo < X_BUILD_CompressedRcBase) {
+                XAssert(false, func, "ref");
+            }
+            if (rcInfo >= X_BUILD_CompressedRcMax) {
+                return ref;
+            } else {
+                newRcInfo = rcInfo + X_BUILD_CompressedRcOne;
+            }
+        } else {
+#else
+        {
+#endif
+            if (rcInfo < X_BUILD_RcBase) {
+                XAssert(false, func, "ref");
+            }
+            if (rcInfo >= X_BUILD_RcMax) {
+                return ref;
+            } else {
+                newRcInfo = rcInfo + X_BUILD_RcOne;
+            }
+        }
+    } while (!atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
+    return ref;
+}
+XRef _Nullable _XRefTryRetain(XRef _Nonnull ref, const char * _Nonnull func) {
+    _XObjectCompressedBase * cbase = (_XObjectCompressedBase *)ref;
+    _Atomic(XFastUInt) * rcInfoPtr = &(cbase->rcInfo);
+    XFastUInt rcInfo = 0;
+    XFastUInt newRcInfo = 0;
+    
+    do {
+        rcInfo = atomic_load(rcInfoPtr);
+        
+#if BUILD_TARGET_RT_64_BIT
+        if ((rcInfo & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag) {
+            XAssert(false, func, "not support");
+        }
+#endif
+        if (rcInfo < X_BUILD_RcWillDealloc) {
+            XAssert(false, func, "ref");
+        }
+        if (rcInfo >= X_BUILD_RcMax) {
+            return ref;
+        } else {
+            newRcInfo = rcInfo + X_BUILD_RcOne;
+        }
+    } while (!atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
+    return ref;
+}
+void _XRefRelease(XRef _Nonnull ref, const char * _Nonnull func) {
+    _XObjectCompressedBase * cbase = (_XObjectCompressedBase *)ref;
+    _Atomic(XFastUInt) * rcInfoPtr = &(cbase->rcInfo);
+    XFastUInt rcInfo = 0;
+    XFastUInt newRcInfo = 0;
+    
+    static const char * releaseError = "ref";
+    do {
+        rcInfo = atomic_load(rcInfoPtr);
+        
+#if BUILD_TARGET_RT_64_BIT
+        if ((rcInfo & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag) {
+            if (rcInfo < X_BUILD_CompressedRcBase) {
+                XAssert(false, func, releaseError);
+            }
+            if (rcInfo >= X_BUILD_CompressedRcMax) {
+                return;
+            } else {
+                newRcInfo = rcInfo - X_BUILD_CompressedRcOne;
+            }
+        } else {
+#else
+        {
+#endif
+            if (rcInfo < X_BUILD_RcBase) {
+                XAssert(false, func, releaseError);
+            }
+            if (rcInfo >= X_BUILD_RcMax) {
+                return;
+            } else {
+                newRcInfo = rcInfo - X_BUILD_RcOne;
+            }
+        }
+    } while (!atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
+        
+#if BUILD_TARGET_RT_64_BIT
+    if ((newRcInfo & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag) {
+        if (newRcInfo < X_BUILD_CompressedRcBase) {
+            //X_BUILD_CompressedRcDeallocing
+            //do dealloc
+        }
+        if (rcInfo >= X_BUILD_CompressedRcMax) {
+            return;
+        } else {
+            newRcInfo = rcInfo - X_BUILD_CompressedRcOne;
+        }
+    }
+    //X_BUILD_CompressedRcDeallocing
+    if (newRcInfo < X_BUILD_CompressedRcBase) {
+        //X_BUILD_CompressedRcDeallocing
+        //do dealloc
+
+    } else {
+#else
+    {
+#endif
+    return ref;
+}
+
+
+#pragma mark - Allocator
+
+XSize XAllocatorAlignedSize(XSize size) {
+    XSize s = (size + 15) & (~X_BUILD_UInt(0xf));
+    XAssert(s >= size, __func__, "");
+    return s;
+}
+
+XPtr _Nonnull _XAllocatorMemoryAllocate(XSize size, const char * _Nonnull func) {
+    XSize s = XAllocatorAlignedSize(size);
+    XAssert(s >= size, func, "");
+    XPtr r = XAlignedAllocate(size, 16);
+    XAssert(NULL != r, func, "");
+    return r;
+}
+void _XAllocatorMemoryDeallocate(XPtr _Nonnull ptr, const char * _Nonnull func) {
+    XAssert(NULL != ptr, func, "");
+    XDeallocate(ptr);
+}
 
 XPtr _Nonnull _XAllocatorConstantAllocate(_XAllocatorPtr _Nonnull allocator, XSize size) {
     abort();
@@ -17,7 +263,7 @@ void _XAllocatorConstantDeallocate(_XAllocatorPtr _Nonnull allocator, XPtr _Nonn
     abort();
 }
 
-XObject _Nonnull _XAllocatorConstantObjectAllocate(_XAllocatorPtr _Nonnull allocator, XClass _Nonnull cls, XSize contentSize, XUInt32 flag) {
+XObject _Nonnull _XAllocatorConstantObjectAllocate(_XAllocatorPtr _Nonnull allocator, XClass _Nonnull cls, XSize contentSize, XObjectRcFlag flag) {
     abort();
 }
 void _XAllocatorConstantObjectDeallocate(_XAllocatorPtr _Nonnull allocator, XObject _Nonnull obj) {
@@ -28,17 +274,34 @@ void _XAllocatorConstantObjectDeallocate(_XAllocatorPtr _Nonnull allocator, XObj
 
 XPtr _Nonnull _XAllocatorDefaultAllocate(_XAllocatorPtr _Nonnull allocator, XSize size) {
     assert(allocator);
-    
-    return NULL;
+    return _XAllocatorMemoryAllocate(size, __func__);
 }
 void _XAllocatorDefaultDeallocate(_XAllocatorPtr _Nonnull allocator, XPtr _Nonnull ptr) {
     assert(allocator);
-    
+    return _XAllocatorMemoryDeallocate(ptr, __func__);
 }
 
-XObject _Nonnull _XAllocatorDefaultObjectAllocate(_XAllocatorPtr _Nonnull allocator, XClass _Nonnull cls, XSize contentSize, XUInt32 flag) {
+XObject _Nonnull _XAllocatorDefaultObjectAllocate(_XAllocatorPtr _Nonnull allocator, XClass _Nonnull cls, XSize contentSize, XObjectRcFlag flag) {
+    XAssert(allocator != NULL, __func__, "");
     
-    return NULL;
+    XUInt type = XCompressedTypeOfClass(cls);
+    XAssert(type > XCompressedTypeMax, __func__, "class error");
+
+    
+    _XObjectBase * ref = _XAllocatorMemoryAllocate(contentSize + sizeof(_XObjectBase), __func__);
+
+    atomic_store(&(ref->typeInfo), (uintptr_t)cls);
+    atomic_store(&(ref->rcInfo), XCompressedRcBase);
+    /*
+    TaggedIsa64
+    refType: 2, value = 2
+    taggedContent: 61 {
+       isa: 6
+       counter: 55
+    }
+    flag: 1, value = 1
+    */
+    return ref;
 }
 void _XAllocatorDefaultObjectDeallocate(_XAllocatorPtr _Nonnull allocator, XObject _Nonnull obj) {
     
@@ -47,21 +310,54 @@ void _XAllocatorDefaultObjectDeallocate(_XAllocatorPtr _Nonnull allocator, XObje
 
 
 XPtr _Nonnull _XAllocatorCompressedAllocate(_XAllocatorPtr _Nonnull allocator, XSize size) {
-    assert(allocator);
-    
-    return NULL;
+    XAssert(allocator == &_XCompressedObjectAllocator, __func__, "");
+    return _XAllocatorMemoryAllocate(size, __func__);
 }
 void _XAllocatorCompressedDeallocate(_XAllocatorPtr _Nonnull allocator, XPtr _Nonnull ptr) {
-    assert(allocator);
-    
+    XAssert(allocator == &_XCompressedObjectAllocator, __func__, "");
+    return _XAllocatorMemoryDeallocate(ptr, __func__);
 }
 
-XObject _Nonnull _XAllocatorCompressedObjectAllocate(_XAllocatorPtr _Nonnull allocator, XClass _Nonnull cls, XSize contentSize, XUInt32 flag) {
+typedef XRef _Nonnull (*XRefAllocate11_f)(_XAllocatorPtr _Nonnull allocator, XClass _Nonnull cls, XSize contentSize, XObjectRcFlag flag);
+
+XRef _Nonnull _XAllocatorCompressedObjectAllocate(_XAllocatorPtr _Nonnull allocator, XClass _Nonnull cls, XSize contentSize, XObjectRcFlag flag) {
+    XAssert(allocator == &_XCompressedObjectAllocator, __func__, "");
+    _XObjectCompressedBase * ref = _XAllocatorMemoryAllocate(contentSize + sizeof(_XObjectCompressedBase), __func__);
+
+    XUInt type = XCompressedTypeOfClass(cls);
+    XAssert(type <= XCompressedTypeMax, __func__, "class error");
+
+#if BUILD_TARGET_RT_64_BIT
     
-    return NULL;
+    /*
+    TaggedIsa64
+    refType: 2, value = 2
+    taggedContent: 61 {
+       isa: 6
+       counter: 55
+    }
+    flag: 1, value = 1
+    */
+    
+    type = type << X_BUILD_TaggedObjectHeaderClassShift;
+    XUInt rc = 0;
+    if ((XObjectRcFlagStatic | flag) == XObjectRcFlagStatic) {
+        rc = XCompressedRcMax;
+    } else {
+        rc = XCompressedRcBase;
+    }
+    uintptr_t t = X_BUILD_TaggedObjectHeaderFlag | type | rc;
+    atomic_store(&(ref->rcInfo), t);
+#else
+    atomic_store(&(ref->typeInfo), (uintptr_t)cls);
+    atomic_store(&(ref->rcInfo), XCompressedRcBase);
+#endif
+    
+    return ref;
 }
 void _XAllocatorCompressedObjectDeallocate(_XAllocatorPtr _Nonnull allocator, XObject _Nonnull obj) {
-    
+    XAssert(allocator == &_XCompressedObjectAllocator, __func__, "");
+
     
 }
 
@@ -88,14 +384,14 @@ const _XAllocator_s _XObjectAllocator = {
 };
 
 
-const _XAllocator_s _XClassAllocator = {
-    .context = NULL,
-    .headerSize = sizeof(_XObjectBase),
-    .allocate = _XAllocatorDefaultAllocate,
-    .deallocate = _XAllocatorDefaultDeallocate,
-    .allocateRef = _XAllocatorDefaultObjectAllocate,
-    .deallocateRef = _XAllocatorDefaultObjectDeallocate,
-};
+//const _XAllocator_s _XClassAllocator = {
+//    .context = NULL,
+//    .headerSize = sizeof(_XObjectBase),
+//    .allocate = _XAllocatorDefaultAllocate,
+//    .deallocate = _XAllocatorDefaultDeallocate,
+//    .allocateRef = _XAllocatorDefaultObjectAllocate,
+//    .deallocateRef = _XAllocatorDefaultObjectDeallocate,
+//};
 
 const _XAllocator_s _XConstantClassAllocator = {
     .context = NULL,

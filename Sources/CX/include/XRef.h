@@ -88,20 +88,28 @@ extern XValue _Nonnull XValueCreate(XUInt flag, XPtr _Nullable content, XSize co
 extern XSize XValueGetSize(XValue _Nonnull ref);
 extern void XValueCopyContent(XValue _Nonnull ref, XPtr _Nonnull buffer, XSize offset, XSize length);
 
-#pragma mark - XStorageRef
+#pragma mark - XPackageRef
 
 //16mb
-#define X_BUILD_StorageSizeMax X_BUILD_UInt(0x1000000)
+#define X_BUILD_PackageSizeMax X_BUILD_UInt(0x1000000)
 
-extern const XSize XStorageSizeMax;
+extern const XSize XPackageSizeMax;
 
-typedef void (*XStorageClear_f)(XUInt8 * _Nullable content, XSize size);
+typedef void (*XPackageDeinit_f)(XU8Char * _Nonnull typeName, XUInt8 * _Nullable content, XSize size);
 
-//size 必须 > 0, 当 contentSize > 0 时，content 必须有值
-extern XStorageRef _Nonnull XStorageCreate(XUInt flag, XSize size, XStorageClear_f _Nullable clear, XPtr _Nullable content, XSize contentSize);
+typedef struct {
+    XU8Char * _Nonnull typeName;
+    XSize contentSize;
+    void * _Nonnull content;
+} XPackageContent_t;
 
-extern XSize XStorageGetSize(XStorageRef _Nonnull ref);
-extern XPtr _Nullable XStorageGetContent(XStorageRef _Nonnull ref);
+//size 必须 > 0
+extern XPackageRef _Nonnull XPackageCreate(XUInt flag, XU8Char * _Nonnull typeName, XSize size, XPackageDeinit_f _Nullable deinit);
+
+extern XSize XPackageGetSize(XPackageRef _Nonnull ref);
+extern XPtr _Nonnull XPackageGetContent(XPackageRef _Nonnull ref);
+
+extern void XPackageUnpack(XPackageRef _Nonnull ref, XPackageContent_t * _Nonnull contentPtr);
 
 #pragma mark - XArrayRef
 

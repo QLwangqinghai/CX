@@ -259,7 +259,7 @@ XObject _Nonnull _XAllocatorDefaultObjectAllocate(_XAllocatorPtr _Nonnull alloca
     _XObjectBase * ref = _XAllocatorMemoryAllocate(contentSize + sizeof(_XObjectBase), __func__);
 
     atomic_store(&(ref->typeInfo), (uintptr_t)cls);
-    atomic_store(&(ref->rcInfo), XCompressedRcBase);
+    atomic_store(&(ref->rcInfo), X_BUILD_RcBase);
     /*
     TaggedIsa64
     refType: 2, value = 2
@@ -310,9 +310,9 @@ XRef _Nonnull _XAllocatorCompressedObjectAllocate(_XAllocatorPtr _Nonnull alloca
     type = type << X_BUILD_TaggedObjectHeaderClassShift;
     XUInt rc = 0;
     if ((XObjectRcFlagStatic | flag) == XObjectRcFlagStatic) {
-        rc = XCompressedRcMax;
+        rc = X_BUILD_RcMax;
     } else {
-        rc = XCompressedRcBase;
+        rc = X_BUILD_RcBase;
     }
     uintptr_t t = X_BUILD_TaggedObjectHeaderFlag | type | rc;
     atomic_store(&(ref->rcInfo), t);

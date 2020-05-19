@@ -9,7 +9,7 @@
 #include "include/XRef.h"
 #include "internal/XRuntimeInternal.h"
 #include "internal/XAllocator.h"
-
+#include "internal/XClass.h"
 
 //XBool XStringEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
 //XBool XDataEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};

@@ -9,6 +9,7 @@
 #include "internal/XRuntimeInternal.h"
 #include "internal/XAllocator.h"
 #include "XMemory.h"
+#include "internal/XClass.h"
 
 
 #pragma mark - base

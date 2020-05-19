@@ -7,6 +7,7 @@
 
 #include "XRef.h"
 #include "internal/XRuntimeInternal.h"
+#include "internal/XClass.h"
 
 
 /*

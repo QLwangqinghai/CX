@@ -326,7 +326,7 @@ static _XPackage * _Nonnull __XRefAsPackage(XPackageRef _Nonnull ref, const char
     XClass info = _XRefGetUnpackedType(ref, &compressedType, func);
     
 #if BUILD_TARGET_RT_64_BIT
-    XAssert(XCompressedTypeObject == compressedType, func, "not Object instance");
+    XAssert(XCompressedTypePackage == compressedType, func, "not Object instance");
     return (_XPackage *)ref;
 #else
     const _XType_s * type = (const _XType_s *)info;

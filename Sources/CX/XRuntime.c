@@ -11,6 +11,9 @@
 
 #include "XRef.h"
 #include "XObject.h"
+#include "XClass.h"
+
+#pragma mark - layout
 
 _Static_assert(sizeof(_XByteStorageContentLarge_t) == sizeof(XUInt32) * 2 + sizeof(_Atomic(XFastUInt)) + sizeof(_XBuffer *), "unknown error");
 _Static_assert(sizeof(XUInt) == sizeof(size_t), "unknown error");
@@ -33,10 +36,10 @@ const XObjectFlag XObjectFlagClearWhenDealloc = 1;
 const XObjectFlag XObjectFlagStatic = 1 << 1;
 
 
-const XTypeKind XTypeKindValue = 1;
-const XTypeKind XTypeKindObject = 2;
-const XTypeKind XTypeKindWeakableObject = 3;
-const XTypeKind XTypeKindMetaClass = 0xf;
+const XTypeKind XTypeKindValue = X_BUILD_TypeKindValue;
+const XTypeKind XTypeKindObject = X_BUILD_TypeKindObject;
+const XTypeKind XTypeKindWeakableObject = X_BUILD_TypeKindWeakableObject;
+const XTypeKind XTypeKindMetaClass = X_BUILD_TypeKindMetaClass;
 
 //const XRefKind XRefKindUnknown = 0;
 const XRefKind XRefKindInstance = 1;
@@ -50,244 +53,10 @@ const XTaggedType XTaggedTypeData = 2;
 const XTaggedType XTaggedTypeDate = 3;
 const XTaggedType XTaggedTypeMax = XTaggedTypeDate;
 
-const XCompressedType XCompressedTypeNone = 0;
-const XCompressedType XCompressedTypeNumber = 1;
-const XCompressedType XCompressedTypeString = 2;
-const XCompressedType XCompressedTypeData = 3;
-const XCompressedType XCompressedTypeDate = 4;
-const XCompressedType XCompressedTypeValue = 5;
-const XCompressedType XCompressedTypeObject = 6;
-const XCompressedType XCompressedTypeArray = 7;
-const XCompressedType XCompressedTypeMap = 8;
-const XCompressedType XCompressedTypeSet = 9;
-const XCompressedType XCompressedTypeMax = XCompressedTypeSet;
-
-
 
 XBool XStringEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
 XBool XDataEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
 XBool XValueEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
-
-#define _XTypeIdentifierMakeValue(Type) \
-{\
-    .name = #Type,\
-    .hashCode = X##Type##Hash,\
-    .equalTo = X##Type##Equal,\
-    .compare = NULL,\
-}
-
-#define _XTypeIdentifierMakeValue1(Type) \
-{\
-.name = #Type,\
-.hashCode = X##Type##Hash,\
-.equalTo = X##Type##Equal,\
-.compare = X##Type##Compare,\
-}
-
-
-
-#define _XTypeIdentifierMakeRootObject(Type) \
-{\
-    .name = #Type,\
-    .hashCode = XObjectHash,\
-    .equalTo = XObjectEqual,\
-    .compare = NULL,\
-}
-
-//要求指针类型必须8字节对齐， 不管是32 位机器 还是64位
-const _XTypeIdentifier_s _XTypeIdentifierTable[] __attribute__((aligned(8))) = {
-    _XTypeIdentifierMakeValue(Class),
-    _XTypeIdentifierMakeValue(Null),
-    _XTypeIdentifierMakeValue(Boolean),
-    _XTypeIdentifierMakeValue(Number),
-    _XTypeIdentifierMakeValue(String),
-    _XTypeIdentifierMakeValue(Data),
-    _XTypeIdentifierMakeValue(Date),
-    _XTypeIdentifierMakeValue(Value),
-    _XTypeIdentifierMakeRootObject(Storage),
-    _XTypeIdentifierMakeRootObject(Array),
-    _XTypeIdentifierMakeRootObject(Map),
-    _XTypeIdentifierMakeRootObject(Set),
-};
-
-#define X_BUILD_TypeIdentifier_Class 0
-#define X_BUILD_TypeIdentifier_Null 1
-#define X_BUILD_TypeIdentifier_Boolean 2
-#define X_BUILD_TypeIdentifier_Number 3
-#define X_BUILD_TypeIdentifier_String 4
-#define X_BUILD_TypeIdentifier_Data 5
-#define X_BUILD_TypeIdentifier_Date 6
-#define X_BUILD_TypeIdentifier_Value 7
-#define X_BUILD_TypeIdentifier_Storage 8
-#define X_BUILD_TypeIdentifier_Array 9
-#define X_BUILD_TypeIdentifier_Map 10
-#define X_BUILD_TypeIdentifier_Set 11
-
-const XClassIdentifier _Nonnull XMateClassIdentifier = (XClassIdentifier)&(_XTypeIdentifierTable[X_BUILD_TypeIdentifier_Class]);
-
-
-//这是一个常量
-const _XType_s _XRootMetaClassStorage __attribute__((aligned(8))) = {
-    ._runtime = {
-        .typeInfo = ATOMIC_VAR_INIT((uintptr_t)&_XRootMetaClassStorage),
-        .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),
-    },
-    .base = {
-        .identifier = &_XTypeIdentifierTable[0],
-        .kind = XTypeKindMetaClass,
-        .domain = 0,
-        .tableSize = 0,
-        .super = (uintptr_t)NULL,
-        .allocator = &_XConstantClassAllocator,
-        .deinit = NULL,
-        .describe = NULL,
-    },
-};
-
-const _XType_s _XMetaClassStorage __attribute__((aligned(8))) = {
-    ._runtime = {
-        .typeInfo = ATOMIC_VAR_INIT((uintptr_t)&_XRootMetaClassStorage),
-        .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),
-    },
-    .base = {
-        .identifier = &_XTypeIdentifierTable[0],
-        .kind = XTypeKindMetaClass,
-        .domain = 0,
-        .tableSize = 0,
-        .super = (uintptr_t)NULL,
-        .allocator = &_XConstantClassAllocator,
-        .deinit = NULL,
-        .describe = NULL,
-    },
-};
-
-
-#define _XConstantValueClassMake(Type) \
-{\
-    ._runtime = {\
-        .typeInfo = (uintptr_t)&_XRootMetaClassStorage,\
-        .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
-    },\
-    .base = {\
-        .identifier = &_XTypeIdentifierTable[X_BUILD_TypeIdentifier_##Type],\
-        .kind = XTypeKindValue,\
-        .xx = 0,\
-        .domain = 0,\
-        .tableSize = 0,\
-        .super = (uintptr_t)NULL,\
-        .allocator = &_XConstantAllocator,\
-        .deinit = NULL,\
-        .describe = NULL,\
-    },\
-}
-
-#define _XValueClassMake(kind, Type) \
-{\
-    ._runtime = {\
-        .typeInfo = (uintptr_t)&_XRootMetaClassStorage,\
-        .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
-    },\
-    .base = {\
-        .identifier = &_XTypeIdentifierTable[X_BUILD_TypeIdentifier_##Type],\
-        .kind = XTypeKind##kind,\
-        .domain = 0,\
-        .tableSize = 0,\
-        .super = NULL,\
-        .allocator = &_XObjectAllocator,\
-        .deinit = NULL,\
-        .describe = NULL,\
-    },\
-}
-
-#define _XCompressedValueClassMake(Type) \
-{\
-    ._runtime = {\
-        .typeInfo = (uintptr_t)&_XRootMetaClassStorage,\
-        .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
-    },\
-    .base = {\
-        .identifier = &_XTypeIdentifierTable[X_BUILD_TypeIdentifier_##Type],\
-        .kind = XTypeKindValue,\
-        .xx = 0,\
-        .domain = 0,\
-        .tableSize = 0,\
-        .super = (uintptr_t)NULL,\
-        .allocator = &_XCompressedObjectAllocator,\
-        .deinit = NULL,\
-        .describe = NULL,\
-    },\
-}
-
-//Value = 1;
-//Object = 2;
-//WeakableObject = 3;
-//MetaClass = 0xf;
-
-const _XType_s _XClassTable[] __attribute__((aligned(8))) = {
-    _XCompressedValueClassMake(Number),
-    _XCompressedValueClassMake(String),
-    _XCompressedValueClassMake(Data),
-    _XCompressedValueClassMake(Date),
-    _XCompressedValueClassMake(Value),
-    _XCompressedValueClassMake(Storage),
-    _XCompressedValueClassMake(Array),
-    _XCompressedValueClassMake(Map),
-    _XCompressedValueClassMake(Set),
-};
-
-
-extern XCompressedType XCompressedTypeOfClass(XClass _Nonnull cls) {
-    uintptr_t base = (uintptr_t)(&(_XClassTable[0]));
-    uintptr_t end = base + sizeof(_XClassType);
-    uintptr_t c = (uintptr_t)cls;
-    if (c < base || c >= end) {
-        return XUIntMax;
-    } else {
-        uintptr_t offset = c - base;
-        if (offset % sizeof(_XType_s) == 0) {
-            return offset / sizeof(_XType_s);
-        } else {
-            return XUIntMax;
-        }
-    }
-}
-
-
-const _XType_s _XClassNullStorage __attribute__((aligned(8))) = _XConstantValueClassMake(Null);
-const _XType_s _XClassBooleanStorage __attribute__((aligned(8))) = _XConstantValueClassMake(Boolean);
-
-
-const XClass _Nonnull XClassType = (XClass)&_XRootMetaClassStorage;//0
-const XClass _Nonnull XClassNull = (XClass)&_XClassNullStorage;//1
-const XClass _Nonnull XClassBoolean = (XClass)&_XClassBooleanStorage;//2
-
-const XClass _Nonnull XClassNumber = (XClass)&(_XClassTable[X_BUILD_CompressedType_Number - 1]);//3
-const XClass _Nonnull XClassString = (XClass)&(_XClassTable[X_BUILD_CompressedType_String - 1]);//4
-const XClass _Nonnull XClassData = (XClass)&(_XClassTable[X_BUILD_CompressedType_Data - 1]);//5
-const XClass _Nonnull XClassDate = (XClass)&(_XClassTable[X_BUILD_CompressedType_Date - 1]);//6
-const XClass _Nonnull XClassValue = (XClass)&(_XClassTable[X_BUILD_CompressedType_Value - 1]);//7
-const XClass _Nonnull XClassPackage = (XClass)&(_XClassTable[X_BUILD_CompressedType_Package - 1]);//8
-
-const XClass _Nonnull XClassArray = (XClass)&(_XClassTable[X_BUILD_CompressedType_Array - 1]);//9
-const XClass _Nonnull XClassMap = (XClass)&(_XClassTable[X_BUILD_CompressedType_Map - 1]);//10
-const XClass _Nonnull XClassSet = (XClass)&(_XClassTable[X_BUILD_CompressedType_Set - 1]);//11
-
-
-
-const _XType_s * _Nonnull _XClassNull = &_XClassNullStorage;//1
-const _XType_s * _Nonnull _XClassBoolean = &_XClassBooleanStorage;//2
-
-const _XType_s * _Nonnull _XClassNumber = &(_XClassTable[X_BUILD_CompressedType_Number - 1]);//3
-const _XType_s * _Nonnull _XClassString = &(_XClassTable[X_BUILD_CompressedType_String - 1]);//4
-const _XType_s * _Nonnull _XClassData = &(_XClassTable[X_BUILD_CompressedType_Data - 1]);//5
-const _XType_s * _Nonnull _XClassDate = &(_XClassTable[X_BUILD_CompressedType_Date - 1]);//6
-const _XType_s * _Nonnull _XClassValue = &(_XClassTable[X_BUILD_CompressedType_Value - 1]);//7
-const _XType_s * _Nonnull _XClassPackage = &(_XClassTable[X_BUILD_CompressedType_Package - 1]);//8
-
-const _XType_s * _Nonnull _XClassArray = &(_XClassTable[X_BUILD_CompressedType_Array - 1]);//9
-const _XType_s * _Nonnull _XClassMap = &(_XClassTable[X_BUILD_CompressedType_Map - 1]);//10
-const _XType_s * _Nonnull _XClassSet = &(_XClassTable[X_BUILD_CompressedType_Set - 1]);//11
-
 
 
 //64bit 压缩的头
@@ -354,8 +123,17 @@ uintptr_t _XRefGetType(XRef _Nonnull ref) {
     return info;
 }
 
+const _XType_s * _Nullable _XRefGetTaggedObjectClass(XRef _Nonnull ref) {
+    XUInt v = (XUInt)((uintptr_t)ref);
+    if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
+        XUInt id = ((X_BUILD_TaggedObjectClassMask & v) >> X_BUILD_TaggedObjectClassShift);
+        //id 只有4个值
+        return _XRefTaggedObjectClassTable[id];
+    } else {
+        return NULL;
+    }
+}
 
-static const XCompressedType _XRefTaggedObjectClassTable[4] = {XCompressedTypeNumber, XCompressedTypeString, XCompressedTypeData, XCompressedTypeDate};
 
 XCompressedType _XRefGetTaggedObjectCompressedType(XRef _Nonnull ref) {
     XUInt v = (XUInt)((uintptr_t)ref);

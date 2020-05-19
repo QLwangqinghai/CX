@@ -40,29 +40,8 @@ typedef XUInt32 XNumberType;
 
 #endif
 
-
-#define X_BUILD_CompressedType_Number X_BUILD_UInt(1)
-#define X_BUILD_CompressedType_String X_BUILD_UInt(2)
-#define X_BUILD_CompressedType_Data X_BUILD_UInt(3)
-#define X_BUILD_CompressedType_Date X_BUILD_UInt(4)
-#define X_BUILD_CompressedType_Value X_BUILD_UInt(5)
-#define X_BUILD_CompressedType_Package X_BUILD_UInt(6)
-#define X_BUILD_CompressedType_Array X_BUILD_UInt(7)
-#define X_BUILD_CompressedType_Map X_BUILD_UInt(8)
-#define X_BUILD_CompressedType_Set X_BUILD_UInt(9)
-
 typedef XUInt XCompressedType;
-extern const XCompressedType XCompressedTypeNone;
-extern const XCompressedType XCompressedTypeNumber;
-extern const XCompressedType XCompressedTypeString;
-extern const XCompressedType XCompressedTypeData;
-extern const XCompressedType XCompressedTypeDate;
-extern const XCompressedType XCompressedTypeValue;
-extern const XCompressedType XCompressedTypeObject;
-extern const XCompressedType XCompressedTypeArray;
-extern const XCompressedType XCompressedTypeMap;
-extern const XCompressedType XCompressedTypeSet;
-extern const XCompressedType XCompressedTypeMax;
+
 
 extern XCompressedType XCompressedTypeOfClass(XClass _Nonnull cls);
 

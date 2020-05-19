@@ -101,6 +101,13 @@ flag: 1, value = 1
  flag1:hasWeak
  */
 
+#define X_BUILD_TypeKindValue 0x1UL
+#define X_BUILD_TypeKindObject 0x2UL
+#define X_BUILD_TypeKindWeakableObject 0x3UL
+#define X_BUILD_TypeKindMetaClass 0xFUL
+
+    
+
 #if BUILD_TARGET_RT_64_BIT
 
 #define X_BUILD_ObjectRcMax 0xFFFFFFFFFFFFFFF0ULL
@@ -242,21 +249,6 @@ extern const _XType_s * _Nonnull _XClassArray;
 extern const _XType_s * _Nonnull _XClassMap;
 extern const _XType_s * _Nonnull _XClassSet;
 
-#pragma mark - XClass
-
-extern const XClassIdentifier _Nonnull XMateClassIdentifier;
-extern const _XType_s _XClassTable[];
-extern const _XType_s _XClassNullStorage;
-extern const _XType_s _XClassBooleanStorage;
-
-static inline XClass _Nullable _XRefGetClassWithCompressedType(XCompressedType id) {
-    if (id <= 0 || id > 9) {
-        return NULL;
-    } else {
-        return (XClass)&(_XClassTable[id - 1]);
-    }
-}
-
 #pragma mark - XNull
 
 typedef struct {
@@ -333,6 +325,10 @@ typedef struct {
 //    XUInt8 extended[0];/* 可能有0、16、48、112、 240 5种可能 */
 //} _XByteStorageContent_t;
 
+typedef struct {
+    XUInt32 length;
+    XUInt32 __xx;
+} _XByteStorageContent_t;
 
 typedef struct {
     XUInt32 length;
@@ -341,24 +337,16 @@ typedef struct {
     _XBuffer * _Nonnull buffer;
 } _XByteStorageContentLarge_t;
 
-#pragma pack(push, 4)
-
-typedef struct {
-    XUInt32 length;
-    XUInt32 __xx;
-} _XByteStorageContent_t;
 typedef struct {
     XUInt32 length;
     XUInt8 extended[4];/* 可能有0、16、48、112、 240 5种可能 */
 } _XByteStorageContentSmall_t;
 
-#pragma pack(pop)
-#define _XByteStorageContentBufferSizeMin X_BUILD_UInt(245)
-
-
 typedef struct {
     XUInt8 content[sizeof(XUInt)];//content[0] 标识长度
 } _XByteStorageNano_t;
+    
+#define _XByteStorageContentBufferSizeMin X_BUILD_UInt(245)
 
 typedef struct {
     XUInt isString: 1;
@@ -459,6 +447,8 @@ typedef _XCollection _XSet;
 
 //如果ref是个 TaggedObject 返回值有效，否则返回 XCompressedTypeNone
 extern XCompressedType _XRefGetTaggedObjectCompressedType(XRef _Nonnull ref);
+
+extern const _XType_s * _Nullable _XRefGetTaggedObjectClass(XRef _Nonnull ref);
 
 //如果ref是个 CompressedObject 返回值有效，否则返回 XCompressedTypeNone
 extern _XType_s * _Nonnull _XRefGetUnpackedType(XRef _Nonnull ref, XCompressedType * _Nullable compressedType, const char * _Nonnull func);

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		77C7F5C724742B4F00B7EC3C /* XClass.c in Sources */ = {isa = PBXBuildFile; fileRef = 77C7F5C624742B4F00B7EC3C /* XClass.c */; };
 		D6446FD8244D7254009E4F57 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D6446FD7244D7254009E4F57 /* AppDelegate.m */; };
 		D6446FDB244D7254009E4F57 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = D6446FDA244D7254009E4F57 /* ViewController.mm */; };
 		D6446FDD244D7256009E4F57 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6446FDC244D7256009E4F57 /* Assets.xcassets */; };
@@ -43,6 +44,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		77C7F5C524742B4F00B7EC3C /* XClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XClass.h; sourceTree = "<group>"; };
+		77C7F5C624742B4F00B7EC3C /* XClass.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = XClass.c; sourceTree = "<group>"; };
 		D6446FD3244D7254009E4F57 /* X.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = X.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6446FD6244D7254009E4F57 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		D6446FD7244D7254009E4F57 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -163,6 +166,7 @@
 				D6446FEF244D7261009E4F57 /* XObject.c */,
 				D6446FF0244D7261009E4F57 /* XType.c */,
 				D6447004244D7261009E4F57 /* XRuntime.c */,
+				77C7F5C624742B4F00B7EC3C /* XClass.c */,
 				D6446FFD244D7261009E4F57 /* XNumber.c */,
 				D6446FFC244D7261009E4F57 /* CCReferenceBase.h */,
 				D6447003244D7261009E4F57 /* XDevice.c */,
@@ -198,6 +202,7 @@
 			children = (
 				D6447000244D7261009E4F57 /* XAllocator.h */,
 				D6447001244D7261009E4F57 /* XRuntimeInternal.h */,
+				77C7F5C524742B4F00B7EC3C /* XClass.h */,
 			);
 			path = internal;
 			sourceTree = "<group>";
@@ -321,6 +326,7 @@
 				D6447010244D7261009E4F57 /* XProcess.c in Sources */,
 				D6446FDB244D7254009E4F57 /* ViewController.mm in Sources */,
 				D6447009244D7261009E4F57 /* XMemory.c in Sources */,
+				77C7F5C724742B4F00B7EC3C /* XClass.c in Sources */,
 				D644700B244D7261009E4F57 /* XType.c in Sources */,
 				D6446FE3244D7256009E4F57 /* main.m in Sources */,
 				D6447007244D7261009E4F57 /* XAllocator.c in Sources */,

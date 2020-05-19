@@ -8,6 +8,7 @@
 #include "internal/XAllocator.h"
 #include "internal/XRuntimeInternal.h"
 #include "XMemory.h"
+#include "internal/XClass.h"
 
 
 //#if BUILD_TARGET_RT_64_BIT
@@ -49,72 +50,43 @@
 
 */
 
-
-#if BUILD_TARGET_RT_64_BIT
-    #define X_BUILD_CompressedRcHasWeakMask 0x2ULL
-    #define X_BUILD_CompressedRcHasWeakFlag 0x2ULL
-
-    //析构中， 不允许retain
-    #define X_BUILD_RcDeallocing 0x4ULL
-
-    //将要dealloc， 可以tryRetain
-    #define X_BUILD_RcWillDealloc 0x8ULL
-
-    #define X_BUILD_RcBase 0xCULL
-    #define X_BUILD_RcOne 0x4ULL
-    #define X_BUILD_RcMax 0xFFFFFFFFFFFFFFFCULL
-
 /* compressed == 1
  counter
  type: 6
  compressed: 1
  */
 
+#define X_BUILD_CompressedRcMask X_BUILD_UInt(0x1)
+#define X_BUILD_CompressedRcFlag X_BUILD_UInt(0x1)
+
+#define X_BUILD_CompressedRcTypeMask X_BUILD_UInt(0x7E)
+#define X_BUILD_CompressedRcTypeShift X_BUILD_UInt(0x1)
+
+#define X_BUILD_CompressedRcDeallocing X_BUILD_UInt(0x80)
+#define X_BUILD_CompressedRcBase X_BUILD_UInt(0x100)
+#define X_BUILD_CompressedRcOne X_BUILD_UInt(0x80)
+#define X_BUILD_CompressedRcMax (XUIntMax - X_BUILD_UInt(0x7F))
+
+
 /* compressed == 0
-counter
-weak: 1
-compressed: 1
-*/
+ counter
+ weak: 1
+ compressed: 1
+ */
 
-    #define X_BUILD_CompressedRcMask 0x1ULL
-    #define X_BUILD_CompressedRcFlag 0x1ULL
-
-    #define X_BUILD_CompressedRcTypeMask 0x7EULL
-    #define X_BUILD_CompressedRcTypeShift 0x1ULL
-
-    #define X_BUILD_CompressedRcDeallocing 0x8ULL
-    #define X_BUILD_CompressedRcBase 0x10ULL
-    #define X_BUILD_CompressedRcOne 0x8ULL
-    #define X_BUILD_CompressedRcMax 0xFFFFFFFFFFFFFFF8ULL
-
-#else
-/*
-counter
-weak: 1
-*/
-#define X_BUILD_CompressedRcHasWeakMask 0x1UL
-#define X_BUILD_CompressedRcHasWeakFlag 0x1UL
-
-#define X_BUILD_RcDeallocing 0x2UL
+#define X_BUILD_RcHasWeakMask X_BUILD_UInt(0x2)
+#define X_BUILD_RcHasWeakFlag X_BUILD_UInt(0x2)
+//析构中， 不允许retain
+#define X_BUILD_RcDeallocing X_BUILD_UInt(0x4)
 
 //将要dealloc， 可以tryRetain
-#define X_BUILD_RcWillDealloc 0x4UL
+#define X_BUILD_RcWillDealloc X_BUILD_UInt(0x8)
 
-#define X_BUILD_RcBase 0x6UL
-#define X_BUILD_RcOne 0x2UL
-#define X_BUILD_RcMax 0xFFFFFFFEUL
-
-#endif
-
-
-
-
-
-
+#define X_BUILD_RcBase X_BUILD_UInt(0xC)
+#define X_BUILD_RcOne X_BUILD_UInt(0x4)
+#define X_BUILD_RcMax (XUIntMax - X_BUILD_UInt(0x3))
 
 #pragma mark - rc
-
-
 
 XRef _Nonnull _XRefRetain(XRef _Nonnull ref, const char * _Nonnull func) {
     _XObjectCompressedBase * cbase = (_XObjectCompressedBase *)ref;
@@ -179,10 +151,11 @@ XRef _Nullable _XRefTryRetain(XRef _Nonnull ref, const char * _Nonnull func) {
 void _XRefRelease(XRef _Nonnull ref, const char * _Nonnull func) {
     _XObjectCompressedBase * cbase = (_XObjectCompressedBase *)ref;
     _Atomic(XFastUInt) * rcInfoPtr = &(cbase->rcInfo);
-    XFastUInt rcInfo = 0;
+    XFastUInt rcInfo = atomic_load(rcInfoPtr);;
     XFastUInt newRcInfo = 0;
     
     static const char * releaseError = "ref";
+    
     do {
         rcInfo = atomic_load(rcInfoPtr);
         
@@ -222,17 +195,12 @@ void _XRefRelease(XRef _Nonnull ref, const char * _Nonnull func) {
         } else {
             newRcInfo = rcInfo - X_BUILD_CompressedRcOne;
         }
-    }
-    //X_BUILD_CompressedRcDeallocing
-    if (newRcInfo < X_BUILD_CompressedRcBase) {
-        //X_BUILD_CompressedRcDeallocing
-        //do dealloc
-
     } else {
 #else
     {
 #endif
-    return ref;
+        
+    }
 }
 
 

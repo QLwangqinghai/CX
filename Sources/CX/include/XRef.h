@@ -127,7 +127,6 @@ extern void XPackageUnpack(XPackageRef _Nonnull ref, XPackageContent_t * _Nonnul
 
 
 extern XRef _Nonnull XRefRetain(XRef _Nonnull ref);
-extern XRef _Nullable XRefTryRetain(XRef _Nonnull ref);
 extern void XRefRelease(XRef _Nonnull ref);
 
 

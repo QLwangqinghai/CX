@@ -10,36 +10,6 @@
 #include "XMemory.h"
 #include "internal/XClass.h"
 
-
-//#if BUILD_TARGET_RT_64_BIT
-//
-//#define X_BUILD_TaggedDateUnitMask 0x800000000000000ULL
-//#define X_BUILD_TaggedDateUnitFlagMillisecond 0x800000000000000ULL
-//
-//#define X_BUILD_TaggedDateMax  0x1FFFFFFFFFFFFFFLL
-//#define X_BUILD_TaggedDateMin -0x200000000000000LL
-//#define X_BUILD_TaggedDateContentMask 0x3FFFFFFFFFFFFFFULL
-//
-//#define X_BUILD_TaggedDateContentSignBit    0x200000000000000ULL
-//#define X_BUILD_TaggedDateContentSignHigh  0xFC00000000000000ULL
-//
-//#else
-//
-//#define X_BUILD_TaggedDateUnitMask 0xC000000UL
-//#define X_BUILD_TaggedDateUnitFlagMillisecond 0x4000000UL
-//#define X_BUILD_TaggedDateUnitFlagSecond 0x8000000UL
-//
-//#define X_BUILD_TaggedDateMax  0xFFFFFFLL
-//#define X_BUILD_TaggedDateMin -0x1000000LL
-//#define X_BUILD_TaggedDateContentMask 0x1FFFFFFUL
-//
-//#define X_BUILD_TaggedDateContentSignBit    0x1000000UL
-//#define X_BUILD_TaggedDateContentSignHigh  0xFE000000UL
-//
-//
-//#endif
-
-
 /*
 流传状态
 
@@ -62,9 +32,10 @@
 #define X_BUILD_CompressedRcTypeMask X_BUILD_UInt(0x7E)
 #define X_BUILD_CompressedRcTypeShift X_BUILD_UInt(0x1)
 
-#define X_BUILD_CompressedRcDeallocing X_BUILD_UInt(0x80)
-#define X_BUILD_CompressedRcBase X_BUILD_UInt(0x100)
 #define X_BUILD_CompressedRcOne X_BUILD_UInt(0x80)
+#define X_BUILD_CompressedRcTwo X_BUILD_UInt(0x100)
+#define X_BUILD_CompressedRcBase X_BUILD_CompressedRcTwo
+#define X_BUILD_CompressedRcDeallocing X_BUILD_CompressedRcOne
 #define X_BUILD_CompressedRcMax (XUIntMax - X_BUILD_UInt(0x7F))
 
 
@@ -76,14 +47,20 @@
 
 #define X_BUILD_RcHasWeakMask X_BUILD_UInt(0x2)
 #define X_BUILD_RcHasWeakFlag X_BUILD_UInt(0x2)
-//析构中， 不允许retain
-#define X_BUILD_RcDeallocing X_BUILD_UInt(0x4)
+
+#define X_BUILD_RcOne X_BUILD_UInt(0x4)
+#define X_BUILD_RcTwo X_BUILD_UInt(0x8)
+#define X_BUILD_RcThree X_BUILD_UInt(0xC)
+
+#define X_BUILD_RcBase X_BUILD_RcThree
 
 //将要dealloc， 可以tryRetain
-#define X_BUILD_RcWillDealloc X_BUILD_UInt(0x8)
+#define X_BUILD_RcWillDealloc X_BUILD_RcTwo
 
-#define X_BUILD_RcBase X_BUILD_UInt(0xC)
-#define X_BUILD_RcOne X_BUILD_UInt(0x4)
+//析构中， 不允许retain
+#define X_BUILD_RcDeallocing X_BUILD_RcOne
+
+
 #define X_BUILD_RcMax (XUIntMax - X_BUILD_UInt(0x3))
 
 #pragma mark - rc
@@ -96,8 +73,6 @@ XRef _Nonnull _XRefRetain(XRef _Nonnull ref, const char * _Nonnull func) {
     
     do {
         rcInfo = atomic_load(rcInfoPtr);
-        
-#if BUILD_TARGET_RT_64_BIT
         if ((rcInfo & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag) {
             if (rcInfo < X_BUILD_CompressedRcBase) {
                 XAssert(false, func, "ref");
@@ -108,9 +83,6 @@ XRef _Nonnull _XRefRetain(XRef _Nonnull ref, const char * _Nonnull func) {
                 newRcInfo = rcInfo + X_BUILD_CompressedRcOne;
             }
         } else {
-#else
-        {
-#endif
             if (rcInfo < X_BUILD_RcBase) {
                 XAssert(false, func, "ref");
             }
@@ -123,6 +95,8 @@ XRef _Nonnull _XRefRetain(XRef _Nonnull ref, const char * _Nonnull func) {
     } while (!atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
     return ref;
 }
+
+
 XRef _Nullable _XRefTryRetain(XRef _Nonnull ref, const char * _Nonnull func) {
     _XObjectCompressedBase * cbase = (_XObjectCompressedBase *)ref;
     _Atomic(XFastUInt) * rcInfoPtr = &(cbase->rcInfo);
@@ -131,12 +105,9 @@ XRef _Nullable _XRefTryRetain(XRef _Nonnull ref, const char * _Nonnull func) {
     
     do {
         rcInfo = atomic_load(rcInfoPtr);
-        
-#if BUILD_TARGET_RT_64_BIT
         if ((rcInfo & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag) {
             XAssert(false, func, "not support");
         }
-#endif
         if (rcInfo < X_BUILD_RcWillDealloc) {
             XAssert(false, func, "ref");
         }
@@ -148,6 +119,7 @@ XRef _Nullable _XRefTryRetain(XRef _Nonnull ref, const char * _Nonnull func) {
     } while (!atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
     return ref;
 }
+
 void _XRefRelease(XRef _Nonnull ref, const char * _Nonnull func) {
     _XObjectCompressedBase * cbase = (_XObjectCompressedBase *)ref;
     _Atomic(XFastUInt) * rcInfoPtr = &(cbase->rcInfo);
@@ -156,23 +128,11 @@ void _XRefRelease(XRef _Nonnull ref, const char * _Nonnull func) {
     
     static const char * releaseError = "ref";
     
-    do {
-        rcInfo = atomic_load(rcInfoPtr);
-        
-#if BUILD_TARGET_RT_64_BIT
-        if ((rcInfo & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag) {
-            if (rcInfo < X_BUILD_CompressedRcBase) {
-                XAssert(false, func, releaseError);
-            }
-            if (rcInfo >= X_BUILD_CompressedRcMax) {
-                return;
-            } else {
-                newRcInfo = rcInfo - X_BUILD_CompressedRcOne;
-            }
-        } else {
-#else
-        {
-#endif
+    if ((rcInfo & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag) {
+        do {
+            rcInfo = atomic_load(rcInfoPtr);
+            XAssert(((rcInfo & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag), func, releaseError);
+            
             if (rcInfo < X_BUILD_RcBase) {
                 XAssert(false, func, releaseError);
             }
@@ -181,25 +141,40 @@ void _XRefRelease(XRef _Nonnull ref, const char * _Nonnull func) {
             } else {
                 newRcInfo = rcInfo - X_BUILD_RcOne;
             }
-        }
-    } while (!atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
+        } while (!atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
         
-#if BUILD_TARGET_RT_64_BIT
-    if ((newRcInfo & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag) {
-        if (newRcInfo < X_BUILD_CompressedRcBase) {
-            //X_BUILD_CompressedRcDeallocing
+        if (rcInfo < X_BUILD_CompressedRcBase) {
             //do dealloc
-        }
-        if (rcInfo >= X_BUILD_CompressedRcMax) {
-            return;
-        } else {
-            newRcInfo = rcInfo - X_BUILD_CompressedRcOne;
+
         }
     } else {
-#else
-    {
-#endif
+        do {
+            rcInfo = atomic_load(rcInfoPtr);
+            XAssert(((rcInfo & X_BUILD_CompressedRcMask) != X_BUILD_CompressedRcFlag), func, releaseError);
+            
+            if (rcInfo < X_BUILD_RcBase) {
+                XAssert(false, func, releaseError);
+            }
+            if (rcInfo >= X_BUILD_RcMax) {
+                return;
+            } else {
+                newRcInfo = rcInfo - X_BUILD_RcOne;
+                if (newRcInfo < X_BUILD_RcBase) {
+                    if ((rcInfo & X_BUILD_RcHasWeakMask) != X_BUILD_RcHasWeakFlag) {
+                        //noWeak, 跳过X_BUILD_RcWillDealloc
+                        newRcInfo -= X_BUILD_RcOne;
+                    }
+                }
+            }
+        } while (!atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
         
+        if (rcInfo < X_BUILD_RcWillDealloc) {
+            //do dealloc
+
+        } else if (rcInfo < X_BUILD_RcBase) {
+            //will dealloc
+            
+        }
     }
 }
 

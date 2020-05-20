@@ -427,6 +427,18 @@ typedef struct {
     _XPackageContent_t content;
 } _XPackage;
 
+#pragma mark - XWeakPackage
+
+typedef struct {
+    void * _Nullable value;
+} _WeakStorageContent_t;
+
+typedef struct {
+    _XObjectCompressedBase _runtime;
+    _XPackageContent_t content;
+} _WeakStorage;
+
+
 #pragma mark - XCollection
 typedef struct {
     _XObjectCompressedBase _runtime;

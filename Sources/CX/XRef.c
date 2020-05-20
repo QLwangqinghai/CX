@@ -400,14 +400,6 @@ XRef _Nonnull XRefRetain(XRef _Nonnull ref) {
     }
     return _XRefRetain(ref, __func__);
 }
-XRef _Nullable XRefTryRetain(XRef _Nonnull ref) {
-    XAssert(NULL != ref, __func__, "ref is Null");
-    XTaggedType type = XRefGetTaggedType(ref);
-    if (type < XTaggedTypeMax) {
-        return ref;
-    }
-    return _XRefTryRetain(ref, __func__);
-}
 void XRefRelease(XRef _Nonnull ref) {
     XAssert(NULL != ref, __func__, "ref is Null");
     XTaggedType type = XRefGetTaggedType(ref);

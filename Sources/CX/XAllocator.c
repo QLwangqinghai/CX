@@ -10,60 +10,6 @@
 #include "XMemory.h"
 #include "internal/XClass.h"
 
-/*
-流传状态
-
->= rcBase 的才可以retain
-
-0  -> rcBase -> hasWeak -> retain -> release -> release ->
-
-
-*/
-
-/* compressed == 1
- counter
- type: 6
- compressed: 1
- */
-
-#define X_BUILD_CompressedRcMask X_BUILD_UInt(0x1)
-#define X_BUILD_CompressedRcFlag X_BUILD_UInt(0x1)
-
-#define X_BUILD_CompressedRcTypeMask X_BUILD_UInt(0x7E)
-#define X_BUILD_CompressedRcTypeShift X_BUILD_UInt(0x1)
-#define X_BUILD_CompressedTypeWeakStorageRcFlag (X_BUILD_CompressedType_WeakStorage << X_BUILD_CompressedRcTypeShift)
-
-#define X_BUILD_CompressedRcOne X_BUILD_UInt(0x80)
-#define X_BUILD_CompressedRcTwo X_BUILD_UInt(0x100)
-#define X_BUILD_CompressedRcBase X_BUILD_CompressedRcTwo
-#define X_BUILD_CompressedRcDeallocing X_BUILD_CompressedRcOne
-#define X_BUILD_CompressedRcMax (XUIntMax - X_BUILD_UInt(0x7F))
-
-
-
-/* compressed == 0
- counter
- weak: 1
- compressed: 1
- */
-
-#define X_BUILD_RcHasWeakMask X_BUILD_UInt(0x2)
-#define X_BUILD_RcHasWeakFlag X_BUILD_UInt(0x2)
-
-#define X_BUILD_RcOne X_BUILD_UInt(0x4)
-#define X_BUILD_RcTwo X_BUILD_UInt(0x8)
-#define X_BUILD_RcThree X_BUILD_UInt(0xC)
-
-#define X_BUILD_RcBase X_BUILD_RcThree
-
-//将要dealloc， 可以tryRetain
-#define X_BUILD_RcWillDealloc X_BUILD_RcTwo
-
-//析构中， 不允许retain
-#define X_BUILD_RcDeallocing X_BUILD_RcOne
-
-
-#define X_BUILD_RcMax (XUIntMax - X_BUILD_UInt(0x3))
 
 #pragma mark - rc
 
@@ -99,7 +45,7 @@ XRef _Nonnull _XRefRetain(XRef _Nonnull ref, const char * _Nonnull func) {
 }
 
 
-XRef _Nullable _XRefTryRetain(XRef _Nonnull ref, const char * _Nonnull func) {
+XRef _Nullable _XRefTryRetain(XRef _Nullable ref, const char * _Nonnull func) {
     _XObjectCompressedBase * cbase = (_XObjectCompressedBase *)ref;
     _Atomic(XFastUInt) * rcInfoPtr = &(cbase->rcInfo);
     XFastUInt rcInfo = 0;
@@ -109,9 +55,6 @@ XRef _Nullable _XRefTryRetain(XRef _Nonnull ref, const char * _Nonnull func) {
         rcInfo = atomic_load(rcInfoPtr);
         if ((rcInfo & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag) {
             XAssert(false, func, "not support");
-        }
-        if (rcInfo < X_BUILD_RcWillDealloc) {
-            XAssert(false, func, "ref");
         }
         if (rcInfo >= X_BUILD_RcMax) {
             return ref;
@@ -138,13 +81,13 @@ void _XRefRelease(XRef _Nonnull ref, const char * _Nonnull func) {
             rcInfo = atomic_load(rcInfoPtr);
             XAssert(((rcInfo & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag), func, releaseError);
             
-            if (rcInfo < X_BUILD_RcBase) {
+            if (rcInfo < X_BUILD_CompressedRcBase) {
                 XAssert(false, func, releaseError);
             }
-            if (rcInfo >= X_BUILD_RcMax) {
+            if (rcInfo >= X_BUILD_CompressedRcMax) {
                 return;
             } else {
-                newRcInfo = rcInfo - X_BUILD_RcOne;
+                newRcInfo = rcInfo - X_BUILD_CompressedRcOne;
             }
         } while (!atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
         
@@ -153,6 +96,9 @@ void _XRefRelease(XRef _Nonnull ref, const char * _Nonnull func) {
 
         }
     } else {
+        XBool locked = false;
+//        _XWeakTable * table = NULL;
+
         do {
             rcInfo = atomic_load(rcInfoPtr);
             XAssert(((rcInfo & X_BUILD_CompressedRcMask) != X_BUILD_CompressedRcFlag), func, releaseError);
@@ -161,26 +107,43 @@ void _XRefRelease(XRef _Nonnull ref, const char * _Nonnull func) {
                 XAssert(false, func, releaseError);
             }
             if (rcInfo >= X_BUILD_RcMax) {
+                if (locked) {
+//                    _XWeakTableUnlock(table);
+                    locked = false;
+                }
                 return;
             } else {
                 newRcInfo = rcInfo - X_BUILD_RcOne;
                 if (newRcInfo < X_BUILD_RcBase) {
-                    if ((rcInfo & X_BUILD_RcHasWeakMask) != X_BUILD_RcHasWeakFlag) {
-                        //noWeak, 跳过X_BUILD_RcWillDealloc
-                        newRcInfo -= X_BUILD_RcOne;
+                    if ((rcInfo & X_BUILD_RcHasWeakMask) == X_BUILD_RcHasWeakFlag) {
+                        //hasWeak
+                        if (!locked) {
+//                          _XWeakTableLock(table);
+                            locked = true;
+                        }
+                    }
+                } else {
+                    if (locked) {
+//                      _XWeakTableUnlock(table);
+                        locked = false;
                     }
                 }
             }
         } while (!atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
-        
-        if (rcInfo < X_BUILD_RcWillDealloc) {
-            //do dealloc
-
-        } else if (rcInfo < X_BUILD_RcBase) {
-            //will dealloc
+        if (locked) {
+            //clear
             
+//            _XWeakTableUnlock(table);
+            goto dealloc;
+        }
+        if (rcInfo < X_BUILD_RcBase) {
+            //do dealloc
+            goto dealloc;
         }
     }
+    
+dealloc: ;
+    
 }
 
 

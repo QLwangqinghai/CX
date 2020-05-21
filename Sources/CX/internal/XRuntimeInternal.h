@@ -428,13 +428,17 @@ typedef struct {
 
 #pragma mark - XWeakPackage
 
+struct __WeakStorage;
+    
 typedef struct {
-    void * _Nullable value;
+    _Atomic(uintptr_t) value;
+    _Atomic(uintptr_t) table;
+    struct __WeakStorage * _Nullable next;
 } _WeakStorageContent_t;
 
-typedef struct {
+typedef struct __WeakStorage {
     _XObjectCompressedBase _runtime;
-    _XPackageContent_t content;
+    _WeakStorageContent_t content;
 } _WeakStorage;
 
 

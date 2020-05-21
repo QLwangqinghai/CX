@@ -126,7 +126,6 @@ flag: 1, value = 1
 #define X_BUILD_TaggedObjectHeaderClassMask    0x3F00000000000000ULL
 #define X_BUILD_TaggedObjectHeaderClassShift   56ULL
 
-
 #else
 
 #define X_BUILD_ObjectRcMax 0xFFFFFFF0UL
@@ -456,6 +455,9 @@ typedef _XCollection _XSet;
 
 
 #pragma pack(pop)
+
+extern void _XWeakPackageRelease(_WeakStorage * _Nonnull weakStorage);
+
 
 //如果ref是个 TaggedObject 返回值有效，否则返回 XCompressedTypeNone
 extern XCompressedType _XRefGetTaggedObjectCompressedType(XRef _Nonnull ref);

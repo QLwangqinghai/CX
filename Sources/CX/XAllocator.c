@@ -31,12 +31,14 @@
 
 #define X_BUILD_CompressedRcTypeMask X_BUILD_UInt(0x7E)
 #define X_BUILD_CompressedRcTypeShift X_BUILD_UInt(0x1)
+#define X_BUILD_CompressedTypeWeakStorageRcFlag (X_BUILD_CompressedType_WeakStorage << X_BUILD_CompressedRcTypeShift)
 
 #define X_BUILD_CompressedRcOne X_BUILD_UInt(0x80)
 #define X_BUILD_CompressedRcTwo X_BUILD_UInt(0x100)
 #define X_BUILD_CompressedRcBase X_BUILD_CompressedRcTwo
 #define X_BUILD_CompressedRcDeallocing X_BUILD_CompressedRcOne
 #define X_BUILD_CompressedRcMax (XUIntMax - X_BUILD_UInt(0x7F))
+
 
 
 /* compressed == 0
@@ -123,12 +125,15 @@ XRef _Nullable _XRefTryRetain(XRef _Nonnull ref, const char * _Nonnull func) {
 void _XRefRelease(XRef _Nonnull ref, const char * _Nonnull func) {
     _XObjectCompressedBase * cbase = (_XObjectCompressedBase *)ref;
     _Atomic(XFastUInt) * rcInfoPtr = &(cbase->rcInfo);
-    XFastUInt rcInfo = atomic_load(rcInfoPtr);;
+    XFastUInt rcInfo = atomic_load(rcInfoPtr);
     XFastUInt newRcInfo = 0;
     
     static const char * releaseError = "ref";
     
     if ((rcInfo & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag) {
+        if ((rcInfo & X_BUILD_CompressedRcTypeMask) == X_BUILD_CompressedTypeWeakStorageRcFlag) {
+            return _XWeakPackageRelease(ref);
+        }
         do {
             rcInfo = atomic_load(rcInfoPtr);
             XAssert(((rcInfo & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag), func, releaseError);

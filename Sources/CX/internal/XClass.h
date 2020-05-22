@@ -29,6 +29,7 @@
 #define X_BUILD_TypeId_Storage 11
 #define X_BUILD_TypeId_Map 12
 #define X_BUILD_TypeId_Set 13
+#define X_BUILD_TypeId_Object 14
 
 #define X_BUILD_CompressedTypeIdMin X_BUILD_TypeId_Number
 #define X_BUILD_CompressedTypeIdMax X_BUILD_TypeId_Set
@@ -47,6 +48,7 @@
 
 #define X_BUILD_TypeId_Date 12
 #define X_BUILD_TypeId_Value 13
+#define X_BUILD_TypeId_Object 14
 
 #define X_BUILD_CompressedTypeIdMin X_BUILD_TypeId_Number
 #define X_BUILD_CompressedTypeIdMax X_BUILD_TypeId_Set

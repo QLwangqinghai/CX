@@ -44,27 +44,6 @@ XRef _Nonnull _XRefRetain(XRef _Nonnull ref, const char * _Nonnull func) {
     return ref;
 }
 
-
-XRef _Nullable _XRefTryRetain(XRef _Nullable ref, const char * _Nonnull func) {
-    _XObjectCompressedBase * cbase = (_XObjectCompressedBase *)ref;
-    _Atomic(XFastUInt) * rcInfoPtr = &(cbase->rcInfo);
-    XFastUInt rcInfo = 0;
-    XFastUInt newRcInfo = 0;
-    
-    do {
-        rcInfo = atomic_load(rcInfoPtr);
-        if ((rcInfo & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag) {
-            XAssert(false, func, "not support");
-        }
-        if (rcInfo >= X_BUILD_RcMax) {
-            return ref;
-        } else {
-            newRcInfo = rcInfo + X_BUILD_RcOne;
-        }
-    } while (!atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
-    return ref;
-}
-
 void _XRefRelease(XRef _Nonnull ref, const char * _Nonnull func) {
     _XObjectCompressedBase * cbase = (_XObjectCompressedBase *)ref;
     _Atomic(XFastUInt) * rcInfoPtr = &(cbase->rcInfo);
@@ -97,8 +76,7 @@ void _XRefRelease(XRef _Nonnull ref, const char * _Nonnull func) {
         }
     } else {
         XBool locked = false;
-//        _XWeakTable * table = NULL;
-
+        _XWeakTable * table = _XWeakTableGet((uintptr_t)ref);
         do {
             rcInfo = atomic_load(rcInfoPtr);
             XAssert(((rcInfo & X_BUILD_CompressedRcMask) != X_BUILD_CompressedRcFlag), func, releaseError);
@@ -108,23 +86,28 @@ void _XRefRelease(XRef _Nonnull ref, const char * _Nonnull func) {
             }
             if (rcInfo >= X_BUILD_RcMax) {
                 if (locked) {
-//                    _XWeakTableUnlock(table);
+                    _XWeakTableUnlock(table);
                     locked = false;
                 }
                 return;
             } else {
                 newRcInfo = rcInfo - X_BUILD_RcOne;
                 if (newRcInfo < X_BUILD_RcBase) {
-                    if ((rcInfo & X_BUILD_RcHasWeakMask) == X_BUILD_RcHasWeakFlag) {
-                        //hasWeak
+                    if ((newRcInfo & X_BUILD_RcHasWeakMask) == X_BUILD_RcHasWeakFlag) {
+                        //clearWeak
                         if (!locked) {
-//                          _XWeakTableLock(table);
+                          _XWeakTableLock(table);
                             locked = true;
+                        }
+                    } else {
+                        if (locked) {
+                            _XWeakTableUnlock(table);
+                            locked = false;
                         }
                     }
                 } else {
                     if (locked) {
-//                      _XWeakTableUnlock(table);
+                      _XWeakTableUnlock(table);
                         locked = false;
                     }
                 }
@@ -132,8 +115,8 @@ void _XRefRelease(XRef _Nonnull ref, const char * _Nonnull func) {
         } while (!atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
         if (locked) {
             //clear
-            
-//            _XWeakTableUnlock(table);
+            _XWeakTableTryRemove(table, (XObject)ref);
+            _XWeakTableUnlock(table);
             goto dealloc;
         }
         if (rcInfo < X_BUILD_RcBase) {
@@ -273,7 +256,38 @@ void _XAllocatorCompressedObjectDeallocate(_XAllocatorPtr _Nonnull allocator, XO
 }
 
 
+//静态class
+const _XAllocator_s _XConstantClassAllocator = {
+    .context = NULL,
+    .headerSize = sizeof(_XObjectBase),
+    .allocate = _XAllocatorConstantAllocate,
+    .deallocate = _XAllocatorConstantDeallocate,
+    .allocateRef = _XAllocatorConstantObjectAllocate,
+    .deallocateRef = _XAllocatorConstantObjectDeallocate,
+};
 
+//Boolean Null
+const _XAllocator_s _XConstantValueAllocator = {
+    .context = NULL,
+    .headerSize = sizeof(_XObjectBase),
+    .allocate = _XAllocatorConstantAllocate,
+    .deallocate = _XAllocatorConstantDeallocate,
+    .allocateRef = _XAllocatorConstantObjectAllocate,
+    .deallocateRef = _XAllocatorConstantObjectDeallocate,
+};
+
+
+/*
+ _XCompressedValueClassMake(Number),
+ _XCompressedValueClassMake(String),
+ _XCompressedValueClassMake(Data),
+ _XCompressedValueClassMake(Date),
+ _XCompressedValueClassMake(Value),
+ _XCompressedValueClassMake(Storage),
+ _XCompressedValueClassMake(Array),
+ _XCompressedValueClassMake(Map),
+ _XCompressedValueClassMake(Set),
+ */
 
 const _XAllocator_s _XCompressedObjectAllocator = {
     .context = NULL,
@@ -284,6 +298,14 @@ const _XAllocator_s _XCompressedObjectAllocator = {
     .deallocateRef = _XAllocatorCompressedObjectDeallocate,
 };
 
+const _XAllocator_s _XCompressedValueAllocator = {
+    .context = NULL,
+    .headerSize = sizeof(_XObjectCompressedBase),
+    .allocate = _XAllocatorCompressedAllocate,
+    .deallocate = _XAllocatorCompressedDeallocate,
+    .allocateRef = _XAllocatorCompressedObjectAllocate,
+    .deallocateRef = _XAllocatorCompressedObjectDeallocate,
+};
 
 const _XAllocator_s _XObjectAllocator = {
     .context = NULL,
@@ -294,6 +316,14 @@ const _XAllocator_s _XObjectAllocator = {
     .deallocateRef = _XAllocatorDefaultObjectDeallocate,
 };
 
+const _XAllocator_s _XValueAllocator = {
+    .context = NULL,
+    .headerSize = sizeof(_XObjectBase),
+    .allocate = _XAllocatorDefaultAllocate,
+    .deallocate = _XAllocatorDefaultDeallocate,
+    .allocateRef = _XAllocatorDefaultObjectAllocate,
+    .deallocateRef = _XAllocatorDefaultObjectDeallocate,
+};
 
 //const _XAllocator_s _XClassAllocator = {
 //    .context = NULL,
@@ -304,16 +334,9 @@ const _XAllocator_s _XObjectAllocator = {
 //    .deallocateRef = _XAllocatorDefaultObjectDeallocate,
 //};
 
-const _XAllocator_s _XConstantClassAllocator = {
-    .context = NULL,
-    .headerSize = sizeof(_XObjectBase),
-    .allocate = _XAllocatorConstantAllocate,
-    .deallocate = _XAllocatorConstantDeallocate,
-    .allocateRef = _XAllocatorConstantObjectAllocate,
-    .deallocateRef = _XAllocatorConstantObjectDeallocate,
-};
 
-const _XAllocator_s _XConstantAllocator = {
+
+const _XAllocator_s _XWeakStorageAllocator = {
     .context = NULL,
     .headerSize = sizeof(_XObjectBase),
     .allocate = _XAllocatorConstantAllocate,

@@ -89,6 +89,13 @@ struct _XAllocator {
 
 #pragma pack(pop)
 
+//静态class
+extern const _XAllocator_s _XConstantClassAllocator;
+
+//Boolean Null
+extern const _XAllocator_s _XConstantValueAllocator;
+
+
 
 /*
  _XCompressedValueClassMake(Number),
@@ -102,26 +109,20 @@ struct _XAllocator {
  _XCompressedValueClassMake(Set),
  */
 extern const _XAllocator_s _XCompressedObjectAllocator;
+extern const _XAllocator_s _XCompressedValueAllocator;
 
-
-// _XCompressedObjectAllocator _XConstantAllocator 之外的
 extern const _XAllocator_s _XObjectAllocator;
+extern const _XAllocator_s _XValueAllocator;
 
 
 //动态class not support
 //extern const _XAllocator_s _XClassAllocator;
 
 
-//静态class
-extern const _XAllocator_s _XConstantClassAllocator;
-
-//Boolean Null
-extern const _XAllocator_s _XConstantAllocator;
-
+extern const _XAllocator_s _XWeakStorageAllocator;
 
 
 XRef _Nonnull _XRefRetain(XRef _Nonnull ref, const char * _Nonnull func);
-XRef _Nullable _XRefTryRetain(XRef _Nullable ref, const char * _Nonnull func);
 void _XRefRelease(XRef _Nonnull ref, const char * _Nonnull func);
 
 

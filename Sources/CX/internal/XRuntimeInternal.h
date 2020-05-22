@@ -431,7 +431,7 @@ typedef struct {
 struct __WeakStorage;
     
 typedef struct {
-    _Atomic(uintptr_t) value;
+    uintptr_t value;//value 不可变
     _Atomic(uintptr_t) table;
     struct __WeakStorage * _Nullable next;
 } _WeakStorageContent_t;
@@ -457,6 +457,14 @@ typedef _XCollection _XMap;
 #pragma mark - XSet
 typedef _XCollection _XSet;
 
+#pragma mark - XObject
+
+typedef struct {
+    _XObjectBase _runtime;
+    XUInt8 content[0];
+} _XObject;
+
+
 
 #pragma pack(pop)
 
@@ -481,6 +489,19 @@ extern XHashCode _XHashUInt64(XUInt64 i);
 extern XHashCode _XHashSInt64(XSInt64 i);
 extern XHashCode _XHashFloat64(XFloat64 d);
 extern XUInt32 _XELFHashBytes(XUInt8 * _Nullable bytes, XUInt32 length);
+
+
+#pragma mark - weak
+
+typedef struct {
+    XIndex id;
+    XUInt lock;
+    
+} _XWeakTable;
+extern void _XWeakTableTryRemove(_XWeakTable * _Nonnull table, XObject _Nonnull value);
+extern _XWeakTable * _Nonnull _XWeakTableGet(uintptr_t address);
+extern void _XWeakTableLock(_XWeakTable * _Nonnull table);
+extern void _XWeakTableUnlock(_XWeakTable * _Nonnull table);
 
 
 

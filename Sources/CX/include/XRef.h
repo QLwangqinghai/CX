@@ -114,7 +114,7 @@ extern void XPackageUnpack(XPackageRef _Nonnull ref, XPackageContent_t * _Nonnul
 #pragma mark - XWeakStorageRef
 
 //size 必须 > 0
-extern XWeakStorageRef _Nonnull XWeakStorageCreate(XWeakStorageRef _Nonnull ref);
+extern XWeakStorageRef _Nonnull XWeakStorageCreate(XObject _Nonnull object);
 
 extern XObject _Nullable XWeakStorageTakeRetainedValue(XWeakStorageRef _Nonnull ref);
 

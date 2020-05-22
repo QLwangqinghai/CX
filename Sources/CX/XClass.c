@@ -436,7 +436,12 @@ extern XCompressedType XCompressedTypeOfClass(XClass _Nonnull cls) {
     } else {
         uintptr_t offset = c - base;
         if (offset % sizeof(_XType_s) == 0) {
-            return offset / sizeof(_XType_s);
+            XIndex id = offset / sizeof(_XType_s);
+            if (id <= X_BUILD_CompressedTypeIdMax && id >= X_BUILD_CompressedTypeIdMin) {
+                return id - X_BUILD_CompressedTypeIdMin;
+            } else {
+                return XUIntMax;
+            }
         } else {
             return XUIntMax;
         }

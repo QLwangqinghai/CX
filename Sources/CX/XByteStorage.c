@@ -216,7 +216,7 @@ static XRef _Nonnull _XByteStorageCreate(XBool isString, XObjectFlag flag, const
         return (XRef)((uintptr_t)v);
     }
 
-    const _XType_s * cls = isString ? _XClassString : _XClassData;
+    const _XType_s * cls = isString ? _XClassOf(String) : _XClassOf(Data);
     const _XAllocator_s * allocator = (const _XAllocator_s *)(cls->base.allocator);
     XSize size = sizeof(_XByteStorageContent_t);
     
@@ -264,7 +264,7 @@ static _XByteStorage * _Nonnull _XByteStorageCreateWithBuffer(XBool isString, XO
     XAssert(length <= xbuffer->size, func, "range error");
     XAssert(offset <= xbuffer->size - length, func, "range error");
     
-    const _XType_s * cls = isString ? _XClassString : _XClassData;
+    const _XType_s * cls = isString ? _XClassOf(String) : _XClassOf(Data);
     const _XAllocator_s * allocator = (const _XAllocator_s *)(cls->base.allocator);
     XSize size = sizeof(_XByteStorageContent_t);
     

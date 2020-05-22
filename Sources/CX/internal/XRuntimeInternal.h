@@ -235,18 +235,18 @@ typedef struct {
     uintptr_t table[0];
 } _XType_s;
 
-extern const _XType_s * _Nonnull _XClassType;
-extern const _XType_s * _Nonnull _XClassNull;
-extern const _XType_s * _Nonnull _XClassBoolean;
-extern const _XType_s * _Nonnull _XClassNumber;
-extern const _XType_s * _Nonnull _XClassString;
-extern const _XType_s * _Nonnull _XClassData;
-extern const _XType_s * _Nonnull _XClassDate;
-extern const _XType_s * _Nonnull _XClassValue;
-extern const _XType_s * _Nonnull _XClassPackage;
-extern const _XType_s * _Nonnull _XClassArray;
-extern const _XType_s * _Nonnull _XClassMap;
-extern const _XType_s * _Nonnull _XClassSet;
+//extern const _XType_s * _Nonnull _XClassType;
+//extern const _XType_s * _Nonnull _XClassNull;
+//extern const _XType_s * _Nonnull _XClassBoolean;
+//extern const _XType_s * _Nonnull _XClassNumber;
+//extern const _XType_s * _Nonnull _XClassString;
+//extern const _XType_s * _Nonnull _XClassData;
+//extern const _XType_s * _Nonnull _XClassDate;
+//extern const _XType_s * _Nonnull _XClassValue;
+//extern const _XType_s * _Nonnull _XClassPackage;
+//extern const _XType_s * _Nonnull _XClassArray;
+//extern const _XType_s * _Nonnull _XClassMap;
+//extern const _XType_s * _Nonnull _XClassSet;
 
 #pragma mark - XNull
 

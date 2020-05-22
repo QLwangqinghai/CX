@@ -12,48 +12,49 @@
 #include "XType.h"
 #include "XRuntimeInternal.h"
 
-#define X_BUILD_TypeId_Class 0
-#define X_BUILD_TypeId_Null 1
-#define X_BUILD_TypeId_Boolean 2
+
+#define X_BUILD_TypeId_Class X_BUILD_UInt(0)
+#define X_BUILD_TypeId_Null X_BUILD_UInt(1)
+#define X_BUILD_TypeId_Boolean X_BUILD_UInt(2)
+#define X_BUILD_TypeId_Number X_BUILD_UInt(3)
+#define X_BUILD_TypeId_String X_BUILD_UInt(4)
+#define X_BUILD_TypeId_Data X_BUILD_UInt(5)
+
 
 #if BUILD_TARGET_RT_64_BIT
 
-#define X_BUILD_TypeId_Number 3
-#define X_BUILD_TypeId_String 4
-#define X_BUILD_TypeId_Data 5
-#define X_BUILD_TypeId_Date 6
-#define X_BUILD_TypeId_Value 7
-#define X_BUILD_TypeId_Package 8
-#define X_BUILD_TypeId_WeakStorage 9
-#define X_BUILD_TypeId_Array 10
-#define X_BUILD_TypeId_Storage 11
-#define X_BUILD_TypeId_Map 12
-#define X_BUILD_TypeId_Set 13
-#define X_BUILD_TypeId_Object 14
+
+#define X_BUILD_TypeId_Date X_BUILD_UInt(6)
+#define X_BUILD_TypeId_Value X_BUILD_UInt(7)
+#define X_BUILD_TypeId_Package X_BUILD_UInt(8)
+#define X_BUILD_TypeId_WeakStorage X_BUILD_UInt(9)
+#define X_BUILD_TypeId_Array X_BUILD_UInt(10)
+#define X_BUILD_TypeId_Storage X_BUILD_UInt(11)
+#define X_BUILD_TypeId_Map X_BUILD_UInt(12)
+#define X_BUILD_TypeId_Set X_BUILD_UInt(13)
 
 #define X_BUILD_CompressedTypeIdMin X_BUILD_TypeId_Number
 #define X_BUILD_CompressedTypeIdMax X_BUILD_TypeId_Set
 
 #else
 
-#define X_BUILD_TypeId_Number 3
-#define X_BUILD_TypeId_String 4
-#define X_BUILD_TypeId_Data 5
-#define X_BUILD_TypeId_Package 6
-#define X_BUILD_TypeId_WeakStorage 7
-#define X_BUILD_TypeId_Array 8
-#define X_BUILD_TypeId_Storage 9
-#define X_BUILD_TypeId_Map 10
-#define X_BUILD_TypeId_Set 11
+#define X_BUILD_TypeId_Package X_BUILD_UInt(6)
+#define X_BUILD_TypeId_WeakStorage X_BUILD_UInt(7)
+#define X_BUILD_TypeId_Array X_BUILD_UInt(8)
+#define X_BUILD_TypeId_Storage X_BUILD_UInt(9)
+#define X_BUILD_TypeId_Map X_BUILD_UInt(10)
+#define X_BUILD_TypeId_Set X_BUILD_UInt(11)
 
-#define X_BUILD_TypeId_Date 12
-#define X_BUILD_TypeId_Value 13
-#define X_BUILD_TypeId_Object 14
+#define X_BUILD_TypeId_Date X_BUILD_UInt(12)
+#define X_BUILD_TypeId_Value X_BUILD_UInt(13)
 
 #define X_BUILD_CompressedTypeIdMin X_BUILD_TypeId_Number
 #define X_BUILD_CompressedTypeIdMax X_BUILD_TypeId_Set
 
 #endif
+
+#define X_BUILD_TypeId_Object X_BUILD_UInt(14)
+
 
 
 #define X_BUILD_CompressedType(Name) (X_BUILD_TypeId_##Name - X_BUILD_CompressedTypeIdMin + 1)
@@ -93,8 +94,12 @@ extern const XCompressedType XCompressedTypeMax;
 
 extern const XClassIdentifier _Nonnull XMateClassIdentifier;
 extern const _XType_s _XClassTable[];
-extern const _XType_s _XClassNullStorage;
-extern const _XType_s _XClassBooleanStorage;
+
+
+#define _XClassOf(Type) (&(_XClassTable[X_BUILD_TypeId_##Type]))
+
+#define XClassOf(Type) ((XClass)&(_XClassTable[X_BUILD_TypeId_##Type]))
+
 
 static inline XClass _Nullable _XRefGetClassWithCompressedType(XCompressedType id) {
     if (id <= 0 || id > XCompressedTypeMax) {

@@ -429,7 +429,7 @@ const _XType_s _XClassTable[] __attribute__((aligned(64))) = {
 
 extern XCompressedType XCompressedTypeOfClass(XClass _Nonnull cls) {
     uintptr_t base = (uintptr_t)(&(_XClassTable[0]));
-    uintptr_t end = base + sizeof(_XClassType);
+    uintptr_t end = base + sizeof(_XType_s);
     uintptr_t c = (uintptr_t)cls;
     if (c < base || c >= end) {
         return XUIntMax;
@@ -444,41 +444,22 @@ extern XCompressedType XCompressedTypeOfClass(XClass _Nonnull cls) {
 }
 
 
-#define XClassOf(Type) ((XClass)&(_XClassTable[X_BUILD_TypeId_##Type]))
 
-const XClass _Nonnull XClassType = XClassOf(Class);//0
-const XClass _Nonnull XClassNull = XClassOf(Null);//1
-const XClass _Nonnull XClassBoolean = (XClass)&(_XClassTable[X_BUILD_CompressedType_Number - 1]);//2
-
-const XClass _Nonnull XClassNumber = (XClass)&(_XClassTable[X_BUILD_CompressedType_Number - 1]);//3
-const XClass _Nonnull XClassString = (XClass)&(_XClassTable[X_BUILD_CompressedType_String - 1]);//4
-const XClass _Nonnull XClassData = (XClass)&(_XClassTable[X_BUILD_CompressedType_Data - 1]);//5
-const XClass _Nonnull XClassDate = (XClass)&(_XClassTable[X_BUILD_CompressedType_Date - 1]);//6
-const XClass _Nonnull XClassValue = (XClass)&(_XClassTable[X_BUILD_CompressedType_Value - 1]);//7
-const XClass _Nonnull XClassPackage = (XClass)&(_XClassTable[X_BUILD_CompressedType_Package - 1]);//8
-
-const XClass _Nonnull XClassArray = (XClass)&(_XClassTable[X_BUILD_CompressedType_Array - 1]);//9
-const XClass _Nonnull XClassMap = (XClass)&(_XClassTable[X_BUILD_CompressedType_Map - 1]);//10
-const XClass _Nonnull XClassSet = (XClass)&(_XClassTable[X_BUILD_CompressedType_Set - 1]);//11
-
-
-
-const _XType_s * _Nonnull _XClassNull = &_XClassNullStorage;//1
-const _XType_s * _Nonnull _XClassBoolean = &_XClassBooleanStorage;//2
-
-const _XType_s * _Nonnull _XClassNumber = &(_XClassTable[X_BUILD_CompressedType_Number - 1]);//3
-const _XType_s * _Nonnull _XClassString = &(_XClassTable[X_BUILD_CompressedType_String - 1]);//4
-const _XType_s * _Nonnull _XClassData = &(_XClassTable[X_BUILD_CompressedType_Data - 1]);//5
-const _XType_s * _Nonnull _XClassDate = &(_XClassTable[X_BUILD_CompressedType_Date - 1]);//6
-const _XType_s * _Nonnull _XClassValue = &(_XClassTable[X_BUILD_CompressedType_Value - 1]);//7
-const _XType_s * _Nonnull _XClassPackage = &(_XClassTable[X_BUILD_CompressedType_Package - 1]);//8
-
-const _XType_s * _Nonnull _XClassArray = &(_XClassTable[X_BUILD_CompressedType_Array - 1]);//9
-const _XType_s * _Nonnull _XClassMap = &(_XClassTable[X_BUILD_CompressedType_Map - 1]);//10
-const _XType_s * _Nonnull _XClassSet = &(_XClassTable[X_BUILD_CompressedType_Set - 1]);//11
-
-
-
+const XClass _Nonnull XClassType = XClassOf(Class);
+const XClass _Nonnull XClassNull = XClassOf(Null);
+const XClass _Nonnull XClassBoolean = XClassOf(Boolean);
+const XClass _Nonnull XClassNumber = XClassOf(Number);
+const XClass _Nonnull XClassString = XClassOf(String);
+const XClass _Nonnull XClassData = XClassOf(Data);
+const XClass _Nonnull XClassDate = XClassOf(Date);
+const XClass _Nonnull XClassValue = XClassOf(Value);
+const XClass _Nonnull XClassPackage = XClassOf(Package);
+const XClass _Nonnull XClassWeakStorage = XClassOf(WeakStorage);
+const XClass _Nonnull XClassArray = XClassOf(Array);
+const XClass _Nonnull XClassStorage = XClassOf(Storage);
+const XClass _Nonnull XClassMap = XClassOf(Map);
+const XClass _Nonnull XClassSet = XClassOf(Set);
+const XClass _Nonnull XClassObject = XClassOf(Object);
 
 const _XType_s * const _Nonnull _XRefTaggedObjectClassTable[4] = {
     &(_XClassTable[X_BUILD_TypeId_Number]),

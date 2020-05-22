@@ -47,7 +47,7 @@ XHashCode XClassHash(XRef _Nonnull cls) {
 #pragma mark - XNull
 
 const _XNull _XNullShared = {
-    ._runtime = _XConstantObjectBaseMake(&_XClassNullStorage),
+    ._runtime = _XConstantObjectBaseMake(XClassOf(Null)),
 };
 const XNull _Nonnull XNullShared = (XNull)&_XNullShared;
 
@@ -69,11 +69,11 @@ extern XNull _Nonnull XNullCreate(void) {
 #pragma mark - XBoolean
 
 const _XBoolean _XBooleanTrue = {
-    ._runtime = _XConstantObjectBaseMake(&_XClassBooleanStorage),
+    ._runtime = _XConstantObjectBaseMake(XClassOf(Boolean)),
     .content = {.value = true},
 };
 const _XBoolean _XBooleanFalse = {
-    ._runtime = _XConstantObjectBaseMake(&_XClassBooleanStorage),
+    ._runtime = _XConstantObjectBaseMake(XClassOf(Boolean)),
     .content = {.value = false},
 };
 
@@ -213,7 +213,7 @@ XValue _Nonnull XValueCreate(XUInt flag, XPtr _Nullable content, XSize contentSi
         XAssert(contentSize == 0, __func__, "contentSize < 0");
         return XValueEmpty;
     }
-    const _XAllocator_s * allocator = (const _XAllocator_s *)(_XClassValue->base.allocator);
+    const _XAllocator_s * allocator = (const _XAllocator_s *)(_XClassOf(Value)->base.allocator);
 //    typedef XRef _Nonnull (*XRefAllocate_f)(_XAllocatorPtr _Nonnull allocator, XClass _Nonnull cls, XSize contentSize, XObjectRcFlag flag);
 
     XObjectRcFlag rcFlag = 0;
@@ -302,7 +302,7 @@ XPackageRef _Nonnull XPackageCreate(XUInt flag, XU8Char * _Nonnull typeName, XSi
     XAssert(size > 0, __func__, "size == 0");
 
     XAssert(NULL != typeName, __func__, "typeName NULL");
-    const _XAllocator_s * allocator = (const _XAllocator_s *)(_XClassPackage->base.allocator);
+    const _XAllocator_s * allocator = (const _XAllocator_s *)(_XClassOf(Package)->base.allocator);
     XObjectRcFlag rcFlag = XObjectRcFlagFromObjectFlag(flag);
     XSize contentSize = __XPackageContentSizeAligned(size);
     XSize s = contentSize + sizeof(_XPackageContent_t);

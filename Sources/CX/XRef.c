@@ -28,20 +28,23 @@
 XBool XClassEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
     assert(lhs);
     assert(rhs);
-    XClassIdentifier lclsId = XRefGetIdentfierIfIsClass(lhs);
-    XClassIdentifier rclsId = XRefGetIdentfierIfIsClass(rhs);
-    if (lclsId && rclsId) {
-        return lclsId == rclsId;
-    } else {
-        return false;
-    }
+    return false;
+
+//    XClassIdentifier lclsId = XRefGetIdentfierIfIsClass(lhs);
+//    XClassIdentifier rclsId = XRefGetIdentfierIfIsClass(rhs);
+//    if (lclsId && rclsId) {
+//        return lclsId == rclsId;
+//    } else {
+//        return false;
+//    }
 };
 
 XHashCode XClassHash(XRef _Nonnull cls) {
-    XClassIdentifier clsId = XRefGetIdentfierIfIsClass(cls);
-    assert(clsId);
-    
-    return (XHashCode)(((uintptr_t)clsId) >> 4);
+//    XClassIdentifier clsId = XRefGetIdentfierIfIsClass(cls);
+//    assert(clsId);
+//
+//    return (XHashCode)(((uintptr_t)clsId) >> 4);
+    return 0;
 }
 
 #pragma mark - XNull
@@ -213,7 +216,7 @@ XValue _Nonnull XValueCreate(XUInt flag, XPtr _Nullable content, XSize contentSi
         XAssert(contentSize == 0, __func__, "contentSize < 0");
         return XValueEmpty;
     }
-    const _XAllocator_s * allocator = (const _XAllocator_s *)(_XClassOf(Value)->base.allocator);
+    const _XAllocator_s * allocator = &_XValueAllocator;
 //    typedef XRef _Nonnull (*XRefAllocate_f)(_XAllocatorPtr _Nonnull allocator, XClass _Nonnull cls, XSize contentSize, XObjectRcFlag flag);
 
     XObjectRcFlag rcFlag = 0;
@@ -238,7 +241,7 @@ static _XValue * _Nonnull __XRefAsValue(XValue _Nonnull ref, const char * _Nonnu
     XAssert(XCompressedTypeValue == compressedType, func, "not Value instance");
     return (_XValue *)ref;
 #else
-    const _XType_s * type = (const _XType_s *)info;
+    const XType_s * type = (const XType_s *)info;
     XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Value - 1].base.identifier, func, "not Value instance");
     return (_XValue *)ref;
 #endif
@@ -302,7 +305,7 @@ XPackageRef _Nonnull XPackageCreate(XUInt flag, XU8Char * _Nonnull typeName, XSi
     XAssert(size > 0, __func__, "size == 0");
 
     XAssert(NULL != typeName, __func__, "typeName NULL");
-    const _XAllocator_s * allocator = (const _XAllocator_s *)(_XClassOf(Package)->base.allocator);
+    const _XAllocator_s * allocator = &_XCollectionAllocator;
     XObjectRcFlag rcFlag = XObjectRcFlagFromObjectFlag(flag);
     XSize contentSize = __XPackageContentSizeAligned(size);
     XSize s = contentSize + sizeof(_XPackageContent_t);
@@ -329,7 +332,7 @@ static _XPackage * _Nonnull __XRefAsPackage(XPackageRef _Nonnull ref, const char
     XAssert(XCompressedTypePackage == compressedType, func, "not Object instance");
     return (_XPackage *)ref;
 #else
-    const _XType_s * type = (const _XType_s *)info;
+    const XType_s * type = (const XType_s *)info;
     XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Package - 1].base.identifier, func, "not Object instance");
     return (_XPackage *)ref;
 #endif
@@ -369,11 +372,11 @@ void XPackageUnpack(XPackageRef _Nonnull ref, XPackageContent_t * _Nonnull conte
 
 
 //typedef struct {
-//    _XObjectBase _runtime;
+//    XObjectBase_s _runtime;
 //} _XNull;
 //
 //typedef struct {
-//    _XObjectBase _runtime;
+//    XObjectBase_s _runtime;
 //    XBool value;
 //} _XBoolean;
 //

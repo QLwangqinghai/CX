@@ -14,18 +14,85 @@ extern "C" {
 
 #include "XType.h"
 
+typedef XPtr _XDescriptionBuffer;
+typedef XComparisonResult (*XRefCompare_f)(XRef _Nonnull lhs, XRef _Nonnull rhs);
 
-typedef XUInt32 XRefKind;
-typedef XUInt32 XTypeKind;
+typedef XHashCode (*XRefHashCode_f)(XRef _Nonnull obj);
+typedef XBool (*XRefEqual_f)(XRef _Nonnull lhs, XRef _Nonnull rhs);
+typedef void (*XRefDeinit_f)(XRef _Nonnull obj);
+typedef void (*XRefDescribe_f)(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer);
 
-extern const XTypeKind XTypeKindValue;//1
-extern const XTypeKind XTypeKindObject;//2
-extern const XTypeKind XTypeKindWeakableObject;//3
+struct __XRefKind;
+typedef struct __XRefKind _XRefKind_t;
+typedef const _XRefKind_t * XRefKind;
 
-//extern const XRefKind XRefKindUnknown;
-extern const XRefKind XRefKindInstance;
-extern const XRefKind XRefKindClass;
-extern const XRefKind XRefKindMetaClass;
+struct __XRefKind {
+    XRefHashCode_f _Nonnull hashCode;
+    XRefEqual_f _Nonnull equal;
+    XRefDeinit_f _Nonnull deinit;
+    XRefDescribe_f _Nonnull describe;
+};
+    
+struct _XAllocator;
+typedef const struct _XAllocator * _XAllocatorPtr;
+
+    
+#if defined(__cplusplus)
+
+typedef struct {
+    XFastUInt rcInfo;
+    uintptr_t typeInfo;
+} XObjectBase_s;
+#else
+#include "XAtomic.h"
+typedef struct {
+    _Atomic(XFastUInt) rcInfo;
+    _Atomic(uintptr_t) typeInfo;
+} XObjectBase_s;
+#endif
+    
+typedef struct _XTypeBase {
+    XRefKind _Nonnull kind;
+    const char * _Nonnull name;
+} XTypeBase_s;
+
+typedef struct {
+    XObjectBase_s _runtime;
+    XTypeBase_s base;
+} XType_s;
+
+
+typedef struct {
+    XObjectBase_s _runtime;
+    XTypeBase_s base;
+    uintptr_t super;
+    _XAllocatorPtr _Nonnull allocator;
+    XRefDeinit_f _Nonnull deinit;
+    XRefDescribe_f _Nonnull describe;
+} XObjectType_s;
+
+
+
+
+extern XRefKind _Nonnull XRefKindClass;
+extern XRefKind _Nonnull XRefKindConstantValue;
+extern XRefKind _Nonnull XRefKindValue;
+extern XRefKind _Nonnull XRefKindCollection;
+extern XRefKind _Nonnull XRefKindObject;
+
+
+    
+typedef XUInt32 XRefKindType;
+typedef XUInt32 XTypeObjectKind;
+
+extern const XTypeObjectKind XTypeObjectKindValue;//1
+extern const XTypeObjectKind XTypeObjectKindCollection;//2
+extern const XTypeObjectKind XTypeObjectKindObject;//3
+
+//extern const XRefKindType XRefKindTypeUnknown;
+extern const XRefKindType XRefKindTypeInstance;
+extern const XRefKindType XRefKindTypeClass;
+extern const XRefKindType XRefKindTypeMetaClass;
 
 
 typedef XUInt32 XNumberType;
@@ -88,12 +155,8 @@ typedef const struct _XAllocator * _XAllocatorPtr;
 typedef XRef _Nonnull (*XRefAllocate_f)(_XAllocatorPtr _Nonnull allocator, XClass _Nonnull cls, XSize contentSize, XObjectRcFlag flag);
 typedef void (*XRefDeallocate_f)(_XAllocatorPtr _Nonnull allocator, XObject _Nonnull obj);
 
-typedef XBool (*XRefEqualTo_f)(XRef _Nonnull lhs, XRef _Nonnull rhs);
-typedef XHashCode (*XRefHashCode_f)(XObject _Nonnull obj);
-typedef XComparisonResult (*XRefCompare_f)(XRef _Nonnull lhs, XRef _Nonnull rhs);
 
-extern XRefKind XRefGetKind(XRef _Nonnull ref);
-extern XClassIdentifier _Nullable XRefGetIdentfierIfIsClass(XRef _Nonnull ref);
+extern XRefKind _Nonnull XRefGetKind(XRef _Nonnull ref);
 extern XClass _Nonnull XRefGetClass(XRef _Nonnull ref);
 extern XBool XRefIsMetaClass(XRef _Nonnull ref);
 

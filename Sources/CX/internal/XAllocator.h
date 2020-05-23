@@ -17,28 +17,24 @@ extern "C" {
 #include "XRuntime.h"
 
     
-    /*
-     流传状态
-     
-     >= rcBase 的才可以retain
-     
-     0  -> rcBase -> hasWeak -> retain -> release -> release ->
-     
-     
-     */
-    
-    /* compressed == 1
-     counter
-     type: 6
-     compressed: 1
-     */
+/*
+ 流传状态
+ >= rcBase 的才可以retain
+ 0  -> rcBase -> hasWeak -> retain -> release -> release ->
+ */
+
+/* compressed == 1
+ counter
+ type: 6
+ compressed: 1
+ */
     
 #define X_BUILD_CompressedRcMask X_BUILD_UInt(0x1)
 #define X_BUILD_CompressedRcFlag X_BUILD_UInt(0x1)
     
 #define X_BUILD_CompressedRcTypeMask X_BUILD_UInt(0x7E)
 #define X_BUILD_CompressedRcTypeShift X_BUILD_UInt(0x1)
-#define X_BUILD_CompressedTypeWeakStorageRcFlag (X_BUILD_CompressedType_WeakStorage << X_BUILD_CompressedRcTypeShift)
+#define X_BUILD_CompressedTypeWeakPackageRcFlag (X_BUILD_CompressedType_WeakPackage << X_BUILD_CompressedRcTypeShift)
     
 #define X_BUILD_CompressedRcOne X_BUILD_UInt(0x80)
 #define X_BUILD_CompressedRcTwo X_BUILD_UInt(0x100)
@@ -48,11 +44,11 @@ extern "C" {
     
     
     
-    /* compressed == 0
-     counter
-     weak: 1
-     compressed: 1
-     */
+/* compressed == 0
+ counter
+ weak: 1
+ compressed: 1
+ */
     
 #define X_BUILD_RcHasWeakMask X_BUILD_UInt(0x2)
 #define X_BUILD_RcHasWeakFlag X_BUILD_UInt(0x2)
@@ -65,10 +61,8 @@ extern "C" {
 //析构中， 不允许retain
 #define X_BUILD_RcDeallocing X_BUILD_RcOne
     
-    
 #define X_BUILD_RcMax (XUIntMax - X_BUILD_UInt(0x3))
 
-    
 
 #pragma pack(push, 1)
 
@@ -89,15 +83,8 @@ struct _XAllocator {
 
 #pragma pack(pop)
 
-//静态class
-extern const _XAllocator_s _XConstantClassAllocator;
-
-//Boolean Null
-extern const _XAllocator_s _XConstantValueAllocator;
-
-
-extern const _XAllocator_s _XCompressedObjectAllocator;
-extern const _XAllocator_s _XCompressedValueAllocator;
+extern const _XAllocator_s _XCollectionAllocator;
+extern const _XAllocator_s _XValueAllocator;
 
 extern const _XAllocator_s _XObjectAllocator;
 extern const _XAllocator_s _XValueAllocator;
@@ -107,12 +94,10 @@ extern const _XAllocator_s _XValueAllocator;
 //extern const _XAllocator_s _XClassAllocator;
 
 
-extern const _XAllocator_s _XWeakStorageAllocator;
+extern const _XAllocator_s _XWeakPackageAllocator;
 
-
-XRef _Nonnull _XRefRetain(XRef _Nonnull ref, const char * _Nonnull func);
-void _XRefRelease(XRef _Nonnull ref, const char * _Nonnull func);
-
+XRef _Nonnull _XRefRetain(XHeapRef _Nonnull ref, const char * _Nonnull func);
+void _XRefRelease(XHeapRef _Nonnull ref, const char * _Nonnull func);
 
 #if defined(__cplusplus)
 }  // extern C

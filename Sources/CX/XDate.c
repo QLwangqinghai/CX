@@ -168,7 +168,7 @@ static _XDate * _Nonnull __XRefAsDate(XDate _Nonnull ref, const char * _Nonnull 
 #if BUILD_TARGET_RT_64_BIT
     __unused
 #endif
-    const _XType_s * type = _XHeapRefGetClass(ref, &compressedType, func);
+    const XType_s * type = _XHeapRefGetClass(ref, &compressedType, func);
     
 #if BUILD_TARGET_RT_64_BIT
     XAssert(XCompressedTypeDate == compressedType, func, "not Date instance");

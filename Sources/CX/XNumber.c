@@ -673,7 +673,7 @@ static _XNumber * _Nonnull __XRefAsNumber(XNumber _Nonnull ref, const char * _No
 #if BUILD_TARGET_RT_64_BIT
     __unused
 #endif
-    const _XType_s * type = _XHeapRefGetClass(ref, &compressedType, func);
+    const XType_s * type = _XHeapRefGetClass(ref, &compressedType, func);
     XAssert(XCompressedTypeNumber == compressedType, func, "not Number instance");
     return (_XNumber *)ref;
 }

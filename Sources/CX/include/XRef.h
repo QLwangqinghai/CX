@@ -111,12 +111,12 @@ extern XPtr _Nonnull XPackageGetContent(XPackageRef _Nonnull ref);
 
 extern void XPackageUnpack(XPackageRef _Nonnull ref, XPackageContent_t * _Nonnull contentPtr);
 
-#pragma mark - XWeakStorageRef
+#pragma mark - XWeakPackageRef
 
 //size 必须 > 0
-extern XWeakStorageRef _Nonnull XWeakStorageCreate(XObject _Nonnull object);
+extern XWeakPackageRef _Nonnull XWeakPackageCreate(XObject _Nonnull object);
 
-extern XObject _Nullable XWeakStorageTakeRetainedValue(XWeakStorageRef _Nonnull ref);
+extern XObject _Nullable XWeakPackageTakeRetainedValue(XWeakPackageRef _Nonnull ref);
 
 
 #pragma mark - XArrayRef

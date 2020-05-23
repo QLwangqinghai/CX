@@ -87,6 +87,9 @@ typedef intptr_t XSIntptr;
     #define X_BUILD_UInt(value) value##UL
 
 #endif
+    
+
+    
 
 typedef XUInt XIndex;
 //#define XIndexNotFound XUIntMax
@@ -138,14 +141,12 @@ typedef XRef XValue;
 
 //对象类型， 默认hash是对对象地址的hash， 比较是对对象地址的比较
 typedef XRef XPackageRef;
-typedef XRef XWeakStorageRef;
+typedef XRef XWeakPackageRef;
 typedef XRef XArrayRef;
 typedef XRef XMapRef;
 typedef XRef XSetRef;
 
 typedef XRef XObject;
-
-typedef XPtr XClassIdentifier;
 
 #pragma mark - XHashCode
 
@@ -174,6 +175,35 @@ typedef int64_t XTimeInterval;
 #define XSInt32Min INT32_MIN
 #define XSInt64Min INT64_MIN
 
+    
+#define XFastSInt32 int_fast32_t
+#define XFastUInt32 uint_fast32_t
+    
+#define XFastSInt64 int_fast64_t
+#define XFastUInt64 uint_fast64_t
+    
+#if BUILD_TARGET_RT_64_BIT
+#define XFastSInt int_fast64_t
+#define XFastUInt uint_fast64_t
+    
+#define XFastSIntMin INT_FAST64_MIN
+#define XFastSIntMax INT_FAST64_MAX
+    
+#define XFastUIntMax UINT_FAST64_MAX
+    
+#else
+#define XFastSInt int_fast32_t
+#define XFastUInt uint_fast32_t
+    
+#define XFastSIntMin INT_FAST32_MIN
+#define XFastSIntMax INT_FAST32_MAX
+    
+#define XFastUIntMax UINT_FAST32_MAX
+    
+#endif
+    
+    
+    
 typedef XSInt32 XComparisonResult;
 extern const XComparisonResult XCompareLessThan;
 extern const XComparisonResult XCompareEqualTo;
@@ -290,38 +320,34 @@ static inline void XByte128Reset(XByte128 * _Nonnull bytes, const uint8_t * _Non
 
 
 typedef enum {
-    XTypeNone = 0,
-    XTypeVoid = 1,
-    XTypePointer = 2,
-    XTypeBool = 3,
-    XTypeSInt8 = 4,
-    XTypeUInt8 = 5,
-    XTypeSInt16 = 6,
-    XTypeUInt16 = 7,
-    XTypeSInt32 = 8,
-    XTypeUInt32 = 9,
-    XTypeSInt64 = 10,
-    XTypeUInt64 = 11,
-    XTypeFloat32 = 12,
-    XTypeFloat64 = 13,
+    XTypeVoid = 0x0,
+    XTypeBool = 0x1,
+    XTypeSInt8 = 0x2,
+    XTypeUInt8 = 0x3,
+    XTypeSInt16 = 0x4,
+    XTypeUInt16 = 0x5,
+    XTypeSInt32 = 0x6,
+    XTypeUInt32 = 0x7,
+    XTypeSInt64 = 0x8,
+    XTypeUInt64 = 0x9,
+    XTypeFloat32 = 0xA,
+    XTypeFloat64 = 0xB,
+    XTypeRef = 0xC,
+
     
-
-
-
-    XObjectTypeBool = 1,
-    XObjectTypeSInt8 = 2,
-    
-//    XTypeUInt8 = 3,
-//    XTypeSInt16 = 4,
-//    XTypeUInt16 = 5,
-//    XTypeSInt32 = 6,
-//    XTypeUInt32 = 7,
-//    XTypeFloat = 8,
-//    XTypePtr = 9,
-//    XTypeSInt64 = 10,
-//    XTypeUInt64 = 11,
-//    XTypeDouble = 12,
-//    XTypeBuffer = 13,
+    XTypeVoidPtr = 0x10,
+    XTypeBoolPtr = 0x11,
+    XTypeSInt8Ptr = 0x12,
+    XTypeUInt8Ptr = 0x13,
+    XTypeSInt16Ptr = 0x14,
+    XTypeUInt16Ptr = 0x15,
+    XTypeSInt32Ptr = 0x16,
+    XTypeUInt32Ptr = 0x17,
+    XTypeSInt64Ptr = 0x18,
+    XTypeUInt64Ptr = 0x19,
+    XTypeFloat32Ptr = 0x1A,
+    XTypeFloat64Ptr = 0x1B,
+    XTypeRefPtr = 0x1C,
 } XTypeId_e;
 
 //typedef enum {

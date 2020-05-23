@@ -143,10 +143,10 @@ void _XBufferRelease(_XBuffer * _Nonnull buffer) {
 /*
  TaggedObject64
 
- refType: 2, value = 1
+ refType: 1, value = 1
  taggedContent: 62 {
     class: 2
-    objectContent: 50 {
+    objectContent: 60 {
        len: 4
        content: 56
    }
@@ -216,8 +216,8 @@ static XRef _Nonnull _XByteStorageCreate(XBool isString, XObjectFlag flag, const
         return (XRef)((uintptr_t)v);
     }
 
-    const _XType_s * cls = isString ? _XClassOf(String) : _XClassOf(Data);
-    const _XAllocator_s * allocator = (const _XAllocator_s *)(cls->base.allocator);
+    const XType_s * cls = isString ? _XClassOf(String) : _XClassOf(Data);
+    const _XAllocator_s * allocator = &_XValueAllocator;
     XSize size = sizeof(_XByteStorageContent_t);
     
     XObjectRcFlag rcFlag = 0;
@@ -264,8 +264,8 @@ static _XByteStorage * _Nonnull _XByteStorageCreateWithBuffer(XBool isString, XO
     XAssert(length <= xbuffer->size, func, "range error");
     XAssert(offset <= xbuffer->size - length, func, "range error");
     
-    const _XType_s * cls = isString ? _XClassOf(String) : _XClassOf(Data);
-    const _XAllocator_s * allocator = (const _XAllocator_s *)(cls->base.allocator);
+    const XType_s * cls = isString ? _XClassOf(String) : _XClassOf(Data);
+    const _XAllocator_s * allocator = &_XValueAllocator;
     XSize size = sizeof(_XByteStorageContent_t);
     
     XObjectRcFlag rcFlag = 0;
@@ -316,7 +316,7 @@ static _XByteStorage * _Nonnull __XRefAsByteStorage(XRef _Nonnull ref, XBool * _
 #if BUILD_TARGET_RT_64_BIT
     __unused
 #endif
-    const _XType_s * type = _XHeapRefGetClass(ref, &compressedType, func);
+    const XType_s * type = _XHeapRefGetClass(ref, &compressedType, func);
     
     if (XCompressedTypeString == compressedType) {
         *isString = true;

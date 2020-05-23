@@ -48,13 +48,13 @@ typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
 
 
 XBool XObjectEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-    assert(XRefKindInstance == XRefGetKind(lhs));
-    assert(XRefKindInstance == XRefGetKind(rhs));
+    assert(XRefKindObject == XRefGetKind(lhs));
+    assert(XRefKindObject == XRefGetKind(rhs));
     return lhs == rhs;
 };
 
 XHashCode XObjectHash(XRef _Nonnull obj) {
-    assert(XRefKindInstance == XRefGetKind(obj));
+    assert(XRefKindObject == XRefGetKind(obj));
     return (XHashCode)(((uintptr_t)obj) >> 4);
 };
 

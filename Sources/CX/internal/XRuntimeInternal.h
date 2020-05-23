@@ -30,22 +30,6 @@ typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
     #pragma pack(push, 4)
 #endif
 
-
-/*
- Tagged32
- refType: 1
- taggedContent: 30
- flag: 1, value = 1
- */
-
-/*
-Tagged64
-refType: 2
-taggedContent: 61
-flag: 1, value = 1
-*/
-
-
 /*
  TaggedObject32
  refType: 1, value = 1
@@ -67,28 +51,10 @@ flag: 1, value = 1
 */
 
 
-/*
- XObjectFlagclearWhenDealloc
- XObjectFlagNoRc
- */
-
-//64bit 压缩的StackObject flagBegin = 1
-/* flagBegin:2 type:6 rcInfo:55 flagEnd:1  */
-
-//32bit StackObject flagBegin = 1
-/* flagBegin:1 type:6 rcInfo:55 flagEnd:1  */
-
-// rc info
-/*
- count://其余高位
- flags: 低4位
- flag1:hasWeak
- */
-
-#define X_BUILD_TypeKindValue 0x1UL
-#define X_BUILD_TypeKindObject 0x2UL
-#define X_BUILD_TypeKindWeakableObject 0x3UL
-#define X_BUILD_TypeKindMetaClass 0xFUL
+#define X_BUILD_TypeObjectKindValue 0x1UL
+#define X_BUILD_TypeObjectKindCollection 0x2UL
+#define X_BUILD_TypeObjectKindObject 0x3UL
+#define X_BUILD_TypeObjectKindMetaClass 0xFUL
 
 
 
@@ -112,7 +78,7 @@ flag: 1, value = 1
 
 #define X_BUILD_TaggedObjectClassMask    0x60000000UL
 #define X_BUILD_TaggedObjectClassShift   29UL
-#define X_BUILD_TaggedObjectClassNumber  0X0UL
+#define X_BUILD_TaggedObjectClassNumber  0x0UL
 #define X_BUILD_TaggedObjectClassString  0x20000000UL
 #define X_BUILD_TaggedObjectClassData    0x40000000UL
 #define X_BUILD_TaggedObjectClassDate    0x60000000UL
@@ -120,21 +86,14 @@ flag: 1, value = 1
 
 #endif
 
-#define X_BUILD_TaggedObjectClassMax    X_BUILD_TaggedObjectClassDate
 
 
 typedef struct {
     _Atomic(XFastUInt) rcInfo;
 } _XObjectCompressedBase;
 
-typedef struct {
-    _Atomic(XFastUInt) rcInfo;
-    _Atomic(uintptr_t) typeInfo;
-} _XObjectBase;
-
 #define X_BUILD_RcInfoConstantCompressed (X_BUILD_RcMax | X_BUILD_CompressedRcFlag)
 
-/* counter:.. type:6 compressedRcFlag:1  */
 #define _XConstantObjectCompressedBaseMake(typeId) {\
     .rcInfo = ATOMIC_VAR_INIT((uintptr_t)(X_BUILD_RcInfoConstantCompressed | (typeId << X_BUILD_CompressedRcTypeShift))),\
 }
@@ -152,46 +111,13 @@ typedef const struct _XTypeIdentifier * _XTypeIdentifierPtr;
 struct _XTypeIdentifier {
     const char * _Nonnull name;
     XRefHashCode_f _Nullable hashCode;
-    XRefEqualTo_f _Nonnull equalTo;
+    XRefEqual_f _Nonnull equalTo;
     XRefCompare_f _Nullable compare;
 };
 
 
 
-struct _XTypeBase;
-typedef struct _XTypeBase XTypeBase_s;
 
-struct _XTypeBase {
-    _XTypeIdentifierPtr _Nonnull identifier;
-
-#if BUILD_TARGET_RT_64_BIT
-    XUInt64 kind: 4;
-    XUInt64 xx: 4;
-    XUInt64 domain: 8;
-    XUInt64 tableSize: 48;
-#else
-    XUInt32 kind: 4;
-    XUInt32 xx: 4;
-    XUInt32 domain: 8;
-    XUInt32 tableSize: 16;
-
-#endif
-    uintptr_t /* _XType_s * _Nullable */ super;
-    _XAllocatorPtr _Nonnull allocator;
-
-    //对象方法
-    XObjectDeinit_f _Nullable deinit;
-    XObjectDescribe_f _Nonnull describe;
-};
-
-
-typedef struct {
-    _XObjectBase _runtime;
-    XTypeBase_s base;
-    
-    //动态方法列表
-    uintptr_t table[0];
-} _XType_s;
 
 #pragma mark - XNull
 
@@ -200,7 +126,7 @@ typedef struct {
 } _XNullContent_t;
 
 typedef struct {
-    _XObjectBase _runtime;
+    XObjectBase_s _runtime;
     _XNullContent_t content;
 } _XNull;
 
@@ -211,7 +137,7 @@ typedef struct {
 } _XBooleanContent_t;
 
 typedef struct {
-    _XObjectBase _runtime;
+    XObjectBase_s _runtime;
     _XBooleanContent_t content;
 } _XBoolean;
 
@@ -254,32 +180,12 @@ typedef struct {
 } _XNumber;
 
 #pragma mark - XString
-/*
- 
- */
-
-//inline buffer
-
+    
 typedef struct {
     _Atomic(XFastUInt) _refCount;
     XUInt size;
     XUInt8 content[0];
 } _XBuffer;
-
-/*
-(8 + 4 + 4 + opt16 = 16 or 32)
-16 32 48 64 80 96 112(128-16) (256-16)
-*/
-//typedef struct {
-//    _XExtendedLayout layout: 4;
-//    XUInt32 hasHashCode: 1;
-//    XUInt32 __unuse: 3;
-//    XUInt32 clearWhenDealloc: 1;
-//    XUInt32 __unusedFlags: 7;
-//    XUInt32 inlineLength: 16;//layout == _XStringLayoutInline时有效 取值范围(0、16、48、112、 240), 其他情况必须设置为UInt16Max
-//    XUInt32 hashCode;
-//    XUInt8 extended[0];/* 可能有0、16、48、112、 240 5种可能 */
-//} _XByteStorageContent_t;
 
 typedef struct {
     XUInt32 length;
@@ -348,8 +254,8 @@ typedef struct {
 #pragma mark - XValue
 
 /*
-32: (8 + 4 + 4 = 16)
-16 48
+32: (4 + 4 + 4 = 12)
+4 20 52
 64: (8 + 4 + 4 = 16)
 16 48
 */
@@ -385,18 +291,18 @@ typedef struct {
 
 #pragma mark - XWeakPackage
 
-struct __WeakStorage;
+struct __WeakPackage;
     
 typedef struct {
     uintptr_t value;//value 不可变
     _Atomic(uintptr_t) table;
-    struct __WeakStorage * _Nullable next;
-} _WeakStorageContent_t;
+    struct __WeakPackage * _Nullable next;
+} _WeakPackageContent_t;
 
-typedef struct __WeakStorage {
+typedef struct __WeakPackage {
     _XObjectCompressedBase _runtime;
-    _WeakStorageContent_t content;
-} _WeakStorage;
+    _WeakPackageContent_t content;
+} _WeakPackage;
 
 
 #pragma mark - XCollection
@@ -408,6 +314,9 @@ typedef struct {
 #pragma mark - XArray
 typedef _XCollection _XArray;
 
+#pragma mark - XStorage
+typedef _XCollection _XStorage;
+
 #pragma mark - XMap
 typedef _XCollection _XMap;
 
@@ -417,7 +326,7 @@ typedef _XCollection _XSet;
 #pragma mark - XObject
 
 typedef struct {
-    _XObjectBase _runtime;
+    XObjectBase_s _runtime;
     XUInt8 content[0];
 } _XObject;
 
@@ -425,17 +334,26 @@ typedef struct {
 
 #pragma pack(pop)
 
-extern void _XWeakPackageRelease(_WeakStorage * _Nonnull weakStorage);
+extern void _XWeakPackageRelease(_WeakPackage * _Nonnull WeakPackage);
+
+    
+    
+    
+#pragma mark - runtime
 
 
 //如果ref是个 TaggedObject 返回值有效，否则返回 XCompressedTypeNone
 extern XTaggedType _XRefGetTaggedObjectTaggedType(XRef _Nonnull ref);
 
-extern const _XType_s * _Nullable _XRefGetTaggedObjectClass(XRef _Nonnull ref);
+extern const XType_s * _Nullable _XRefGetTaggedObjectClass(XRef _Nonnull ref);
 
-extern const _XType_s * _Nonnull _XHeapRefGetClass(XHeapRef _Nonnull ref, XCompressedType * _Nullable compressedType, const char * _Nonnull func);
-extern const _XType_s * _Nonnull _XRefGetClass(XRef _Nonnull ref, const char * _Nonnull func);
+const XType_s * _Nonnull _XObjectGetClass(_XObject * _Nonnull object, const char * _Nonnull func);
+extern const XType_s * _Nonnull _XHeapRefGetClass(XHeapRef _Nonnull ref, XCompressedType * _Nullable compressedType, const char * _Nonnull func);
+extern const XType_s * _Nonnull _XRefGetClass(XRef _Nonnull ref, const char * _Nonnull func);
 
+    
+#pragma mark - hash
+    
 extern XHashCode _XHashUInt64(XUInt64 i);
 extern XHashCode _XHashSInt64(XSInt64 i);
 extern XHashCode _XHashFloat64(XFloat64 d);
@@ -453,8 +371,6 @@ extern void _XWeakTableTryRemove(_XWeakTable * _Nonnull table, XObject _Nonnull 
 extern _XWeakTable * _Nonnull _XWeakTableGet(uintptr_t address);
 extern void _XWeakTableLock(_XWeakTable * _Nonnull table);
 extern void _XWeakTableUnlock(_XWeakTable * _Nonnull table);
-
-
 
 #if defined(__cplusplus)
 }  // extern C

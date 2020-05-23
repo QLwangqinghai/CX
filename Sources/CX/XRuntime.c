@@ -34,17 +34,6 @@ const XObjectFlag XObjectFlagClearWhenDealloc = 1;
 const XObjectFlag XObjectFlagStatic = 1 << 1;
 
 
-const XTypeObjectKind XTypeObjectKindValue = X_BUILD_TypeObjectKindValue;
-const XTypeObjectKind XTypeObjectKindCollection = X_BUILD_TypeObjectKindCollection;
-const XTypeObjectKind XTypeObjectKindObject = X_BUILD_TypeObjectKindObject;
-const XTypeObjectKind XTypeObjectKindMetaClass = X_BUILD_TypeObjectKindMetaClass;
-
-//const XRefKindType XRefKindTypeUnknown = 0;
-const XRefKindType XRefKindTypeInstance = 1;
-const XRefKindType XRefKindTypeClass = 2;
-const XRefKindType XRefKindTypeMetaClass = 3;
-
-
 const XTaggedType XTaggedTypeNumber = 0;
 const XTaggedType XTaggedTypeString = 1;
 const XTaggedType XTaggedTypeData = 2;

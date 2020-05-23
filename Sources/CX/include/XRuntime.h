@@ -71,28 +71,11 @@ typedef struct {
     XRefDescribe_f _Nonnull describe;
 } XObjectType_s;
 
-
-
-
 extern XRefKind _Nonnull XRefKindClass;
 extern XRefKind _Nonnull XRefKindConstantValue;
 extern XRefKind _Nonnull XRefKindValue;
 extern XRefKind _Nonnull XRefKindCollection;
 extern XRefKind _Nonnull XRefKindObject;
-
-
-    
-typedef XUInt32 XRefKindType;
-typedef XUInt32 XTypeObjectKind;
-
-extern const XTypeObjectKind XTypeObjectKindValue;//1
-extern const XTypeObjectKind XTypeObjectKindCollection;//2
-extern const XTypeObjectKind XTypeObjectKindObject;//3
-
-//extern const XRefKindType XRefKindTypeUnknown;
-extern const XRefKindType XRefKindTypeInstance;
-extern const XRefKindType XRefKindTypeClass;
-extern const XRefKindType XRefKindTypeMetaClass;
 
 
 typedef XUInt32 XNumberType;

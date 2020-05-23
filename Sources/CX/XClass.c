@@ -10,7 +10,6 @@
 #include "XRef.h"
 #include "XObject.h"
 
-//
 //typedef XHashCode (*XRefHashCode_f)(XRef _Nonnull obj);
 //typedef XBool (*XRefEqual_f)(XRef _Nonnull lhs, XRef _Nonnull rhs);
 //typedef void (*XRefDeinit_f)(XRef _Nonnull obj);
@@ -139,36 +138,6 @@ const XCompressedType XCompressedTypeMap = X_BUILD_CompressedType_Map;
 const XCompressedType XCompressedTypeSet = X_BUILD_CompressedType_Set;
 const XCompressedType XCompressedTypeMax = XCompressedTypeSet;
 
-
-//这是一个常量
-const XType_s _XRootMetaClassStorage __attribute__((aligned(8))) = {
-    ._runtime = {
-        .rcInfo = ATOMIC_VAR_INIT(X_BUILD_RcMax),
-        .typeInfo = ATOMIC_VAR_INIT((uintptr_t)&_XRootMetaClassStorage),
-    },
-    .base = {
-        .name = "MetaClass",
-        .kind = XRefKindOf(Class),
-    },
-};
-
-//const XType_s _XObjectClass __attribute__((aligned(8))) = {
-//    ._runtime = {
-//        .typeInfo = ATOMIC_VAR_INIT((uintptr_t)&_XRootMetaClassStorage),
-//        .rcInfo = ATOMIC_VAR_INIT(X_BUILD_RcMax),
-//    },
-//    .base = {
-//        .identifier = &_XTypeIdentifierObject,
-//        .kind = X_BUILD_TypeObjectKindObject,
-//        .domain = 0,
-//        .tableSize = 0,
-//        .super = (uintptr_t)NULL,
-//        .allocator = &_XObjectAllocator,
-//        .deinit = NULL,
-//        .describe = NULL,
-//    },
-//};
-
 #define _XClassMake(Kind, Name) \
 {\
 ._runtime = {\
@@ -192,29 +161,29 @@ const XType_s _XRootMetaClassStorage __attribute__((aligned(8))) = {
 #define _XClassMakeObject(Name) _XClassMake(Object, Name)
 
 const XType_s _XClassTable[] __attribute__((aligned(64))) = {
-    //ConstantType
+    //ConstantValue
     _XClassMake(Class, MetaClass),
     _XClassMakeConstantValue(Null),
     _XClassMakeConstantValue(Boolean),
     
-    //CompressedType
+    //Value
     _XClassMakeValue(Number),
     _XClassMakeValue(String),
     _XClassMakeValue(Data),
     _XClassMakeValue(Date),
     _XClassMakeValue(Value),
     
+    //Collection
     _XClassMakeCollection(Package),
     _XClassMakeCollection(WeakPackage),
     _XClassMakeCollection(Array),
     _XClassMakeCollection(Storage),
     _XClassMakeCollection(Map),
     _XClassMakeCollection(Set),
-    //NormalType
 
 };
 
-const XObjectType_s XObjectTypeRootObject = _XClassMake(Object, Object);
+const XObjectType_s XObjectTypeRootObject __attribute__((aligned(64))) = _XClassMake(Object, Object);
 
 
 extern XCompressedType XCompressedTypeOfClass(XClass _Nonnull cls) {

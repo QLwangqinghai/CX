@@ -51,13 +51,6 @@ typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
 */
 
 
-#define X_BUILD_TypeObjectKindValue 0x1UL
-#define X_BUILD_TypeObjectKindCollection 0x2UL
-#define X_BUILD_TypeObjectKindObject 0x3UL
-#define X_BUILD_TypeObjectKindMetaClass 0xFUL
-
-
-
 #if BUILD_TARGET_RT_64_BIT
 
 #define X_BUILD_TaggedMask 0x8000000000000001ULL

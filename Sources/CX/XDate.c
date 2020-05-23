@@ -22,7 +22,6 @@ taggedContent: {
        numberContent: 26
    }
 }
-flag: 1, value = 1
  
 64位：
 refType: 1, value = 1
@@ -33,7 +32,6 @@ taggedContent: {
        numberContent: 59
    }
 }
-flag: 1, value = 1
 */
 
 
@@ -87,8 +85,15 @@ const _XDate _XDateMax = {
 const XDate _Nonnull XDateMin = (XDate)(&_XDateMin);
 const XDate _Nonnull XDateMax = (XDate)(&_XDateMax);
 
-//2bit type, 有效位数 64(32) - 6 = 58(26), type = 0 标识微妙、 type = 1标识毫秒 type=2标识秒
+static XDate _Nonnull _XHeapDateCreate(XUInt flag, XTimeInterval time) {
+    return NULL;
+}
 
+
+
+
+
+//2bit type, 有效位数 64(32) - 6 = 58(26), type = 0 标识微妙、 type = 1标识毫秒 type=2标识秒
 XDate _Nonnull XDateCreate(XUInt flag, XTimeInterval time) {
     if (XTimeIntervalMin == time) {
         return XDateMin;
@@ -154,7 +159,7 @@ XDate _Nonnull XDateCreate(XUInt flag, XTimeInterval time) {
     }
 
 #endif
-    return NULL;
+    return _XHeapDateCreate(flag, time);
 }
 
 static _XDate * _Nonnull __XRefAsDate(XDate _Nonnull ref, const char * _Nonnull func) {

@@ -16,67 +16,81 @@
 //typedef void (*XRefDescribe_f)(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer);
 
 
-XHashCode _XClassHash(XRef _Nonnull obj) {
+XHashCode _XRefHash(XRef _Nonnull obj) {
     
     return 0;
 }
-
-XBool _XClassEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+XBool _XRefEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
     
     return 0;
 }
-void _XClassDeinit(XRef _Nonnull obj) {
+void _XRefDeinit(XRef _Nonnull obj) {
     
 }
-void _XClassDescribe(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+void _XRefDescribe(XRef _Nonnull lhs, XRef _Nonnull rhs) {
     
 }
-
-XHashCode _XConstantValueHash(XRef _Nonnull obj) {
-    
-    return 0;
-}
-
-XBool _XConstantValueEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-    
-    return 0;
-}
-void _XConstantValueDeinit(XRef _Nonnull obj) {
-    
-}
-void _XConstantValueDescribe(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-    
-}
-
-XHashCode _XValueHash(XRef _Nonnull obj) {
-    
-    return 0;
-}
-XBool _XValueEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-    
-    return 0;
-}
-void _XValueDeinit(XRef _Nonnull obj) {
-    
-}
-void _XValueDescribe(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-    
-}
-
-XHashCode _XCollectionHash(XRef _Nonnull obj) {
-    
-    return 0;
-}
-XBool _XCollectionEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-    
-    return 0;
-}
-void _XCollectionDeinit(XRef _Nonnull obj) {
-    
-}
-void _XCollectionDescribe(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-    
-}
+//XHashCode _XClassHash(XRef _Nonnull obj) {
+//
+//    return 0;
+//}
+//
+//XBool _XClassEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+//
+//    return 0;
+//}
+//void _XClassDeinit(XRef _Nonnull obj) {
+//
+//}
+//void _XClassDescribe(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+//
+//}
+//
+//XHashCode _XConstantValueHash(XRef _Nonnull obj) {
+//
+//    return 0;
+//}
+//
+//XBool _XConstantValueEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+//
+//    return 0;
+//}
+//void _XConstantValueDeinit(XRef _Nonnull obj) {
+//
+//}
+//void _XConstantValueDescribe(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+//
+//}
+//
+//XHashCode _XValueHash(XRef _Nonnull obj) {
+//
+//    return 0;
+//}
+//XBool _XValueEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+//
+//    return 0;
+//}
+//void _XValueDeinit(XRef _Nonnull obj) {
+//
+//}
+//void _XValueDescribe(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+//
+//}
+//
+//XHashCode _XCollectionHash(XRef _Nonnull obj) {
+//
+//    return 0;
+//}
+//XBool _XCollectionEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+//
+//    return 0;
+//}
+//void _XCollectionDeinit(XRef _Nonnull obj) {
+//
+//}
+//void _XCollectionDescribe(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+//
+//}
 
 XHashCode _XObjectHash(XRef _Nonnull obj) {
     
@@ -95,6 +109,14 @@ void _XObjectDescribe(XRef _Nonnull lhs, XRef _Nonnull rhs) {
 
 #define _XRefKindMake(Type) \
 {\
+.hashCode = _XRefHash,\
+.equal = _XRefEqual,\
+.deinit = _XRefDeinit,\
+.describe = _XRefDescribe,\
+}
+
+#define _XRefKindMakeObject(Type) \
+{\
 .hashCode = _X##Type##Hash,\
 .equal = _X##Type##Equal,\
 .deinit = _X##Type##Deinit,\
@@ -106,7 +128,7 @@ const _XRefKind_t _XRefKindTable[] __attribute__((aligned(64))) = {
     _XRefKindMake(ConstantValue),
     _XRefKindMake(Value),
     _XRefKindMake(Collection),
-    _XRefKindMake(Object),
+    _XRefKindMakeObject(Object),
 };
 
 #define X_BUILD_RefKindId_Class X_BUILD_UInt(0)

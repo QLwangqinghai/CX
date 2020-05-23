@@ -14,23 +14,23 @@
 Tagged object
 Date
 32位：
-refType: 2, value = 1
+refType: 1, value = 1
 taggedContent: {
    class: 2
-   objectContent: 32 - 3 - 2 = 27 {
+   objectContent: 28 {
        unit: 2
-       numberContent: 25
+       numberContent: 26
    }
 }
 flag: 1, value = 1
  
 64位：
-refType: 2, value = 1
+refType: 1, value = 1
 taggedContent: {
    class: 2
-   objectContent: 64 - 3 - 2 = 59 {
+   objectContent: 60 {
        unit: 1
-       numberContent: 58
+       numberContent: 59
    }
 }
 flag: 1, value = 1
@@ -45,29 +45,28 @@ flag: 1, value = 1
 
 #if BUILD_TARGET_RT_64_BIT
 
-#define X_BUILD_TaggedDateUnitMask 0x800000000000000ULL
-#define X_BUILD_TaggedDateUnitFlagMillisecond 0x800000000000000ULL
+#define X_BUILD_TaggedDateUnitMask 0x1000000000000000ULL
+#define X_BUILD_TaggedDateUnitFlagMillisecond 0x1000000000000000ULL
 
-#define X_BUILD_TaggedDateMax  0x1FFFFFFFFFFFFFFLL
-#define X_BUILD_TaggedDateMin -0x200000000000000LL
-#define X_BUILD_TaggedDateContentMask 0x3FFFFFFFFFFFFFFULL
+#define X_BUILD_TaggedDateMax  0x3FFFFFFFFFFFFFFLL
+#define X_BUILD_TaggedDateMin -0x400000000000000LL
+#define X_BUILD_TaggedDateContentMask 0x7FFFFFFFFFFFFFFULL
 
-#define X_BUILD_TaggedDateContentSignBit    0x200000000000000ULL
-#define X_BUILD_TaggedDateContentSignHigh  0xFC00000000000000ULL
+#define X_BUILD_TaggedDateContentSignBit    0x400000000000000ULL
+#define X_BUILD_TaggedDateContentSignHigh  0xF800000000000000ULL
     
 #else
 
-#define X_BUILD_TaggedDateUnitMask 0xC000000UL
-#define X_BUILD_TaggedDateUnitFlagMillisecond 0x4000000UL
-#define X_BUILD_TaggedDateUnitFlagSecond 0x8000000UL
+#define X_BUILD_TaggedDateUnitMask 0x18000000UL
+#define X_BUILD_TaggedDateUnitFlagMillisecond 0x8000000UL
+#define X_BUILD_TaggedDateUnitFlagSecond 0x10000000UL
 
-#define X_BUILD_TaggedDateMax  0xFFFFFFLL
-#define X_BUILD_TaggedDateMin -0x1000000LL
-#define X_BUILD_TaggedDateContentMask 0x1FFFFFFUL
+#define X_BUILD_TaggedDateMax  0x1FFFFFFLL
+#define X_BUILD_TaggedDateMin -0x2000000LL
+#define X_BUILD_TaggedDateContentMask 0x3FFFFFFUL
 
-#define X_BUILD_TaggedDateContentSignBit    0x1000000UL
-#define X_BUILD_TaggedDateContentSignHigh  0xFE000000UL
-
+#define X_BUILD_TaggedDateContentSignBit    0x2000000UL
+#define X_BUILD_TaggedDateContentSignHigh  0xFC000000UL
 
 #endif
 
@@ -164,16 +163,14 @@ static _XDate * _Nonnull __XRefAsDate(XDate _Nonnull ref, const char * _Nonnull 
 #if BUILD_TARGET_RT_64_BIT
     __unused
 #endif
-    XClass info = _XRefGetUnpackedType(ref, &compressedType, func);
+    const _XType_s * type = _XHeapRefGetClass(ref, &compressedType, func);
     
 #if BUILD_TARGET_RT_64_BIT
     XAssert(XCompressedTypeDate == compressedType, func, "not Date instance");
     return (_XDate *)ref;
 #else
-    const _XType_s * type = (const _XType_s *)info;
     XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Date - 1].base.identifier, func, "not Number instance");
     return (_XDate *)ref;
-
 #endif
 }
 

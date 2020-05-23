@@ -19,11 +19,6 @@
 #define X_BUILD_TypeId_Number X_BUILD_UInt(3)
 #define X_BUILD_TypeId_String X_BUILD_UInt(4)
 #define X_BUILD_TypeId_Data X_BUILD_UInt(5)
-
-
-#if BUILD_TARGET_RT_64_BIT
-
-
 #define X_BUILD_TypeId_Date X_BUILD_UInt(6)
 #define X_BUILD_TypeId_Value X_BUILD_UInt(7)
 #define X_BUILD_TypeId_Package X_BUILD_UInt(8)
@@ -32,29 +27,10 @@
 #define X_BUILD_TypeId_Storage X_BUILD_UInt(11)
 #define X_BUILD_TypeId_Map X_BUILD_UInt(12)
 #define X_BUILD_TypeId_Set X_BUILD_UInt(13)
-
-#define X_BUILD_CompressedTypeIdMin X_BUILD_TypeId_Number
-#define X_BUILD_CompressedTypeIdMax X_BUILD_TypeId_Set
-
-#else
-
-#define X_BUILD_TypeId_Package X_BUILD_UInt(6)
-#define X_BUILD_TypeId_WeakStorage X_BUILD_UInt(7)
-#define X_BUILD_TypeId_Array X_BUILD_UInt(8)
-#define X_BUILD_TypeId_Storage X_BUILD_UInt(9)
-#define X_BUILD_TypeId_Map X_BUILD_UInt(10)
-#define X_BUILD_TypeId_Set X_BUILD_UInt(11)
-
-#define X_BUILD_TypeId_Date X_BUILD_UInt(12)
-#define X_BUILD_TypeId_Value X_BUILD_UInt(13)
-
-#define X_BUILD_CompressedTypeIdMin X_BUILD_TypeId_Number
-#define X_BUILD_CompressedTypeIdMax X_BUILD_TypeId_Set
-
-#endif
-
 #define X_BUILD_TypeId_Object X_BUILD_UInt(14)
 
+#define X_BUILD_CompressedTypeIdMin X_BUILD_TypeId_Number
+#define X_BUILD_CompressedTypeIdMax X_BUILD_TypeId_Set
 
 
 #define X_BUILD_CompressedType(Name) (X_BUILD_TypeId_##Name - X_BUILD_CompressedTypeIdMin + 1)
@@ -75,15 +51,12 @@
 #define X_BUILD_CompressedType_Set X_BUILD_CompressedType(Set)
 
 
-//0
 extern const XCompressedType XCompressedTypeNone;
 extern const XCompressedType XCompressedTypeNumber;
 extern const XCompressedType XCompressedTypeString;
 extern const XCompressedType XCompressedTypeData;
-#if BUILD_TARGET_RT_64_BIT
 extern const XCompressedType XCompressedTypeDate;
 extern const XCompressedType XCompressedTypeValue;
-#endif
 extern const XCompressedType XCompressedTypePackage;
 extern const XCompressedType XCompressedTypeWeakStorage;
 extern const XCompressedType XCompressedTypeArray;
@@ -98,14 +71,14 @@ extern const _XType_s _XClassTable[];
 
 #define _XClassOf(Type) (&(_XClassTable[X_BUILD_TypeId_##Type]))
 
-#define XClassOf(Type) ((XClass)&(_XClassTable[X_BUILD_TypeId_##Type]))
+#define XClassOf(Type) ((XClass)_XClassOf(Type))
 
 
-static inline XClass _Nullable _XRefGetClassWithCompressedType(XCompressedType id) {
+static inline const _XType_s * _Nullable _XRefGetClassWithCompressedType(XCompressedType id) {
     if (id <= 0 || id > XCompressedTypeMax) {
         return NULL;
     } else {
-        return (XClass)&(_XClassTable[id - 1]);
+        return &(_XClassTable[id + X_BUILD_CompressedTypeIdMin - 1]);
     }
 }
 

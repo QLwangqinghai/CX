@@ -14,10 +14,8 @@ const XCompressedType XCompressedTypeNone = 0;
 const XCompressedType XCompressedTypeNumber = X_BUILD_CompressedType_Number;
 const XCompressedType XCompressedTypeString = X_BUILD_CompressedType_String;
 const XCompressedType XCompressedTypeData = X_BUILD_CompressedType_Data;
-#if BUILD_TARGET_RT_64_BIT
 const XCompressedType XCompressedTypeDate = X_BUILD_CompressedType_Date;
 const XCompressedType XCompressedTypeValue = X_BUILD_CompressedType_Value;
-#endif
 const XCompressedType XCompressedTypePackage = X_BUILD_CompressedType_Package;
 const XCompressedType XCompressedTypeWeakStorage = X_BUILD_CompressedType_WeakStorage;
 const XCompressedType XCompressedTypeArray = X_BUILD_CompressedType_Array;
@@ -52,7 +50,6 @@ const XCompressedType XCompressedTypeMax = X_BUILD_CompressedTypeIdMax - X_BUILD
 }
 
 
-#if BUILD_TARGET_RT_64_BIT
 const _XTypeIdentifier_s _XTypeIdentifierTable[] __attribute__((aligned(64))) = {
     //ConstantType
     _XTypeIdentifierMakeValue(Class),
@@ -75,45 +72,14 @@ const _XTypeIdentifier_s _XTypeIdentifierTable[] __attribute__((aligned(64))) = 
     _XTypeIdentifierMakeRootObject(Object),
 };
 
-#else
-
-//_XPackage _XArray _XMap _XSet
-
-const _XTypeIdentifier_s _XTypeIdentifierTable[] __attribute__((aligned(64))) = {
-    //ConstantType
-    _XTypeIdentifierMakeValue(Class),
-    _XTypeIdentifierMakeValue(Null),
-    _XTypeIdentifierMakeValue(Boolean),
-    
-    //CompressedType (Compressed·Value, Compressed·Object)
-    _XTypeIdentifierMakeValue(Number),
-    _XTypeIdentifierMakeValue(String),
-    _XTypeIdentifierMakeValue(Data),
-    _XTypeIdentifierMakeRootObject(Package),
-    _XTypeIdentifierMakeRootObject(WeakStorage),
-    _XTypeIdentifierMakeRootObject(Array),
-    _XTypeIdentifierMakeRootObject(Storage),
-    _XTypeIdentifierMakeRootObject(Map),
-    _XTypeIdentifierMakeRootObject(Set),
-    
-    //NormalType
-    _XTypeIdentifierMakeValue(Date),
-    _XTypeIdentifierMakeValue(Value),
-    
-    _XTypeIdentifierMakeRootObject(Object),
-};
-
-
-#endif
-
 
 const XClassIdentifier _Nonnull XMateClassIdentifier = (XClassIdentifier)&(_XTypeIdentifierTable[X_BUILD_TypeId_Class]);
 
 //这是一个常量
 const _XType_s _XRootMetaClassStorage __attribute__((aligned(8))) = {
     ._runtime = {
+        .rcInfo = ATOMIC_VAR_INIT(X_BUILD_RcMax),
         .typeInfo = ATOMIC_VAR_INIT((uintptr_t)&_XRootMetaClassStorage),
-        .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),
     },
     .base = {
         .identifier = &_XTypeIdentifierTable[0],
@@ -130,7 +96,7 @@ const _XType_s _XRootMetaClassStorage __attribute__((aligned(8))) = {
 const _XType_s _XMetaClassStorage __attribute__((aligned(8))) = {
     ._runtime = {
         .typeInfo = ATOMIC_VAR_INIT((uintptr_t)&_XRootMetaClassStorage),
-        .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),
+        .rcInfo = ATOMIC_VAR_INIT(X_BUILD_RcMax),
     },
     .base = {
         .identifier = &_XTypeIdentifierTable[0],
@@ -144,29 +110,10 @@ const _XType_s _XMetaClassStorage __attribute__((aligned(8))) = {
     },
 };
 
-//#define _XClassMakeConstant(kind, Type) \
-//{\
-//._runtime = {\
-//.rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
-//.typeInfo = (uintptr_t)&_XRootMetaClassStorage,\
-//},\
-//.base = {\
-//.identifier = &_XTypeIdentifierTable[X_BUILD_TypeId_##Type],\
-//.kind = X_BUILD_TypeKind ##kind,\
-//.xx = 0,\
-//.domain = 0,\
-//.tableSize = 0,\
-//.super = (uintptr_t)NULL,\
-//.allocator = &_XConstantValueAllocator,\
-//.deinit = NULL,\
-//.describe = NULL,\
-//},\
-//}
-
 #define _XClassMake(Type, allocatorKind, typeKind) \
 {\
 ._runtime = {\
-.rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
+.rcInfo = ATOMIC_VAR_INIT(X_BUILD_RcMax),\
 .typeInfo = (uintptr_t)&_XRootMetaClassStorage,\
 },\
 .base = {\
@@ -186,189 +133,15 @@ const _XType_s _XMetaClassStorage __attribute__((aligned(8))) = {
 #define _XClassMakeConstantValue(Type) _XClassMake(Type, ConstantValue, Value)
 
 
-//#define _XClassMakeConstantValue(Type) \
-//{\
-//._runtime = {\
-//.rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
-//.typeInfo = (uintptr_t)&_XRootMetaClassStorage,\
-//},\
-//.base = {\
-//.identifier = &_XTypeIdentifierTable[X_BUILD_TypeId_##Type],\
-//.kind = X_BUILD_TypeKindValue,\
-//.xx = 0,\
-//.domain = 0,\
-//.tableSize = 0,\
-//.super = (uintptr_t)NULL,\
-//.allocator = &_XConstantValueAllocator,\
-//.deinit = NULL,\
-//.describe = NULL,\
-//},\
-//}
-
 #define _XClassMakeCompressedValue(Type) _XClassMake(Type, CompressedValue, Value)
 
 
-//#define _XClassMakeCompressedValue(Type) \
-//{\
-//._runtime = {\
-//.rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
-//.typeInfo = (uintptr_t)&_XRootMetaClassStorage,\
-//},\
-//.base = {\
-//.identifier = &_XTypeIdentifierTable[X_BUILD_TypeId_##Type],\
-//.kind = X_BUILD_TypeKindValue,\
-//.xx = 0,\
-//.domain = 0,\
-//.tableSize = 0,\
-//.super = (uintptr_t)NULL,\
-//.allocator = &_XCompressedObjectAllocator,\
-//.deinit = NULL,\
-//.describe = NULL,\
-//},\
-//}
-
 #define _XClassMakeCompressedObject(Type) _XClassMake(Type, CompressedObject, Object)
-
-//#define _XClassMakeCompressedObject(Type) \
-//{\
-//._runtime = {\
-//.rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
-//.typeInfo = (uintptr_t)&_XRootMetaClassStorage,\
-//},\
-//.base = {\
-//.identifier = &_XTypeIdentifierTable[X_BUILD_TypeId_##Type],\
-//.kind = X_BUILD_TypeKindObject,\
-//.xx = 0,\
-//.domain = 0,\
-//.tableSize = 0,\
-//.super = (uintptr_t)NULL,\
-//.allocator = &_XCompressedObjectAllocator,\
-//.deinit = NULL,\
-//.describe = NULL,\
-//},\
-//}
 
 
 #define _XClassMakeValue(Type) _XClassMake(Type, Object, Value)
 
 #define _XClassMakeObject(Type) _XClassMake(Type, Object, Object)
-
-//#define _XClassMakeValue(Type) \
-//{\
-//._runtime = {\
-//.rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
-//.typeInfo = (uintptr_t)&_XRootMetaClassStorage,\
-//},\
-//.base = {\
-//.identifier = &_XTypeIdentifierTable[X_BUILD_TypeId_##Type],\
-//.kind = X_BUILD_TypeKindValue,\
-//.xx = 0,\
-//.domain = 0,\
-//.tableSize = 0,\
-//.super = (uintptr_t)NULL,\
-//.allocator = &_XObjectAllocator,\
-//.deinit = NULL,\
-//.describe = NULL,\
-//},\
-//}
-
-//#define _XClassMakeObject(Type) \
-//{\
-//._runtime = {\
-//.rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
-//.typeInfo = (uintptr_t)&_XRootMetaClassStorage,\
-//},\
-//.base = {\
-//.identifier = &_XTypeIdentifierTable[X_BUILD_TypeId_##Type],\
-//.kind = X_BUILD_TypeKindObject,\
-//.xx = 0,\
-//.domain = 0,\
-//.tableSize = 0,\
-//.super = (uintptr_t)NULL,\
-//.allocator = &_XObjectAllocator,\
-//.deinit = NULL,\
-//.describe = NULL,\
-//},\
-//}
-
-
-
-
-
-#define _XConstantValueClassMakeWithKind(Type, kind) \
-{\
-._runtime = {\
-.typeInfo = (uintptr_t)&_XRootMetaClassStorage,\
-.rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
-},\
-.base = {\
-.identifier = &_XTypeIdentifierTable[X_BUILD_TypeIdentifier_##Type],\
-.kind = X_BUILD_TypeKind##kind,\
-.xx = 0,\
-.domain = 0,\
-.tableSize = 0,\
-.super = (uintptr_t)NULL,\
-.allocator = &_XConstantValueAllocator,\
-.deinit = NULL,\
-.describe = NULL,\
-},\
-}
-
-#define _XConstantValueClassMake(Type) \
-{\
-._runtime = {\
-.typeInfo = (uintptr_t)&_XRootMetaClassStorage,\
-.rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
-},\
-.base = {\
-.identifier = &_XTypeIdentifierTable[X_BUILD_TypeIdentifier_##Type],\
-.kind = X_BUILD_TypeKindValue,\
-.xx = 0,\
-.domain = 0,\
-.tableSize = 0,\
-.super = (uintptr_t)NULL,\
-.allocator = &_XConstantValueAllocator,\
-.deinit = NULL,\
-.describe = NULL,\
-},\
-}
-
-#define _XValueClassMake(kind, Type) \
-{\
-._runtime = {\
-.typeInfo = (uintptr_t)&_XRootMetaClassStorage,\
-.rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
-},\
-.base = {\
-.identifier = &_XTypeIdentifierTable[X_BUILD_TypeId_##Type],\
-.kind = X_BUILD_TypeKind##kind,\
-.domain = 0,\
-.tableSize = 0,\
-.super = NULL,\
-.allocator = &_XObjectAllocator,\
-.deinit = NULL,\
-.describe = NULL,\
-},\
-}
-
-#define _XCompressedValueClassMake(Type) \
-{\
-._runtime = {\
-.typeInfo = (uintptr_t)&_XRootMetaClassStorage,\
-.rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
-},\
-.base = {\
-.identifier = &_XTypeIdentifierTable[X_BUILD_TypeId_##Type],\
-.kind = X_BUILD_TypeKindValue,\
-.xx = 0,\
-.domain = 0,\
-.tableSize = 0,\
-.super = (uintptr_t)NULL,\
-.allocator = &_XCompressedObjectAllocator,\
-.deinit = NULL,\
-.describe = NULL,\
-},\
-}
 
 //Value = 1;
 //Object = 2;
@@ -377,7 +150,6 @@ const _XType_s _XMetaClassStorage __attribute__((aligned(8))) = {
 
 
 
-#if BUILD_TARGET_RT_64_BIT
 const _XType_s _XClassTable[] __attribute__((aligned(64))) = {
     //ConstantType
     _XClassMakeConstantMetaClass(Class),
@@ -397,35 +169,10 @@ const _XType_s _XClassTable[] __attribute__((aligned(64))) = {
     _XClassMakeCompressedObject(Map),
     _XClassMakeCompressedObject(Set),
     //NormalType
-};
-#else
 
-//_XPackage _XArray _XMap _XSet
-
-const _XType_s _XClassTable[] __attribute__((aligned(64))) = {
-    //ConstantType
-    _XClassMakeConstantMetaClass(Class),
-    _XClassMakeConstantValue(Null),
-    _XClassMakeConstantValue(Boolean),
-
-    //CompressedType
-    _XClassMakeCompressedValue(Number),
-    _XClassMakeCompressedValue(String),
-    _XClassMakeCompressedValue(Data),
-    _XClassMakeCompressedObject(Package),
-    _XClassMakeCompressedObject(WeakStorage),
-    _XClassMakeCompressedObject(Array),
-    _XClassMakeCompressedObject(Storage),
-    _XClassMakeCompressedObject(Map),
-    _XClassMakeCompressedObject(Set),
-    
-    //NormalType
-    _XClassMakeValue(Date),
-    _XClassMakeValue(Value),
+    _XClassMakeCompressedObject(Object),
 };
 
-
-#endif
 
 extern XCompressedType XCompressedTypeOfClass(XClass _Nonnull cls) {
     uintptr_t base = (uintptr_t)(&(_XClassTable[0]));

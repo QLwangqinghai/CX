@@ -14,6 +14,27 @@
 #include "internal/XClass.h"
 
 
+#define X_BUILD_Float32MantissaMask 0x7FFFFFUL
+#define X_BUILD_Float64MantissaMask 0xFFFFFFFFFFFFFULL
+
+#define X_BUILD_Float32MantissaBitsCount 23UL
+#define X_BUILD_Float64MantissaBitsCount 52ULL
+
+#define X_BUILD_Float32BaseMask 0xFF800000UL
+#define X_BUILD_Float64BaseMask 0xFFF0000000000000ULL
+
+#define X_BUILD_Float32BaseBitsCount 9UL
+#define X_BUILD_Float64BaseBitsCount 12ULL
+
+/*
+ 符号位(Sign) : 0代表正，1代表为负
+ 指数位（Exponent）:用于存储科学计数法中的指数数据，并且采用移位存储 float(8) double(11)
+ 尾数部分（Mantissa）：尾数部分 float(23) double(52)
+
+ 9/12
+ 15, full / 12, 44
+ */
+
 /*
  TaggedNumber32
 
@@ -31,12 +52,12 @@
 /*
  TaggedNumber64
 
- refType: 2, value = 1
- taggedContent: 61 {
+ refType: 1, value = 1
+ taggedContent: 62 {
     class: 2
-    objectContent: 59 {
+    objectContent: 60 {
         numberType: 4
-        numberContent: 55
+        numberContent: 56
     }
  }
  flag: 1, value = 1
@@ -48,28 +69,38 @@
 #if BUILD_TARGET_RT_64_BIT
 
 #define X_BUILD_TaggedNumberNumberTypeMask 0xF00000000000000ULL
-#define X_BUILD_TaggedNumberNumberTypeShift 56ULL
+#define X_BUILD_TaggedNumberSubtypeShift 57ULL
+#define X_BUILD_TaggedNumberContentBitsCount 56ULL
 
-#define X_BUILD_TaggedNumberSIntMax  0x3FFFFFFFFFFFFFULL
-#define X_BUILD_TaggedNumberSIntMin -0x40000000000000ULL
+#define X_BUILD_TaggedNumberSIntMax  0x7FFFFFFFFFFFFFLL
+#define X_BUILD_TaggedNumberSIntMin -0x80000000000000LL
 
-#define X_BUILD_TaggedNumberUIntMax  0x7FFFFFFFFFFFFFULL
-#define X_BUILD_TaggedNumberContentMask  0x7FFFFFFFFFFFFFULL
-#define X_BUILD_TaggedNumberContentSignBit  0x40000000000000ULL
-#define X_BUILD_TaggedNumberContentSignHigh  0xFF80000000000000ULL
+#define X_BUILD_TaggedNumberUIntMax  0xFFFFFFFFFFFFFFULL
+#define X_BUILD_TaggedNumberContentMask  0xFFFFFFFFFFFFFFULL
+#define X_BUILD_TaggedNumberContentSignBit  0x80000000000000ULL
+#define X_BUILD_TaggedNumberContentSignHigh  0xFF00000000000000ULL
+
+
+#define X_BUILD_TaggedNumberFloat64Mask  0xFFFFFFFFFFFULL
+
 
 #else
 
 #define X_BUILD_TaggedNumberNumberTypeMask 0x1E000000UL
-#define X_BUILD_TaggedNumberNumberTypeShift 25UL
-#define X_BUILD_TaggedNumberContentSignBit  0x400000ULL
-#define X_BUILD_TaggedNumberContentSignHigh  0xFF800000UL
+#define X_BUILD_TaggedNumberSubtypeShift 25UL
+#define X_BUILD_TaggedNumberContentBitsCount 24UL
 
 #define X_BUILD_TaggedNumberSIntMax  0x7FFFFFL
 #define X_BUILD_TaggedNumberSIntMin -0x800000L
 
 #define X_BUILD_TaggedNumberUIntMax  0xFFFFFFUL
 #define X_BUILD_TaggedNumberContentMask  0xFFFFFFUL
+
+#define X_BUILD_TaggedNumberContentSignBit  0x800000ULL
+#define X_BUILD_TaggedNumberContentSignHigh  0xFF000000UL
+
+#define X_BUILD_TaggedNumberFloat32Mask  0x7FFFUL
+#define X_BUILD_TaggedNumberFloat64Mask  0xFFFULL
 
 
 #endif
@@ -99,12 +130,12 @@ typedef union {
     XSInt64 s;
     XUInt64 u;
     XFloat64 f;
-} _XNumberBits_u;
+} _XNumberValue_u;
 
 typedef struct {
     XNumberType type;
     XUInt32 xx;
-    _XNumberBits_u bits;
+    _XNumberValue_u bits;
 } _XNumberStruct;
 
 
@@ -412,27 +443,14 @@ static void cvtFloat64ToSInt128(XSInt128Struct *out, const XFloat64 *in) {
 
 static inline XNumber _Nullable ___XNumberMakeSInt(XNumberType type, XSInt64 value, const char * _Nonnull func) {
     if (X_BUILD_TaggedNumberSIntMin <= value && value <= X_BUILD_TaggedNumberSIntMax) {
-    #if BUILD_TARGET_RT_64_BIT
-        XSInt64 v = value;
-        XUInt64 tmp = *(XUInt64 *)(&v);
-        XUInt64 content = (tmp & X_BUILD_TaggedNumberContentMask) << 1;
-        XUInt64 typeFlag = type;
-        typeFlag = typeFlag << X_BUILD_TaggedNumberNumberTypeShift;
-        XUInt64 result = X_BUILD_TaggedObjectFlag | X_BUILD_TaggedObjectClassNumber | typeFlag | content;
+        XSInt v = (XSInt)value;
+        XUInt tmp = *(XUInt *)(&v);
+        XUInt content = (tmp & X_BUILD_TaggedNumberContentMask) << X_BUILD_TaggedObjectContentShift;
+        XUInt typeFlag = type;
+        typeFlag = typeFlag << X_BUILD_TaggedNumberSubtypeShift;
+        XUInt result = X_BUILD_TaggedObjectFlag | X_BUILD_TaggedObjectClassNumber | typeFlag | content;
         XNumber ref = (XNumber)((uintptr_t)result);
-        XAssert((XUInt64)((uintptr_t)ref) == result, func, "unknown error");
         return ref;
-    #else
-        XSInt32 v = (XSInt32)value;
-        XUInt32 tmp = *(XUInt32 *)(&v);
-        XUInt32 content = (tmp & X_BUILD_TaggedNumberContentMask) << 1;
-        XUInt32 typeFlag = type;
-        typeFlag = typeFlag << X_BUILD_TaggedNumberNumberTypeShift;
-        XUInt32 result = X_BUILD_TaggedObjectFlag | X_BUILD_TaggedObjectClassNumber | typeFlag | content;
-        XNumber ref = (XNumber)((uintptr_t)result);
-        XAssert((XUInt32)((uintptr_t)ref) == result, func, "unknown error");
-        return ref;
-    #endif
     } else {
         return NULL;
     }
@@ -440,23 +458,12 @@ static inline XNumber _Nullable ___XNumberMakeSInt(XNumberType type, XSInt64 val
 
 static inline  XNumber _Nullable ___XNumberMakeUInt(XNumberType type, XUInt64 value, const char * _Nonnull func) {
     if (value <= X_BUILD_TaggedNumberUIntMax) {
-    #if BUILD_TARGET_RT_64_BIT
-        XUInt64 content = value << 1ULL;
-        XUInt64 typeFlag = type;
-        typeFlag = typeFlag << X_BUILD_TaggedNumberNumberTypeShift;
-        XUInt64 result = X_BUILD_TaggedObjectFlag | X_BUILD_TaggedObjectClassNumber | typeFlag | content;
+        XUInt content = value << X_BUILD_TaggedObjectContentShift;
+        XUInt typeFlag = type;
+        typeFlag = typeFlag << X_BUILD_TaggedNumberSubtypeShift;
+        XUInt result = X_BUILD_TaggedObjectFlag | X_BUILD_TaggedObjectClassNumber | typeFlag | content;
         XNumber ref = (XNumber)((uintptr_t)result);
-        XAssert((XUInt64)((uintptr_t)ref) == result, func, "unknown error");
         return ref;
-    #else
-        XUInt32 content = (XUInt32)(value << 1);
-        XUInt32 typeFlag = type;
-        typeFlag = typeFlag << X_BUILD_TaggedNumberNumberTypeShift;
-        XUInt32 result = X_BUILD_TaggedObjectFlag | X_BUILD_TaggedObjectClassNumber | typeFlag | content;
-        XNumber ref = (XNumber)((uintptr_t)result);
-        XAssert((XUInt32)((uintptr_t)ref) == result, func, "unknown error");
-        return ref;
-    #endif
     } else {
         return NULL;
     }
@@ -511,45 +518,76 @@ static XNumber _Nonnull __XNumberCreateUInt64(XNumberType type, XUInt64 value, c
 }
 
 #if BUILD_TARGET_RT_64_BIT
-static inline XNumber _Nonnull ___XNumberMakeFloat32(XNumberType type, XFloat32 value, const char * _Nonnull func) {
+static inline XNumber _Nullable ___XNumberMakeFloat32(XFloat32 value, const char * _Nonnull func) {
     XUInt32 tmp = *(XUInt32 *)(&value);
     XUInt64 content = tmp;
-    XUInt64 typeFlag = type;
-    typeFlag = typeFlag << 58;
-    XUInt64 result = 0xE000000000000001ULL | (content << 1) | typeFlag;
+    XUInt64 typeFlag = XNumberTypeFloat32;
+    typeFlag = typeFlag << X_BUILD_TaggedNumberSubtypeShift;
+    XUInt64 result = X_BUILD_TaggedObjectFlag | X_BUILD_TaggedObjectClassNumber | typeFlag | (content << X_BUILD_TaggedObjectContentShift);
     XNumber ref = (XNumber)((uintptr_t)result);
-    XAssert((XUInt64)((uintptr_t)ref) == result, func, "unknown error");
+    return ref;
+}
+#else
+
+static inline XNumber _Nullable ___XNumberMakeFloat32(XFloat32 value, const char * _Nonnull func) {
+    XUInt32 tmp = *(XUInt32 *)(&value);
+    XUInt32 mantissa = tmp & X_BUILD_Float32MantissaBitsCount;
+    XUInt32 submantissa = mantissa & X_BUILD_TaggedNumberFloat32Mask;
+
+    if (submantissa != mantissa) {
+        return NULL;
+    }
+    
+    XUInt32 base = tmp & X_BUILD_Float32BaseMask;
+    base = base >> (X_BUILD_Float32MantissaBitsCount - X_BUILD_TaggedNumberContentBitsCount + X_BUILD_Float32BaseBitsCount);
+    XUInt32 content32 = base | submantissa;
+    XUInt content = (XUInt)content32;
+    XUInt typeFlag = XNumberTypeFloat32;
+    typeFlag = typeFlag << X_BUILD_TaggedNumberSubtypeShift;
+    XUInt result = X_BUILD_TaggedObjectFlag | X_BUILD_TaggedObjectClassNumber | typeFlag | (content << X_BUILD_TaggedObjectContentShift);
+    XNumber ref = (XNumber)((uintptr_t)result);
     return ref;
 }
 #endif
+static inline XNumber _Nullable ___XNumberMakeFloat64(XFloat64 value, const char * _Nonnull func) {
+    XUInt64 tmp = *(XUInt64 *)(&value);
+    XUInt64 mantissa = tmp & X_BUILD_Float64MantissaBitsCount;
+    XUInt64 submantissa = mantissa & X_BUILD_TaggedNumberFloat64Mask;
 
-XNumber _Nonnull __XNumberCreateFloat32(XNumberType type, XFloat32 value, const char * _Nonnull func) {
-#if BUILD_TARGET_RT_64_BIT
-    return ___XNumberMakeFloat32(type, value, func);
-#else
-    _XNumberBits32_u bits = {};
-    bits.f = value;
-    return __XNumberCreate32(type, bits, func);
+    if (submantissa != mantissa) {
+        return NULL;
+    }
+    
+    XUInt64 base = tmp & X_BUILD_Float64BaseMask;
+    base = base >> (X_BUILD_Float64MantissaBitsCount - X_BUILD_TaggedNumberContentBitsCount + X_BUILD_Float64BaseBitsCount);
+    XUInt64 content64 = base | submantissa;
 
-#endif
+    XUInt content = (XUInt)content64;
+    XUInt typeFlag = XNumberTypeFloat64;
+    typeFlag = typeFlag << X_BUILD_TaggedNumberSubtypeShift;
+    XUInt result = X_BUILD_TaggedObjectFlag | X_BUILD_TaggedObjectClassNumber | typeFlag | (content << X_BUILD_TaggedObjectContentShift);
+    XNumber ref = (XNumber)((uintptr_t)result);
+    return ref;
 }
 
-XNumber _Nonnull __XNumberCreateFloat64(XNumberType type, XFloat64 value, const char * _Nonnull func) {
-#if BUILD_TARGET_RT_64_BIT
-    if (isnan(value)) {
-        XFloat32 f32 = _XNumberBits32Nan.f;
-        return ___XNumberMakeFloat32(type, f32, func);
-    } else {
-        XFloat32 f32 = (XFloat32)value;
-        XFloat64 f64 = (XFloat64)f32;
-        if (value == f64) {
-            return ___XNumberMakeFloat32(type, f32, func);
-        }
+XNumber _Nullable __XNumberCreateFloat32(XNumberType type, XFloat32 value, const char * _Nonnull func) {
+    XNumber result = ___XNumberMakeFloat32(value, func);
+    if (NULL == result) {
+        _XNumberBits32_u bits = {};
+        bits.u = value;
+        result = __XNumberCreate32(type, bits, func);
     }
-#endif
-    _XNumberBits64_u bits = {};
-    bits.f = value;
-    return __XNumberCreate64(type, bits, func);
+    return result;
+}
+
+XNumber _Nullable __XNumberCreateFloat64(XNumberType type, XFloat64 value, const char * _Nonnull func) {
+    XNumber result = ___XNumberMakeFloat64(value, func);
+    if (NULL == result) {
+        _XNumberBits64_u bits = {};
+        bits.f = value;
+        result = __XNumberCreate64(type, bits, func);
+    }
+    return result;
 }
 
 
@@ -635,58 +673,72 @@ static _XNumber * _Nonnull __XRefAsNumber(XNumber _Nonnull ref, const char * _No
 #if BUILD_TARGET_RT_64_BIT
     __unused
 #endif
-    XClass info = _XRefGetUnpackedType(ref, &compressedType, func);
-    
-#if BUILD_TARGET_RT_64_BIT
+    const _XType_s * type = _XHeapRefGetClass(ref, &compressedType, func);
     XAssert(XCompressedTypeNumber == compressedType, func, "not Number instance");
     return (_XNumber *)ref;
-#else
-    const _XType_s * type = (const _XType_s *)info;
-    XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Number - 1].base.identifier, func, "not Number instance");
-    return (_XNumber *)ref;
-
-#endif
 }
 
 
 void __XNumberUnpack(XNumber _Nonnull ref, _XNumberStruct * _Nonnull ptr, const char * _Nonnull func) {
     _XNumberStruct content = {};
-#if BUILD_TARGET_RT_64_BIT
-    XUInt64 v = (XUInt64)((uintptr_t)ref);
+    XUInt v = (XUInt)((uintptr_t)ref);
     if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
-        XUInt64 clsId = v & X_BUILD_TaggedObjectClassMask;
+        XUInt clsId = v & X_BUILD_TaggedObjectClassMask;
         XAssert(X_BUILD_TaggedObjectClassNumber == clsId, func, "not Number instance");
-        content.type = (XNumberType)((v >> X_BUILD_TaggedNumberNumberTypeShift) & 0xf);
+        content.type = (XNumberType)((v >> X_BUILD_TaggedNumberSubtypeShift) & 0xf);
         switch (content.type) {
             case XNumberTypeSInt8:
             case XNumberTypeSInt16:
             case XNumberTypeSInt32:
             case XNumberTypeSInt64: {
-                XUInt64 tmp = (v >> 1) & X_BUILD_TaggedNumberContentMask;
-                XUInt64 bits = 0;
+                XUInt tmp = (v >> X_BUILD_TaggedObjectContentShift) & X_BUILD_TaggedNumberContentMask;
+                XUInt bits = 0;
                 if (tmp & X_BUILD_TaggedNumberContentSignBit) {
                     bits = X_BUILD_TaggedNumberContentSignHigh | tmp;
                 } else {
                     bits = tmp;
                 }
-                XSInt64 number = *(XSInt64 *)(&bits);
-                content.bits.s = number;
+                XSInt number = *(XSInt *)(&bits);
+                XSInt64 s = number;
+                content.bits.s = s;
             }
                 break;
             case XNumberTypeUInt8:
             case XNumberTypeUInt16:
             case XNumberTypeUInt32:
             case XNumberTypeUInt64: {
-                XUInt64 number = (v >> 1) & X_BUILD_TaggedNumberContentMask;
-                content.bits.u = number;
+                XUInt number = (v >> X_BUILD_TaggedObjectContentShift) & X_BUILD_TaggedNumberContentMask;
+                XUInt64 u = number;
+                content.bits.u = u;
             }
                 break;
-            case XNumberTypeFloat32:
+            case XNumberTypeFloat32: {
+                XUInt tmp = (v >> X_BUILD_TaggedObjectContentShift) & X_BUILD_TaggedNumberContentMask;
+                XUInt32 content32 = (XUInt32)tmp;
+
+#if BUILD_TARGET_RT_64_BIT
+                XFloat32 f32 = *(XFloat32 *)(&content32);
+                XFloat64 f64 = f32;
+                content.bits.f = f64;
+#else
+                XUInt32 base = (content32 << (XUIntBitsCount - X_BUILD_TaggedNumberContentBitsCount)) & X_BUILD_Float32BaseMask;
+                XUInt32 mantissa = content32 & X_BUILD_TaggedNumberFloat32Mask;
+                XUInt32 bit32 = (base | mantissa);
+                XFloat32 f32 = *(XFloat32 *)(&bits32);
+                XFloat64 f64 = f32;
+                content.bits.f = f64;
+#endif
+            }
+                break;
             case XNumberTypeFloat64: {
-                XUInt32 tmp = (XUInt32)((v >> 1) & 0xFFFFFFFFU);
-                XFloat32 f = *(XFloat32 *)(&tmp);
-                XFloat64 number = (XFloat64)f;
-                content.bits.f = number;
+                XUInt tmp = (v >> X_BUILD_TaggedObjectContentShift) & X_BUILD_TaggedNumberContentMask;
+                XUInt64 content64 = (XUInt64)tmp;
+
+                XUInt64 base = (content64 << (XUIntBitsCount - X_BUILD_TaggedNumberContentBitsCount)) & X_BUILD_Float64BaseMask;
+                XUInt64 mantissa = content64 & X_BUILD_TaggedNumberFloat64Mask;
+                XUInt64 bits64 = (base | mantissa);
+                XFloat64 f64 = *(XFloat64 *)(&bits64);
+                content.bits.f = f64;
             }
                 break;
             default: {
@@ -694,48 +746,7 @@ void __XNumberUnpack(XNumber _Nonnull ref, _XNumberStruct * _Nonnull ptr, const 
             }
                 break;
         }
-    } else
-#else
-    if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
-        XUInt32 clsId = v & X_BUILD_TaggedObjectClassMask;
-        XAssert(X_BUILD_TaggedObjectClassNumber == clsId, func, "not Number instance");
-        content.type = (XNumberType)((v >> X_BUILD_TaggedNumberNumberTypeShift) & 0xf);
-        switch (contentOfLhs.type) {
-            case XNumberTypeSInt8:
-            case XNumberTypeSInt16:
-            case XNumberTypeSInt32:
-            case XNumberTypeSInt64: {
-                XUInt32 tmp = (v >> 1) & X_BUILD_TaggedNumberContentMask;
-                XUInt32 bits = 0;
-                if (tmp & X_BUILD_TaggedNumberContentSignBit) {
-                    bits = X_BUILD_TaggedNumberContentSignHigh | tmp;
-                } else {
-                    bits = tmp;
-                }
-                XSInt32 number = *(XSInt32 *)(&bits);
-                content.bits.s = (XSInt64)number;
-            }
-                break;
-            case XNumberTypeUInt8:
-            case XNumberTypeUInt16:
-            case XNumberTypeUInt32:
-            case XNumberTypeUInt64: {
-                XUInt32 tmp = (v >> 1) & X_BUILD_TaggedNumberContentMask;
-                XUInt64 number = tmp;
-                content.bits.u = number;
-            }
-                break;
-            case XNumberTypeFloat32:
-            case XNumberTypeFloat64:
-            default: {
-                XAssert(false, func, );
-            }
-                break;
-        }
-    } else
-
-#endif
-    {
+    } else {
         _XNumber * obj = __XRefAsNumber(ref, func);
         _XNumberContent_t * ncontent = &(obj->content);
         content.type = ncontent->type;

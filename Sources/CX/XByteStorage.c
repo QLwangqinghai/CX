@@ -144,10 +144,10 @@ void _XBufferRelease(_XBuffer * _Nonnull buffer) {
  TaggedObject64
 
  refType: 2, value = 1
- taggedContent: 61 {
+ taggedContent: 62 {
     class: 2
-    objectContent: 59 {
-       len: 3
+    objectContent: 50 {
+       len: 4
        content: 56
    }
  }
@@ -156,7 +156,7 @@ void _XBufferRelease(_XBuffer * _Nonnull buffer) {
 
 #if BUILD_TARGET_RT_64_BIT
 #define X_BUILD_TaggedByteStorageContentMask 0xFFFFFFFFFFFFFFULL
-#define X_BUILD_TaggedByteStorageContentLengthMask 0x7ULL
+#define X_BUILD_TaggedByteStorageContentLengthMask 0xfULL
 #define X_BUILD_TaggedByteStorageContentLengthShift 57ULL
 #define X_BUILD_TaggedByteStorageContentLengthMax 0x7UL
 #else
@@ -316,9 +316,8 @@ static _XByteStorage * _Nonnull __XRefAsByteStorage(XRef _Nonnull ref, XBool * _
 #if BUILD_TARGET_RT_64_BIT
     __unused
 #endif
-    XClass info = _XRefGetUnpackedType(ref, &compressedType, func);
+    const _XType_s * type = _XHeapRefGetClass(ref, &compressedType, func);
     
-#if BUILD_TARGET_RT_64_BIT
     if (XCompressedTypeString == compressedType) {
         *isString = true;
     } else if (XCompressedTypeData == compressedType) {
@@ -327,18 +326,6 @@ static _XByteStorage * _Nonnull __XRefAsByteStorage(XRef _Nonnull ref, XBool * _
         XAssert(false, func, desc);
     }
     return (_XByteStorage *)ref;
-#else
-    const _XType_s * type = (const _XType_s *)info;
-    
-    if (type->base.identifier == _XClassTable[X_BUILD_CompressedType_String - 1].base.identifier) {
-        *isString = true;
-    } else if (type->base.identifier == _XClassTable[X_BUILD_CompressedType_Data - 1].base.identifier) {
-        *isString = false;
-    } else {
-        XAssert(false, func, desc);
-    }
-    return (_XByteStorage *)ref;
-#endif
 }
 
 XByteStorageUnpacked_t _XByteStorageUnpack(XPtr _Nonnull ref, const char * _Nonnull func, const char * _Nonnull desc) {

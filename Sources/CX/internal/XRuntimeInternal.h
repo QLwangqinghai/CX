@@ -58,24 +58,13 @@ flag: 1, value = 1
 
 /*
  TaggedObject64
- refType: 2, value = 1
- taggedContent: 61 {
+ refType: 1, value = 1
+ taggedContent: 62 {
     class: 2
-    objectContent: 59
+    objectContent: 60
  }
  flag: 1, value = 1
 */
-
-
-/*
- TaggedIsa64
- refType: 2, value = 2
- taggedContent: 61 {
-    isa: 6
-    counter: 55
- }
- flag: 1, value = 1
- */
 
 
 /*
@@ -83,16 +72,11 @@ flag: 1, value = 1
  XObjectFlagNoRc
  */
 
-
-//64bit 压缩的ObjectHeader flagBegin = 2
- /* flagBegin:2 type:6 rcInfo:55 flagEnd:1  */
-
 //64bit 压缩的StackObject flagBegin = 1
 /* flagBegin:2 type:6 rcInfo:55 flagEnd:1  */
 
 //32bit StackObject flagBegin = 1
 /* flagBegin:1 type:6 rcInfo:55 flagEnd:1  */
-
 
 // rc info
 /*
@@ -106,29 +90,22 @@ flag: 1, value = 1
 #define X_BUILD_TypeKindWeakableObject 0x3UL
 #define X_BUILD_TypeKindMetaClass 0xFUL
 
-    
+
 
 #if BUILD_TARGET_RT_64_BIT
 
-#define X_BUILD_ObjectRcMax 0xFFFFFFFFFFFFFFF0ULL
-
-#define X_BUILD_TaggedMask 0xC000000000000001ULL
+#define X_BUILD_TaggedMask 0x8000000000000001ULL
 #define X_BUILD_TaggedObjectFlag 0x8000000000000001ULL
 
-#define X_BUILD_TaggedObjectClassMask    0x3000000000000000ULL
-#define X_BUILD_TaggedObjectClassShift    60ULL
+#define X_BUILD_TaggedObjectClassMask    0x6000000000000000ULL
+#define X_BUILD_TaggedObjectClassShift    61ULL
 #define X_BUILD_TaggedObjectClassNumber   0x0ULL
-#define X_BUILD_TaggedObjectClassString  0x1000000000000000ULL
-#define X_BUILD_TaggedObjectClassData    0x2000000000000000ULL
-#define X_BUILD_TaggedObjectClassDate    0x3000000000000000ULL
-
-#define X_BUILD_TaggedObjectHeaderFlag  0x4000000000000001ULL
-#define X_BUILD_TaggedObjectHeaderClassMask    0x3F00000000000000ULL
-#define X_BUILD_TaggedObjectHeaderClassShift   56ULL
+#define X_BUILD_TaggedObjectClassString  0x2000000000000000ULL
+#define X_BUILD_TaggedObjectClassData    0x4000000000000000ULL
+#define X_BUILD_TaggedObjectClassDate    0x6000000000000000ULL
+#define X_BUILD_TaggedObjectContentShift 1ULL
 
 #else
-
-#define X_BUILD_ObjectRcMax 0xFFFFFFF0UL
 
 #define X_BUILD_TaggedMask 0x80000001UL
 #define X_BUILD_TaggedObjectFlag 0x80000001UL
@@ -139,13 +116,12 @@ flag: 1, value = 1
 #define X_BUILD_TaggedObjectClassString  0x20000000UL
 #define X_BUILD_TaggedObjectClassData    0x40000000UL
 #define X_BUILD_TaggedObjectClassDate    0x60000000UL
-
+#define X_BUILD_TaggedObjectContentShift 1UL
 
 #endif
 
 #define X_BUILD_TaggedObjectClassMax    X_BUILD_TaggedObjectClassDate
 
-#if BUILD_TARGET_RT_64_BIT
 
 typedef struct {
     _Atomic(XFastUInt) rcInfo;
@@ -156,35 +132,17 @@ typedef struct {
     _Atomic(uintptr_t) typeInfo;
 } _XObjectBase;
 
-//
-#define X_BUILD_TypeInfoConstantCompressed (uintptr_t)(0xC0FFFFFFFFFFFFE1ULL)
+#define X_BUILD_RcInfoConstantCompressed (X_BUILD_RcMax | X_BUILD_CompressedRcFlag)
 
-/* flagBegin:2 type:6 rcInfo:55 flagEnd:1  */
-#define _XConstantObjectCompressedBaseMake(type) {\
-    .rcInfo = ATOMIC_VAR_INIT((uintptr_t)(X_BUILD_TypeInfoConstantCompressed | (((type) & 0x3f) << 56))),\
+/* counter:.. type:6 compressedRcFlag:1  */
+#define _XConstantObjectCompressedBaseMake(typeId) {\
+    .rcInfo = ATOMIC_VAR_INIT((uintptr_t)(X_BUILD_RcInfoConstantCompressed | (typeId << X_BUILD_CompressedRcTypeShift))),\
 }
-
-#else
-
-typedef struct {
-    _Atomic(uintptr_t) typeInfo;
-    _Atomic(XFastUInt) rcInfo;
-} _XObjectCompressedBase;
-
-typedef _XObjectCompressedBase _XObjectBase;
-
-#define _XConstantObjectCompressedBaseMake(type) {\
-    .typeInfo = ATOMIC_VAR_INIT((uintptr_t)(type)),\
-    .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
-}
-
-#endif
 
 #define _XConstantObjectBaseMake(type) {\
+    .rcInfo = ATOMIC_VAR_INIT(X_BUILD_RcMax),\
     .typeInfo = ATOMIC_VAR_INIT((uintptr_t)(type)),\
-    .rcInfo = ATOMIC_VAR_INIT((X_BUILD_ObjectRcMax | X_BUILD_ObjectRcFlagReadOnly)),\
 }
-
 
 
 struct _XTypeIdentifier;
@@ -271,12 +229,24 @@ typedef union {
     XFloat64 f;
 } _XNumberBits64_u;
 
+typedef union {
+    _XNumberBits32_u bits32;
+    _XNumberBits64_u bits64;
+} _XNumberBits_u;
+
+
+#if BUILD_TARGET_RT_64_BIT
 typedef struct {
     XUInt32 type;
     _XNumberBits32_u bits32;
     XUInt8 extended[0];/* 可能有0、8、16 3种可能 */
 } _XNumberContent_t;
-
+#else
+typedef struct {
+    XUInt32 type;
+    _XNumberBits_u bits;
+} _XNumberContent_t;
+#endif
 
 typedef struct {
     _XObjectCompressedBase _runtime;
@@ -459,18 +429,12 @@ extern void _XWeakPackageRelease(_WeakStorage * _Nonnull weakStorage);
 
 
 //如果ref是个 TaggedObject 返回值有效，否则返回 XCompressedTypeNone
-extern XCompressedType _XRefGetTaggedObjectCompressedType(XRef _Nonnull ref);
+extern XTaggedType _XRefGetTaggedObjectTaggedType(XRef _Nonnull ref);
 
 extern const _XType_s * _Nullable _XRefGetTaggedObjectClass(XRef _Nonnull ref);
 
-//如果ref是个 CompressedObject 返回值有效，否则返回 XCompressedTypeNone
-extern _XType_s * _Nonnull _XRefGetUnpackedType(XRef _Nonnull ref, XCompressedType * _Nullable compressedType, const char * _Nonnull func);
-
-//如果ref是个 CompressedObject 返回值有效，否则返回 XCompressedTypeNone
-extern _XType_s * _Nonnull _XRefUnpackType(uintptr_t type, XCompressedType * _Nullable compressedType, const char * _Nonnull func);
-
-extern uintptr_t _XRefGetType(XRef _Nonnull ref);
-extern _XType_s * _Nonnull _XRefGetClass(XRef _Nonnull ref, const char * _Nonnull func);
+extern const _XType_s * _Nonnull _XHeapRefGetClass(XHeapRef _Nonnull ref, XCompressedType * _Nullable compressedType, const char * _Nonnull func);
+extern const _XType_s * _Nonnull _XRefGetClass(XRef _Nonnull ref, const char * _Nonnull func);
 
 extern XHashCode _XHashUInt64(XUInt64 i);
 extern XHashCode _XHashSInt64(XSInt64 i);

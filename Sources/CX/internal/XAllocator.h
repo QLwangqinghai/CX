@@ -74,14 +74,14 @@ extern "C" {
 
 typedef struct _XAllocator _XAllocator_s;
 
-typedef XPtr _Nonnull (*_XAllocate_f)(_XAllocatorPtr _Nonnull allocator, XSize size);
-typedef void (*_XDeallocate_f)(_XAllocatorPtr _Nonnull allocator, XPtr _Nonnull ptr);
+typedef XPtr _Nonnull (*_XMemoryAllocate_f)(_XAllocatorPtr _Nonnull allocator, XSize size);
+typedef void (*_XMemoryDeallocate_f)(_XAllocatorPtr _Nonnull allocator, XPtr _Nonnull ptr);
 
 struct _XAllocator {
     void * _Nullable context;
     XUInt headerSize;
-    _XAllocate_f _Nonnull allocate;
-    _XDeallocate_f _Nonnull deallocate;
+    _XMemoryAllocate_f _Nonnull allocate;
+    _XMemoryDeallocate_f _Nonnull deallocate;
     
     XRefAllocate_f _Nonnull allocateRef;
     XRefDeallocate_f _Nonnull deallocateRef;
@@ -96,18 +96,6 @@ extern const _XAllocator_s _XConstantClassAllocator;
 extern const _XAllocator_s _XConstantValueAllocator;
 
 
-
-/*
- _XCompressedValueClassMake(Number),
- _XCompressedValueClassMake(String),
- _XCompressedValueClassMake(Data),
- _XCompressedValueClassMake(Date),
- _XCompressedValueClassMake(Value),
- _XCompressedValueClassMake(Storage),
- _XCompressedValueClassMake(Array),
- _XCompressedValueClassMake(Map),
- _XCompressedValueClassMake(Set),
- */
 extern const _XAllocator_s _XCompressedObjectAllocator;
 extern const _XAllocator_s _XCompressedValueAllocator;
 

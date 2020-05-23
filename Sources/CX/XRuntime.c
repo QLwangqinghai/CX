@@ -25,8 +25,6 @@ _Static_assert(BUILD_TARGET_RT_64_BIT || BUILD_TARGET_RT_32_BIT, "unknown rt");
 
 _Static_assert(X_BUILD_ObjectRcFlagReadOnly == 1, "X_BUILD_ObjectRcFlagReadOnly must be 1");
 
-_Static_assert(X_BUILD_ObjectRcMax == (XUIntMax - 15), "X_BUILD_ObjectRcMax error");
-
 const XObjectRcFlag XObjectRcFlagReadOnly = 1;
 const XObjectRcFlag XObjectRcFlagStatic = 1 << 1;
 
@@ -59,6 +57,7 @@ XBool XDataEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
 XBool XValueEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
 
 
+
 //64bit 压缩的头
  /* flagBegin:3 type:6 (rcInfo54(flag:4 count:18+32)) flagEnd:1  */
 
@@ -68,11 +67,11 @@ XBool XValueEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {return false;};
 XRefKind XRefGetKind(XRef _Nonnull ref) {
     XAssert(NULL != ref, __func__, "ref is NULL");
 
-    XCompressedType compressedType = _XRefGetTaggedObjectCompressedType(ref);
+    XCompressedType compressedType = _XRefGetTaggedObjectTaggedType(ref);
     if (XCompressedTypeNone != compressedType) {
         return XRefKindInstance;
     }
-    const _XType_s * type = _XRefGetUnpackedType(ref, &compressedType, __func__);
+    const _XType_s * type = _XHeapRefGetClass(ref, &compressedType, __func__);
     assert(type);
     if (XTypeKindMetaClass == type->base.kind) {
         //ref 是一个类对象
@@ -117,9 +116,10 @@ XBool XRefIsMetaClass(XRef _Nonnull ref) {
 }
 
 
-uintptr_t _XRefGetType(XRef _Nonnull ref) {
-    _Atomic(uintptr_t) * tmp = (_Atomic(uintptr_t) *)ref;
-    uintptr_t info = atomic_load(tmp);
+XUInt _XRefGetRcInfo(XRef _Nonnull ref) {
+    _XObjectCompressedBase * obj = (_XObjectCompressedBase *)ref;
+    _Atomic(XFastUInt) * tmp = &(obj->rcInfo);
+    XFastUInt info = atomic_load(tmp);
     return info;
 }
 
@@ -135,44 +135,33 @@ const _XType_s * _Nullable _XRefGetTaggedObjectClass(XRef _Nonnull ref) {
 }
 
 
-XCompressedType _XRefGetTaggedObjectCompressedType(XRef _Nonnull ref) {
+XTaggedType _XRefGetTaggedObjectTaggedType(XRef _Nonnull ref) {
     XUInt v = (XUInt)((uintptr_t)ref);
     if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
         XUInt id = ((X_BUILD_TaggedObjectClassMask & v) >> X_BUILD_TaggedObjectClassShift);
         //id 只有4个值
-        return _XRefTaggedObjectClassTable[id];
+        return (XTaggedType)id;
     } else {
-        return XCompressedTypeNone;
+        return XUInt32Max;
     }
 }
 
-
-_XType_s * _Nonnull _XRefUnpackType(uintptr_t info, XCompressedType * _Nullable compressedTypePtr, const char * _Nonnull func) {
-    XAssert((uintptr_t)NULL != info, func, "not ref");
-#if BUILD_TARGET_RT_64_BIT
-    if((info & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectHeaderFlag) {
-        XCompressedType clsId = (XCompressedType)((info & X_BUILD_TaggedObjectHeaderClassMask) >> X_BUILD_TaggedObjectHeaderClassShift);
-        
-        XClass type = _XRefGetClassWithCompressedType(clsId);
+const _XType_s * _Nonnull _XHeapRefGetClass(XHeapRef _Nonnull ref, XCompressedType * _Nullable compressedType, const char * _Nonnull func) {
+    XUInt info = _XRefGetRcInfo(ref);
+    if((info & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag) {
+        XCompressedType clsId = (XCompressedType)((info & X_BUILD_CompressedRcTypeMask) >> X_BUILD_CompressedRcTypeShift);
+        const _XType_s * type = _XRefGetClassWithCompressedType(clsId);
         XAssert(NULL != type, func, "not ref");
-        if (NULL != compressedTypePtr) {
-            *compressedTypePtr = clsId;
+        if (NULL != compressedType) {
+            *compressedType = clsId;
         }
         return type;
+    } else {
+        _XObjectBase * obj = (_XObjectBase *)ref;
+        uintptr_t info = atomic_load(&(obj->typeInfo));
+        return (const _XType_s *)info;
     }
-#endif
-    if (NULL != compressedTypePtr) {
-        *compressedTypePtr = XCompressedTypeNone;
-    }
-    return (XClass)info;
 }
-_XType_s * _Nonnull _XRefGetUnpackedType(XRef _Nonnull ref, XCompressedType * _Nullable compressedType, const char * _Nonnull func) {
-    uintptr_t info = _XRefGetType(ref);
-    return _XRefUnpackType(info, compressedType, func);
-}
-
-
-
 
 
 /*
@@ -180,15 +169,15 @@ _XType_s * _Nonnull _XRefGetUnpackedType(XRef _Nonnull ref, XCompressedType * _N
  bitcount: 6 .. 25 .. 1
  bitcount: 6 .. 57 .. 1
  */
-_XType_s * _Nonnull _XRefGetClass(XRef _Nonnull ref, const char * _Nonnull func) {
-    XCompressedType compressedType = _XRefGetTaggedObjectCompressedType(ref);
-    XClass result = NULL;
-    if (XCompressedTypeNone != compressedType) {
-        result = _XRefGetClassWithCompressedType(compressedType);
+const _XType_s * _Nonnull _XRefGetClass(XRef _Nonnull ref, const char * _Nonnull func) {
+    XTaggedType taggedType = _XRefGetTaggedObjectTaggedType(ref);
+    const _XType_s * result = NULL;
+    if (taggedType <= XTaggedTypeMax) {
+        result = _XRefTaggedObjectClassTable[taggedType];
         XAssert(NULL != result, func, "unknown error");
         return result;
     }
-    return _XRefGetUnpackedType(ref, NULL, func);
+    return _XHeapRefGetClass(ref, NULL, func);
 }
 
 XClass _Nonnull XRefGetClass(XRef _Nonnull ref) {

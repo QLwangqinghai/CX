@@ -232,7 +232,7 @@ static _XValue * _Nonnull __XRefAsValue(XValue _Nonnull ref, const char * _Nonnu
 #if BUILD_TARGET_RT_64_BIT
     __unused
 #endif
-    XClass info = _XRefGetUnpackedType(ref, &compressedType, func);
+    XClass info = _XHeapRefGetClass(ref, &compressedType, func);
     
 #if BUILD_TARGET_RT_64_BIT
     XAssert(XCompressedTypeValue == compressedType, func, "not Value instance");
@@ -323,7 +323,7 @@ static _XPackage * _Nonnull __XRefAsPackage(XPackageRef _Nonnull ref, const char
 #if BUILD_TARGET_RT_64_BIT
     __unused
 #endif
-    XClass info = _XRefGetUnpackedType(ref, &compressedType, func);
+    XClass info = _XHeapRefGetClass(ref, &compressedType, func);
     
 #if BUILD_TARGET_RT_64_BIT
     XAssert(XCompressedTypePackage == compressedType, func, "not Object instance");

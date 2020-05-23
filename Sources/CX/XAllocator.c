@@ -203,49 +203,39 @@ void _XAllocatorDefaultObjectDeallocate(_XAllocatorPtr _Nonnull allocator, XObje
 }
 
 
-XPtr _Nonnull _XAllocatorCompressedAllocate(_XAllocatorPtr _Nonnull allocator, XSize size) {
+XPtr _Nonnull _XAllocatorCompressedMemoryAllocate(_XAllocatorPtr _Nonnull allocator, XSize size) {
     XAssert(allocator == &_XCompressedObjectAllocator, __func__, "");
     return _XAllocatorMemoryAllocate(size, __func__);
 }
-void _XAllocatorCompressedDeallocate(_XAllocatorPtr _Nonnull allocator, XPtr _Nonnull ptr) {
+void _XAllocatorCompressedMemoryDeallocate(_XAllocatorPtr _Nonnull allocator, XPtr _Nonnull ptr) {
     XAssert(allocator == &_XCompressedObjectAllocator, __func__, "");
     return _XAllocatorMemoryDeallocate(ptr, __func__);
 }
 
 typedef XRef _Nonnull (*XRefAllocate11_f)(_XAllocatorPtr _Nonnull allocator, XClass _Nonnull cls, XSize contentSize, XObjectRcFlag flag);
 
-XRef _Nonnull _XAllocatorCompressedObjectAllocate(_XAllocatorPtr _Nonnull allocator, XClass _Nonnull cls, XSize contentSize, XObjectRcFlag flag) {
+XRef _Nonnull _XAllocatorCompressedAllocate(_XAllocatorPtr _Nonnull allocator, XClass _Nonnull cls, XSize contentSize, XObjectRcFlag flag) {
     XAssert(allocator == &_XCompressedObjectAllocator, __func__, "");
     _XObjectCompressedBase * ref = _XAllocatorMemoryAllocate(contentSize + sizeof(_XObjectCompressedBase), __func__);
 
     XUInt type = XCompressedTypeOfClass(cls);
     XAssert(type <= XCompressedTypeMax, __func__, "class error");
-
-#if BUILD_TARGET_RT_64_BIT
     
-    /*
-    TaggedIsa64
-    refType: 2, value = 2
-    taggedContent: 61 {
-       isa: 6
-       counter: 55
-    }
-    flag: 1, value = 1
-    */
+    /* compressed == true
+     counter
+     type: 6
+     compressed: 1
+     */
     
-    type = type << X_BUILD_TaggedObjectHeaderClassShift;
+    type = type << X_BUILD_CompressedRcTypeShift;
     XUInt rc = 0;
     if ((XObjectRcFlagStatic | flag) == XObjectRcFlagStatic) {
-        rc = X_BUILD_RcMax;
+        rc = X_BUILD_CompressedRcMax;
     } else {
         rc = X_BUILD_RcBase;
     }
-    uintptr_t t = X_BUILD_TaggedObjectHeaderFlag | type | rc;
+    uintptr_t t = X_BUILD_CompressedRcFlag | type | rc;
     atomic_store(&(ref->rcInfo), t);
-#else
-    atomic_store(&(ref->typeInfo), (uintptr_t)cls);
-    atomic_store(&(ref->rcInfo), XCompressedRcBase);
-#endif
     
     return ref;
 }
@@ -292,18 +282,18 @@ const _XAllocator_s _XConstantValueAllocator = {
 const _XAllocator_s _XCompressedObjectAllocator = {
     .context = NULL,
     .headerSize = sizeof(_XObjectCompressedBase),
-    .allocate = _XAllocatorCompressedAllocate,
-    .deallocate = _XAllocatorCompressedDeallocate,
-    .allocateRef = _XAllocatorCompressedObjectAllocate,
+    .allocate = _XAllocatorCompressedMemoryAllocate,
+    .deallocate = _XAllocatorCompressedMemoryDeallocate,
+    .allocateRef = _XAllocatorCompressedAllocate,
     .deallocateRef = _XAllocatorCompressedObjectDeallocate,
 };
 
 const _XAllocator_s _XCompressedValueAllocator = {
     .context = NULL,
     .headerSize = sizeof(_XObjectCompressedBase),
-    .allocate = _XAllocatorCompressedAllocate,
-    .deallocate = _XAllocatorCompressedDeallocate,
-    .allocateRef = _XAllocatorCompressedObjectAllocate,
+    .allocate = _XAllocatorCompressedMemoryAllocate,
+    .deallocate = _XAllocatorCompressedMemoryDeallocate,
+    .allocateRef = _XAllocatorCompressedAllocate,
     .deallocateRef = _XAllocatorCompressedObjectDeallocate,
 };
 

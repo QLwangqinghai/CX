@@ -118,6 +118,10 @@ typedef uint32_t XU32Char;
 typedef void * XPtr;
 typedef void * XRef;
 
+typedef XRef XHeapRef;
+typedef XRef XStackRef;
+
+
 //描述一个对象的类型，以及对象方法的指针列表
 typedef XRef XClass;
 
@@ -143,7 +147,7 @@ typedef XRef XObject;
 
 typedef XPtr XClassIdentifier;
 
-#pragma mark - CCHashCode
+#pragma mark - XHashCode
 
 typedef XUInt XHashCode;
 

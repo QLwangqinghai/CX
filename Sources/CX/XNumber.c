@@ -126,17 +126,6 @@ static inline XBool XNumberTypeIsValid(XNumberType type) {
 }
 
 
-typedef union {
-    XSInt64 s;
-    XUInt64 u;
-    XFloat64 f;
-} _XNumberValue_u;
-
-typedef struct {
-    XNumberType type;
-    XUInt32 xx;
-    _XNumberValue_u bits;
-} _XNumberStruct;
 
 
 #if BUILD_TARGET_OS_WINDOWS
@@ -176,9 +165,9 @@ static const _XNumberBits32_u _XNumberBits32Nan = {.u = BITSFORDOUBLENAN32};
 static const _XNumberBits32_u _XNumberBits32NegativeInfinity = {.u = BITSFORDOUBLENEGINF32};
 
 
-static const _XNumberBits64_u _XNumberBits64PositiveInfinity = {.u = BITSFORDOUBLEPOSINF};
-static const _XNumberBits64_u _XNumberBits64Nan = {.u = BITSFORDOUBLENAN};
-static const _XNumberBits64_u _XNumberBits64NegativeInfinity = {.u = BITSFORDOUBLENEGINF};
+static const XNumberBits64_u _XNumberBits64PositiveInfinity = {.u = BITSFORDOUBLEPOSINF};
+static const XNumberBits64_u _XNumberBits64Nan = {.u = BITSFORDOUBLENAN};
+static const XNumberBits64_u _XNumberBits64NegativeInfinity = {.u = BITSFORDOUBLENEGINF};
 
 
 #define BITSFORFLOATZERO floatZeroBits.bits
@@ -474,7 +463,7 @@ XNumber _Nonnull __XNumberCreate32(XNumberType type, _XNumberBits32_u value, con
     
     return NULL;
 }
-XNumber _Nonnull __XNumberCreate64(XNumberType type, _XNumberBits64_u value, const char * _Nonnull func) {
+XNumber _Nonnull __XNumberCreate64(XNumberType type, XNumberBits64_u value, const char * _Nonnull func) {
     
     
     return NULL;
@@ -501,7 +490,7 @@ static XNumber _Nonnull __XNumberCreateUInt32(XNumberType type, XUInt32 value, c
 static XNumber _Nonnull __XNumberCreateSInt64(XNumberType type, XSInt64 value, const char * _Nonnull func) {
     XNumber result = ___XNumberMakeSInt(type, value, func);
     if (NULL == result) {
-        _XNumberBits64_u bits = {};
+        XNumberBits64_u bits = {};
         bits.s = value;
         result = __XNumberCreate64(type, bits, func);
     }
@@ -510,7 +499,7 @@ static XNumber _Nonnull __XNumberCreateSInt64(XNumberType type, XSInt64 value, c
 static XNumber _Nonnull __XNumberCreateUInt64(XNumberType type, XUInt64 value, const char * _Nonnull func) {
     XNumber result = ___XNumberMakeUInt(type, value, func);
     if (NULL == result) {
-        _XNumberBits64_u bits = {};
+        XNumberBits64_u bits = {};
         bits.u = value;
         result = __XNumberCreate64(type, bits, func);
     }
@@ -583,7 +572,7 @@ XNumber _Nullable __XNumberCreateFloat32(XNumberType type, XFloat32 value, const
 XNumber _Nullable __XNumberCreateFloat64(XNumberType type, XFloat64 value, const char * _Nonnull func) {
     XNumber result = ___XNumberMakeFloat64(value, func);
     if (NULL == result) {
-        _XNumberBits64_u bits = {};
+        XNumberBits64_u bits = {};
         bits.f = value;
         result = __XNumberCreate64(type, bits, func);
     }
@@ -679,8 +668,9 @@ static _XNumber * _Nonnull __XRefAsNumber(XNumber _Nonnull ref, const char * _No
 }
 
 
-void __XNumberUnpack(XNumber _Nonnull ref, _XNumberStruct * _Nonnull ptr, const char * _Nonnull func) {
-    _XNumberStruct content = {};
+
+void __XNumberUnpack(XNumber _Nonnull ref, XNumberUnpacked_t * _Nonnull ptr, const char * _Nonnull func) {
+    XNumberUnpacked_t content = {};
     XUInt v = (XUInt)((uintptr_t)ref);
     if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
         XUInt clsId = v & X_BUILD_TaggedObjectClassMask;
@@ -760,7 +750,7 @@ void __XNumberUnpack(XNumber _Nonnull ref, _XNumberStruct * _Nonnull ptr, const 
             }
                 break;
             case XNumberTypeSInt64: {
-                _XNumberBits64_u * bits64 = (_XNumberBits64_u *)(&(ncontent->extended[0]));
+                XNumberBits64_u * bits64 = (XNumberBits64_u *)(&(ncontent->extended[0]));
                 content.bits.s = bits64->s;
             }
                 break;
@@ -773,7 +763,7 @@ void __XNumberUnpack(XNumber _Nonnull ref, _XNumberStruct * _Nonnull ptr, const 
             }
                 break;
             case XNumberTypeUInt64: {
-                _XNumberBits64_u * bits64 = (_XNumberBits64_u *)(&(ncontent->extended[0]));
+                XNumberBits64_u * bits64 = (XNumberBits64_u *)(&(ncontent->extended[0]));
                 content.bits.u = bits64->u;
             }
                 break;
@@ -784,7 +774,7 @@ void __XNumberUnpack(XNumber _Nonnull ref, _XNumberStruct * _Nonnull ptr, const 
            }
                break;
             case XNumberTypeFloat64: {
-                _XNumberBits64_u * bits64 = (_XNumberBits64_u *)(&(ncontent->extended[0]));
+                XNumberBits64_u * bits64 = (XNumberBits64_u *)(&(ncontent->extended[0]));
                  XFloat64 f64 = bits64->f;
                 content.bits.f = f64;
             }
@@ -795,7 +785,7 @@ void __XNumberUnpack(XNumber _Nonnull ref, _XNumberStruct * _Nonnull ptr, const 
                 break;
         }
     }
-    memcpy(ptr, &content, sizeof(_XNumberStruct));
+    memcpy(ptr, &content, sizeof(XNumberUnpacked_t));
 }
 
 
@@ -831,7 +821,7 @@ SRC_TYPE vv = (SRC_TYPE)dv; return (vv == sv); \
         } while (0)
 
 //返回true 表示完全相等、否则是个约数
-static XBool __XNumberGetSInt128StructValue(_XNumberStruct * _Nonnull number, XSInt128Struct * _Nonnull valuePtr) {
+static XBool __XNumberGetSInt128StructValue(XNumberUnpacked_t * _Nonnull number, XSInt128Struct * _Nonnull valuePtr) {
     XNumberType type = number->type;
     switch (type) {
         case XNumberTypeSInt8:
@@ -1127,7 +1117,7 @@ XBool XNumberIsSignedType(XNumber _Nonnull ref) {
 
 // returns false if the output value is not the same as the number's value, which
 // can occur due to accuracy loss and the value not being within the target range
-static XBool __XNumberGetValue(_XNumberStruct * _Nonnull number, XNumberType type, void * valuePtr) {
+static XBool __XNumberGetValue(XNumberUnpacked_t * _Nonnull number, XNumberType type, void * valuePtr) {
     XNumberType ntype = number->type;
     switch (ntype) {
         case XNumberTypeSInt8:
@@ -1162,13 +1152,19 @@ static XBool __XNumberGetValue(_XNumberStruct * _Nonnull number, XNumberType typ
 
 
 
-extern XBool XNumberGetValue(XNumber _Nonnull number, XNumberType theType, void * _Nonnull valuePtr) {
+XBool XNumberGetValue(XNumber _Nonnull number, XNumberType theType, void * _Nonnull valuePtr) {
     XAssert(NULL != number, __func__, "number connot be NULL");
     XAssert(NULL != valuePtr, __func__, "valuePtr connot be NULL");
-    _XNumberStruct content = {};
+    XNumberUnpacked_t content = {};
     __XNumberUnpack(number, &content, __func__);
     
     return __XNumberGetValue(&content, theType, valuePtr);
+}
+
+void XNumberUnpack(XNumber _Nonnull number, XNumberUnpacked_t * _Nonnull contentPtr) {
+    XAssert(NULL != number, __func__, "number connot be NULL");
+    XAssert(NULL != contentPtr, __func__, "contentPtr connot be NULL");
+    __XNumberUnpack(number, contentPtr, __func__);
 }
 
 
@@ -1483,7 +1479,7 @@ extern XBool XNumberGetValue(XNumber _Nonnull number, XNumberType theType, void 
 //    return r;
 //}
 
-XComparisonResult __XNumberCompare(_XNumberStruct * _Nonnull number1, _XNumberStruct * _Nonnull number2) {
+XComparisonResult __XNumberCompare(XNumberUnpacked_t * _Nonnull number1, XNumberUnpacked_t * _Nonnull number2) {
     //限定： -0.000...001 < NaN < 0, NaN 大于任何double能表示的负数， 小于0
 
     XNumberType type1 = number1->type;
@@ -1518,7 +1514,7 @@ XComparisonResult __XNumberCompare(_XNumberStruct * _Nonnull number1, _XNumberSt
     // One float, one integer; swap if necessary so number1 is the float
     XBool swapResult = false;
     if (isFloat2) {
-        _XNumberStruct * tmp = number1;
+        XNumberUnpacked_t * tmp = number1;
         number1 = number2;
         number2 = tmp;
         swapResult = true;
@@ -1571,8 +1567,8 @@ XComparisonResult __XNumberCompare(_XNumberStruct * _Nonnull number1, _XNumberSt
 
 
 XComparisonResult XNumberCompare(XNumber _Nonnull lhs, XNumber _Nonnull rhs) {
-    _XNumberStruct contentOfLhs = {};
-    _XNumberStruct contentOfRhs = {};
+    XNumberUnpacked_t contentOfLhs = {};
+    XNumberUnpacked_t contentOfRhs = {};
     __XNumberUnpack(lhs, &contentOfLhs, __func__);
     __XNumberUnpack(rhs, &contentOfRhs, __func__);
     return __XNumberCompare(&contentOfLhs, &contentOfRhs);
@@ -1580,8 +1576,8 @@ XComparisonResult XNumberCompare(XNumber _Nonnull lhs, XNumber _Nonnull rhs) {
 
 
 XBool XNumberEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-    _XNumberStruct contentOfLhs = {};
-    _XNumberStruct contentOfRhs = {};
+    XNumberUnpacked_t contentOfLhs = {};
+    XNumberUnpacked_t contentOfRhs = {};
     __XNumberUnpack(lhs, &contentOfLhs, __func__);
     __XNumberUnpack(rhs, &contentOfRhs, __func__);
     XBool b = __XNumberCompare(&contentOfLhs, &contentOfRhs) == XCompareEqualTo;
@@ -1590,7 +1586,7 @@ XBool XNumberEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
 
 XHashCode XNumberHash(XRef _Nonnull ref) {
     XAssert(NULL != ref, __func__, "ref is NULL");
-    _XNumberStruct content = {};
+    XNumberUnpacked_t content = {};
     __XNumberUnpack(ref, &content, __func__);
     switch (content.type) {
         case XNumberTypeSInt8:

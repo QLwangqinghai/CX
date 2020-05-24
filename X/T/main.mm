@@ -40,16 +40,16 @@ typedef union {
     XSInt64 s;
     XUInt64 u;
     XFloat64 f;
-} _XNumberBits64_u;
+} XNumberBits64_u;
 
 static const _XNumberBits32_u _XNumberBits32PositiveInfinity = {.u = BITSFORDOUBLEPOSINF32};
 static const _XNumberBits32_u _XNumberBits32Nan = {.u = BITSFORDOUBLENAN32};
 static const _XNumberBits32_u _XNumberBits32NegativeInfinity = {.u = BITSFORDOUBLENEGINF32};
 
 
-static const _XNumberBits64_u _XNumberBits64PositiveInfinity = {.u = BITSFORDOUBLEPOSINF};
-static const _XNumberBits64_u _XNumberBits64Nan = {.u = BITSFORDOUBLENAN};
-static const _XNumberBits64_u _XNumberBits64NegativeInfinity = {.u = BITSFORDOUBLENEGINF};
+static const XNumberBits64_u _XNumberBits64PositiveInfinity = {.u = BITSFORDOUBLEPOSINF};
+static const XNumberBits64_u _XNumberBits64Nan = {.u = BITSFORDOUBLENAN};
+static const XNumberBits64_u _XNumberBits64NegativeInfinity = {.u = BITSFORDOUBLENEGINF};
 
 
 typedef int XComparisonResult;
@@ -139,9 +139,9 @@ int main(int argc, const char * argv[]) {
         float pif = _XNumberBits32PositiveInfinity.f;
         float nif = _XNumberBits32NegativeInfinity.f;
         
-        _XNumberBits64_u nand = {.f = (double)nanf};
-        _XNumberBits64_u pid = {.f = (double)pif};
-        _XNumberBits64_u nid = {.f = (double)nif};
+        XNumberBits64_u nand = {.f = (double)nanf};
+        XNumberBits64_u pid = {.f = (double)pif};
+        XNumberBits64_u nid = {.f = (double)nif};
 
         NSLog(@"%d", _XNumberBits64PositiveInfinity.u == pid.u);
         NSLog(@"%d", _XNumberBits64Nan.u == nand.u);

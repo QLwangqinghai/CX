@@ -27,7 +27,7 @@ typedef struct __XRefKind _XRefKind_t;
 typedef const _XRefKind_t * XRefKind;
 
 struct __XRefKind {
-    XRefHashCode_f _Nonnull hashCode;
+    XRefHashCode_f _Nonnull hash;
     XRefEqual_f _Nonnull equal;
     XRefDeinit_f _Nonnull deinit;
     XRefDescribe_f _Nonnull describe;
@@ -78,6 +78,12 @@ extern XRefKind _Nonnull XRefKindCollection;
 extern XRefKind _Nonnull XRefKindObject;
 
 
+extern XHashCode XRefHash(XRef _Nonnull obj);
+extern XBool XRefEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
+extern void XRefDeinit(XRef _Nonnull obj);
+extern void XRefDescribe(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer);
+
+    
 typedef XUInt32 XNumberType;
 
 
@@ -143,9 +149,7 @@ extern XRefKind _Nonnull XRefGetKind(XRef _Nonnull ref);
 extern XClass _Nonnull XRefGetClass(XRef _Nonnull ref);
 extern XBool XRefIsMetaClass(XRef _Nonnull ref);
 
-
-
-
+    
 typedef XUInt32 XTaggedType;
 extern const XTaggedType XTaggedTypeNumber;
 extern const XTaggedType XTaggedTypeString;
@@ -154,7 +158,10 @@ extern const XTaggedType XTaggedTypeDate;
 extern const XTaggedType XTaggedTypeMax;
 //others error
 
+    
 extern XTaggedType XRefGetTaggedType(XRef _Nonnull ref);
+extern XCompressedType XHeapRefGetCompressedType(XHeapRef _Nonnull ref);
+
 
 extern XHashCode XHash(XUInt8 * _Nullable bytes, XUInt length);
 

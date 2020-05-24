@@ -47,6 +47,7 @@
 		77C7F5C524742B4F00B7EC3C /* XClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XClass.h; sourceTree = "<group>"; };
 		77C7F5C624742B4F00B7EC3C /* XClass.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = XClass.c; sourceTree = "<group>"; };
 		77C7F5C92476C53D00B7EC3C /* XWeakStorage.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = XWeakStorage.c; sourceTree = "<group>"; };
+		77C7F5CB247A12BB00B7EC3C /* XRefInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XRefInternal.h; sourceTree = "<group>"; };
 		D6446FD3244D7254009E4F57 /* X.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = X.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6446FD6244D7254009E4F57 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		D6446FD7244D7254009E4F57 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -201,6 +202,7 @@
 				D6447000244D7261009E4F57 /* XAllocator.h */,
 				D6447001244D7261009E4F57 /* XRuntimeInternal.h */,
 				77C7F5C524742B4F00B7EC3C /* XClass.h */,
+				77C7F5CB247A12BB00B7EC3C /* XRefInternal.h */,
 			);
 			path = internal;
 			sourceTree = "<group>";

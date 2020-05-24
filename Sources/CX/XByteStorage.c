@@ -453,7 +453,6 @@ XUInt8 * _Nonnull _XByteStorageUnpackedGetByte(XByteStorageUnpacked_t * _Nonnull
 }
 
 
-
 XComparisonResult _XByteStorageUnpackedCompare(XByteStorageUnpacked_t * _Nonnull lhs, XByteStorageUnpacked_t * _Nonnull rhs, const char * _Nonnull func) {
     XUInt32 leftLength = 0;
     XUInt32 rightLength = 0;
@@ -535,6 +534,9 @@ static const XStringEncoding XStringEncodingUtf8 = 1;
 
 
 #pragma mark - XString
+
+#define XStringEmpty ((XString)((uintptr_t)(X_BUILD_TaggedObjectFlag | X_BUILD_TaggedObjectClassString)))
+
 
 static XRange _XRangeOfString(const XUInt8 * _Nonnull bytes, size_t length) {
     XIndex begin = 0;
@@ -730,6 +732,8 @@ XHashCode XStringHash(XRef _Nonnull ref) {
 }
 
 #pragma mark - Data
+
+#define XDataEmpty ((XData)((uintptr_t)(X_BUILD_TaggedObjectFlag | X_BUILD_TaggedObjectClassData)))
 
 XData _Nonnull XDataCreate(XObjectFlag flag, XUInt8 * _Nullable bytes, XUInt32 length) {
     if (length == 0) {

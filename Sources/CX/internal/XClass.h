@@ -84,6 +84,7 @@ extern const XObjectType_s XObjectTypeRootObject;
 extern const XClass _Nonnull XClassObject;// = (const XClass)&XObjectTypeRootObject;
 
 extern const XType_s * const _Nonnull _XRefTaggedObjectClassTable[4];
+extern const XCompressedType _XRefTaggedObjectTypeTable[4];
 
 
 #endif /* XClass_h */

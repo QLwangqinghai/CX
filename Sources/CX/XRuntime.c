@@ -63,6 +63,7 @@ XRefKind _Nonnull XRefGetKind(XRef _Nonnull ref) {
     XCompressedType compressedType = XCompressedTypeNone;
     const XType_s * type = _XHeapRefGetClass(ref, &compressedType, __func__);
     assert(type);
+    assert(type->base.kind);
     return type->base.kind;
 }
 
@@ -130,10 +131,6 @@ const XType_s * _Nonnull _XHeapRefGetClass(XHeapRef _Nonnull ref, XCompressedTyp
     }
 }
 
-const XType_s * _Nonnull _XObjectGetClass(_XObject * _Nonnull object, const char * _Nonnull func) {
-    uintptr_t info = atomic_load(&(object->_runtime.typeInfo));
-    return (const XType_s *)info;
-}
 
 
 /*
@@ -141,20 +138,22 @@ const XType_s * _Nonnull _XObjectGetClass(_XObject * _Nonnull object, const char
  bitcount: 6 .. 25 .. 1
  bitcount: 6 .. 57 .. 1
  */
-const XType_s * _Nonnull _XRefGetClass(XRef _Nonnull ref, const char * _Nonnull func) {
+const XType_s * _Nonnull _XRefGetClass(XRef _Nonnull ref, XCompressedType * _Nullable compressedType, const char * _Nonnull func) {
     XTaggedType taggedType = _XRefGetTaggedObjectTaggedType(ref);
     const XType_s * result = NULL;
     if (taggedType <= XTaggedTypeMax) {
+        if (compressedType) {
+            *compressedType = _XRefTaggedObjectTypeTable[taggedType];
+        }
         result = _XRefTaggedObjectClassTable[taggedType];
-        XAssert(NULL != result, func, "unknown error");
         return result;
     }
-    return _XHeapRefGetClass(ref, NULL, func);
+    return _XHeapRefGetClass(ref, compressedType, func);
 }
 
 XClass _Nonnull XRefGetClass(XRef _Nonnull ref) {
     assert(ref);
-    XClass info = (XClass)_XRefGetClass(ref, __func__);
+    XClass info = (XClass)_XRefGetClass(ref, NULL, __func__);
     return info;
 }
 
@@ -273,19 +272,55 @@ XHashCode XHash(XUInt8 * _Nullable bytes, XUInt length) {
 
 
 
-extern XTaggedType XRefGetTaggedType(XRef _Nonnull ref) {
-#if BUILD_TARGET_RT_64_BIT
-    XUInt64 v = (XUInt64)((uintptr_t)ref);
+XTaggedType XRefGetTaggedType(XRef _Nonnull ref) {
+    XUInt v = (XUInt)((uintptr_t)ref);
     if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
         XUInt64 clsId = (v & X_BUILD_TaggedObjectClassMask) >> X_BUILD_TaggedObjectClassShift;
         return (XTaggedType)clsId;
     }
-#else
-    XUInt32 v = (XUInt32)((uintptr_t)ref);
-    if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
-        XUInt32 clsId = (v & X_BUILD_TaggedObjectClassMask) >> X_BUILD_TaggedObjectClassShift;
-        return (XTaggedType)clsId;
-    }
-#endif
     return XUInt32Max;
 }
+XCompressedType XHeapRefGetCompressedType(XHeapRef _Nonnull ref) {
+    XUInt info = _XRefGetRcInfo(ref);
+    if((info & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag) {
+        return (XCompressedType)((info & X_BUILD_CompressedRcTypeMask) >> X_BUILD_CompressedRcTypeShift);
+    } else {
+        return XCompressedTypeNone;
+    }
+}
+const XType_s * _Nonnull _XObjectGetClass(_XObject * _Nonnull object, const char * _Nonnull func) {
+    uintptr_t info = atomic_load(&(object->_runtime.typeInfo));
+    return (const XType_s *)info;
+}
+
+XHashCode XRefHash(XRef _Nonnull obj) {
+    XAssert(NULL != obj, __func__, "");
+    XRefKind kind = XRefGetKind(obj);
+    return kind->hash(obj);
+}
+XBool XRefEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+    XAssert(NULL != lhs, __func__, "");
+    XAssert(NULL != rhs, __func__, "");
+    XRefKind kind0 = XRefGetKind(lhs);
+    if (lhs == rhs) {
+        return true;
+    } else {
+        XRefKind kind1 = XRefGetKind(rhs);
+        if (kind0 == kind1) {
+            return kind0->equal(rhs, rhs);
+        } else {
+            return false;
+        }
+    }
+}
+void XRefDeinit(XRef _Nonnull obj) {
+    XAssert(NULL != obj, __func__, "");
+    XRefKind kind = XRefGetKind(obj);
+    return kind->deinit(obj);
+}
+void XRefDescribe(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer) {
+    XAssert(NULL != obj, __func__, "");
+    XRefKind kind = XRefGetKind(obj);
+    return kind->describe(obj, buffer);
+}
+

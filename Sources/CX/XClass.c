@@ -10,25 +10,115 @@
 #include "XRef.h"
 #include "XObject.h"
 
+
+void _XRefConstantValueDeinit(XRef _Nonnull obj) {
+    XAssert(false, __func__, "");
+}
+
+
+
+
 //typedef XHashCode (*XRefHashCode_f)(XRef _Nonnull obj);
 //typedef XBool (*XRefEqual_f)(XRef _Nonnull lhs, XRef _Nonnull rhs);
 //typedef void (*XRefDeinit_f)(XRef _Nonnull obj);
 //typedef void (*XRefDescribe_f)(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer);
 
-
 XHashCode _XRefHash(XRef _Nonnull obj) {
+    XAssert(NULL != obj, __func__, "");
+    XCompressedType typeId = XCompressedTypeNone;
+    _XRefGetClass(obj, &typeId, __func__);
+    XAssert(typeId <= XCompressedTypeMax, __func__, "");
     
+    switch (typeId) {
+        default: {
+            abort();
+        }
+            break;
+    }
     return 0;
 }
 XBool _XRefEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+    XAssert(NULL != lhs, __func__, "");
+    XAssert(NULL != rhs, __func__, "");
     
+    XTaggedType taggedType = XRefGetTaggedType(lhs);
+    
+//    extern const XTaggedType XTaggedTypeNumber;
+//    extern const XTaggedType XTaggedTypeString;
+//    extern const XTaggedType XTaggedTypeData;
+//    extern const XTaggedType XTaggedTypeDate;
+    
+    
+    if (XTaggedTypeNumber == taggedType) {
+        XCompressedType typeId1 = XCompressedTypeNone;
+        _XRefGetClass(rhs, &typeId1, __func__);
+        if (XTaggedTypeNumber == taggedType) {
+            
+        } else {
+            return false;
+        }
+    } else if (taggedType <= XTaggedTypeMax) {
+        return (lhs == rhs);
+    } else {
+        XCompressedType typeId0 = XHeapRefGetCompressedType(lhs);
+        if (typeId0 > XCompressedTypeMax) {
+            
+            
+        } else {
+            return (lhs == rhs);
+        }
+    }
+    
+    
+    XCompressedType typeId0 = XCompressedTypeNone;
+    _XRefGetClass(lhs, &typeId0, __func__);
+    XAssert(typeId0 <= XCompressedTypeMax, __func__, "");
+    if (lhs == rhs) {
+        return true;
+    } else {
+        XCompressedType typeId1 = XCompressedTypeNone;
+        _XRefGetClass(rhs, &typeId1, __func__);
+        XAssert(typeId1 <= XCompressedTypeMax, __func__, "");
+        if (typeId0 == typeId1) {
+            if (XCompressedTypeNumber == typeId0) {
+                XNumberUnpacked_t lhsContent = {};
+                XNumberUnpacked_t rhsContent = {};
+                XNumberUnpack(lhs, &lhsContent);
+                XNumberUnpack(rhs, &rhsContent);
+//                XNumberUnpack
+            } else if (XCompressedTypeString == typeId0 || XCompressedTypeData == typeId0) {
+                XByteStorageUnpacked_t lhsContent = {};
+                XByteStorageUnpacked_t rhsContent = {};
+                
+                return false;
+            } else if (XCompressedTypeDate == typeId0) {
+                return XDateGetValue(lhs) == XDateGetValue(rhs);
+            } else if (XCompressedTypeValue == typeId0) {
+                XValueEqual(lhs, rhs);
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+    
+
     return 0;
 }
 void _XRefDeinit(XRef _Nonnull obj) {
-    
+    XAssert(NULL != obj, __func__, "");
+    XCompressedType typeId = XCompressedTypeNone;
+    _XRefGetClass(obj, &typeId, __func__);
+    XAssert(typeId <= XCompressedTypeMax, __func__, "");
+
+
 }
-void _XRefDescribe(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-    
+void _XRefDescribe(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer) {
+    XAssert(NULL != obj, __func__, "");
+    XCompressedType typeId = XCompressedTypeNone;
+    _XRefGetClass(obj, &typeId, __func__);
+    XAssert(typeId <= XCompressedTypeMax, __func__, "");
 }
 //XHashCode _XClassHash(XRef _Nonnull obj) {
 //
@@ -93,23 +183,46 @@ void _XRefDescribe(XRef _Nonnull lhs, XRef _Nonnull rhs) {
 //}
 
 XHashCode _XObjectHash(XRef _Nonnull obj) {
-    
+    XAssert(NULL != obj, __func__, "");
+    XCompressedType typeId = XCompressedTypeNone;
+    _XRefGetClass(obj, &typeId, __func__);
+    XAssert(typeId > XCompressedTypeMax, __func__, "");
+
     return 0;
 }
 XBool _XObjectEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-    
-    return 0;
+    XAssert(NULL != lhs, __func__, "");
+    XAssert(NULL != rhs, __func__, "");
+    XCompressedType typeId0 = XCompressedTypeNone;
+    _XRefGetClass(lhs, &typeId0, __func__);
+    XAssert(typeId0 > XCompressedTypeMax, __func__, "");
+    if (lhs == rhs) {
+        return true;
+    } else {
+        XCompressedType typeId1 = XCompressedTypeNone;
+        _XRefGetClass(rhs, &typeId1, __func__);
+        XAssert(typeId1 > XCompressedTypeMax, __func__, "");
+        return false;
+    }
 }
 void _XObjectDeinit(XRef _Nonnull obj) {
-    
+    XAssert(NULL != obj, __func__, "");
+    XCompressedType typeId = XCompressedTypeNone;
+    _XRefGetClass(obj, &typeId, __func__);
+    XAssert(typeId > XCompressedTypeMax, __func__, "");
+
 }
-void _XObjectDescribe(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-    
+void _XObjectDescribe(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer) {
+    XAssert(NULL != obj, __func__, "");
+    XCompressedType typeId = XCompressedTypeNone;
+    _XRefGetClass(obj, &typeId, __func__);
+    XAssert(typeId > XCompressedTypeMax, __func__, "");
+
 }
 
 #define _XRefKindMake(Type) \
 {\
-.hashCode = _XRefHash,\
+.hash = _XRefHash,\
 .equal = _XRefEqual,\
 .deinit = _XRefDeinit,\
 .describe = _XRefDescribe,\
@@ -117,7 +230,7 @@ void _XObjectDescribe(XRef _Nonnull lhs, XRef _Nonnull rhs) {
 
 #define _XRefKindMakeObject(Type) \
 {\
-.hashCode = _X##Type##Hash,\
+.hash = _X##Type##Hash,\
 .equal = _X##Type##Equal,\
 .deinit = _X##Type##Deinit,\
 .describe = _X##Type##Describe,\
@@ -257,4 +370,11 @@ const XType_s * const _Nonnull _XRefTaggedObjectClassTable[4] = {
     &(_XClassTable[X_BUILD_TypeId_String]),
     &(_XClassTable[X_BUILD_TypeId_Data]),
     &(_XClassTable[X_BUILD_TypeId_Date]),
+};
+
+const XCompressedType _XRefTaggedObjectTypeTable[4] = {
+    X_BUILD_CompressedType_Number,
+    X_BUILD_CompressedType_String,
+    X_BUILD_CompressedType_Data,
+    X_BUILD_CompressedType_Date,
 };

@@ -56,13 +56,25 @@ extern XNumberType XNumberGetType(XNumber _Nonnull ref);
 extern XBool XNumberIsFloatType(XNumber _Nonnull ref);
 extern XBool XNumberIsSignedType(XNumber _Nonnull ref);
 
+typedef union {
+    XSInt64 s;
+    XUInt64 u;
+    XFloat64 f;
+} XNumberBits64_u;
+
+typedef struct {
+    XUInt64 type;
+    XNumberBits64_u bits;
+} XNumberUnpacked_t;
+    
+extern void XNumberUnpack(XNumber _Nonnull number, XNumberUnpacked_t * _Nonnull contentPtr);
+    
 #pragma mark - XString
 
-extern const XString _Nonnull XStringEmpty;
 
+    
 #pragma mark - XData
 
-extern const XData _Nonnull XDataEmpty;
 
 #pragma mark - XDate
 

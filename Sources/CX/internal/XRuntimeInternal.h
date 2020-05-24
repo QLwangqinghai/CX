@@ -143,14 +143,8 @@ typedef union {
 } _XNumberBits32_u;
 
 typedef union {
-    XSInt64 s;
-    XUInt64 u;
-    XFloat64 f;
-} _XNumberBits64_u;
-
-typedef union {
     _XNumberBits32_u bits32;
-    _XNumberBits64_u bits64;
+    XNumberBits64_u bits64;
 } _XNumberBits_u;
 
 
@@ -171,6 +165,7 @@ typedef struct {
     _XObjectCompressedBase _runtime;
     _XNumberContent_t content;
 } _XNumber;
+
 
 #pragma mark - XString
     
@@ -219,6 +214,7 @@ typedef struct {
     _XByteStorageContent_t content;
 } _XByteStorage;
 
+extern XBool _XByteStorageUnpackedEqual(XByteStorageUnpacked_t * _Nonnull lhs, XByteStorageUnpacked_t * _Nonnull rhs, const char * _Nonnull func);
 //typedef void (*XCustomRelease_f)(XPtr _Nullable context, XPtr _Nonnull content, XUInt length);
 //typedef struct {
 //    XPtr _Nullable context;
@@ -340,9 +336,10 @@ extern XTaggedType _XRefGetTaggedObjectTaggedType(XRef _Nonnull ref);
 
 extern const XType_s * _Nullable _XRefGetTaggedObjectClass(XRef _Nonnull ref);
 
-const XType_s * _Nonnull _XObjectGetClass(_XObject * _Nonnull object, const char * _Nonnull func);
+extern const XType_s * _Nonnull _XObjectGetClass(_XObject * _Nonnull object, const char * _Nonnull func);
 extern const XType_s * _Nonnull _XHeapRefGetClass(XHeapRef _Nonnull ref, XCompressedType * _Nullable compressedType, const char * _Nonnull func);
-extern const XType_s * _Nonnull _XRefGetClass(XRef _Nonnull ref, const char * _Nonnull func);
+    
+extern const XType_s * _Nonnull _XRefGetClass(XRef _Nonnull ref, XCompressedType * _Nullable compressedType, const char * _Nonnull func);
 
     
 #pragma mark - hash
@@ -365,6 +362,10 @@ extern _XWeakTable * _Nonnull _XWeakTableGet(uintptr_t address);
 extern void _XWeakTableLock(_XWeakTable * _Nonnull table);
 extern void _XWeakTableUnlock(_XWeakTable * _Nonnull table);
 
+    
+    
+    
+    
 #if defined(__cplusplus)
 }  // extern C
 #endif

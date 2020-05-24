@@ -23,6 +23,12 @@
 //XHashCode XDateHash(XRef _Nonnull obj) {return 0;};
 //XHashCode XObjectHash(XRef _Nonnull obj) {return 0;};
 
+void _XDisableDeinit(XRef _Nonnull obj, const char * _Nonnull func) {
+    XAssert(false, func, "");
+};
+
+
+
 #pragma mark - XClass
 
 XBool XClassEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
@@ -152,28 +158,8 @@ extern void _XBufferSetClearWhenDealloc(_XBuffer * _Nonnull buffer);
 
 #pragma mark - XString
 
-const _XString _XStringEmpty = {
-    ._runtime = _XConstantObjectCompressedBaseMake(X_BUILD_CompressedType_String),
-    .content = {
-        .length = 0,
-        .__xx = 0,
-    },
-};
-
-const XString _Nonnull XStringEmpty = (XString)&_XStringEmpty;
-
 #pragma mark - XData
 
-
-const _XData _XDataEmpty = {
-    ._runtime = _XConstantObjectCompressedBaseMake(X_BUILD_CompressedType_Data),
-    .content = {
-        .length = 0,
-        .__xx = 0,
-    },
-};
-
-const XData _Nonnull XDataEmpty = (XData)&_XDataEmpty;
 
 
 #pragma mark - XDate

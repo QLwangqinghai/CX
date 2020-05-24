@@ -14,6 +14,12 @@
 
 
 
+extern const _XNull _XNullShared;
+extern const _XBoolean _XBooleanTrue;
+extern const _XBoolean _XBooleanFalse;
+
+
+
 XHashCode _XNullHash(_XNull * _Nonnull obj);
 XBool _XNullEqual(_XNull * _Nonnull lhs, _XNull * _Nonnull rhs);
 
@@ -30,13 +36,9 @@ void _XNumberUnpackedDescribe(XNumberUnpacked_t * _Nonnull obj, _XDescriptionBuf
 
 
 XHashCode _XByteStorageUnpackedHash(XByteStorageUnpacked_t * _Nonnull obj);
-XBool _XByteStorageUnpackedEqual(XByteStorageUnpacked_t * _Nonnull lhs, XByteStorageUnpacked_t * _Nonnull rhs);
+XBool _XByteStorageUnpackedEqual(XByteStorageUnpacked_t * _Nonnull lhs, XByteStorageUnpacked_t * _Nonnull rhs, const char * _Nonnull func);
 void _XStringDescribe(XByteStorageUnpacked_t * _Nonnull obj, _XDescriptionBuffer _Nonnull buffer);
 void _XDataDescribe(XByteStorageUnpacked_t * _Nonnull obj, _XDescriptionBuffer _Nonnull buffer);
-
-XHashCode _XValueHash(_XValue * _Nonnull obj);
-XBool _XValueEqual(_XValue * _Nonnull lhs, _XValue * _Nonnull rhs);
-void _XValueDescribe(_XValue * _Nonnull obj, _XDescriptionBuffer _Nonnull buffer);
 
 
 

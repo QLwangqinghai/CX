@@ -58,7 +58,9 @@ XHashCode XClassHash(XRef _Nonnull cls) {
 const _XNull _XNullShared = {
     ._runtime = _XConstantObjectBaseMake(XClassOf(Null)),
 };
-const XNull _Nonnull XNullShared = (XNull)&_XNullShared;
+const XNull _Nonnull XNullShared() {
+    return (XNull)&_XNullShared;
+}
 
 XBool XNullEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
     //XNull 不允许自己构建， 只可以使用 XNullShared;
@@ -86,8 +88,12 @@ const _XBoolean _XBooleanFalse = {
     .content = {.value = false},
 };
 
-const XBoolean _Nonnull XBooleanTrue = (XBoolean)&_XBooleanTrue;
-const XBoolean _Nonnull XBooleanFalse = (XBoolean)&_XBooleanFalse;
+const XBoolean _Nonnull XBooleanTrue() {
+    return (XBoolean)&_XBooleanTrue;
+};
+const XBoolean _Nonnull XBooleanFalse() {
+    return (XBoolean)&_XBooleanFalse;
+}
 
 XBool XBooleanEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
     //XBoolean 不允许自己构建， 只可以使用 XBooleanTrue、XBooleanFalse;

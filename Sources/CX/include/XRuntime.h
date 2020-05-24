@@ -25,13 +25,6 @@ typedef void (*XRefDescribe_f)(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull b
 struct __XRefKind;
 typedef struct __XRefKind _XRefKind_t;
 typedef const _XRefKind_t * XRefKind;
-
-struct __XRefKind {
-    XRefHashCode_f _Nonnull hash;
-    XRefEqual_f _Nonnull equal;
-    XRefDeinit_f _Nonnull deinit;
-    XRefDescribe_f _Nonnull describe;
-};
     
 struct _XAllocator;
 typedef const struct _XAllocator * _XAllocatorPtr;
@@ -160,6 +153,7 @@ extern const XTaggedType XTaggedTypeMax;
 
     
 extern XTaggedType XRefGetTaggedType(XRef _Nonnull ref);
+extern XCompressedType XRefGetTaggedCompressedType(XRef _Nonnull ref);
 extern XCompressedType XHeapRefGetCompressedType(XHeapRef _Nonnull ref);
 
 

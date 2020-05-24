@@ -8,6 +8,7 @@
 
 #include "XClass.h"
 #include "XRef.h"
+#include "internal/XRefInternal.h"
 #include "XObject.h"
 
 
@@ -16,6 +17,22 @@ void _XRefConstantValueDeinit(XRef _Nonnull obj) {
 }
 
 
+XIndex _XTypeIdOfClass(const XType_s * _Nonnull cls) {
+    uintptr_t base = (uintptr_t)(&(_XClassTable[0]));
+    uintptr_t end = base + sizeof(XType_s);
+    uintptr_t c = (uintptr_t)cls;
+    if (c < base || c >= end) {
+        return XUIntMax;
+    } else {
+        uintptr_t offset = c - base;
+        if (offset % sizeof(XType_s) == 0) {
+            XIndex id = offset / sizeof(XType_s);
+            return id;
+        } else {
+            return XIndexNotFound;
+        }
+    }
+}
 
 
 //typedef XHashCode (*XRefHashCode_f)(XRef _Nonnull obj);
@@ -106,89 +123,116 @@ XBool _XRefEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
 
     return 0;
 }
-void _XRefDeinit(XRef _Nonnull obj) {
-    XAssert(NULL != obj, __func__, "");
-    XCompressedType typeId = XCompressedTypeNone;
-    _XRefGetClass(obj, &typeId, __func__);
-    XAssert(typeId <= XCompressedTypeMax, __func__, "");
 
+
+XHashCode _XClassHash(XRef _Nonnull obj) {
+    return XAddressHash(obj);
+}
+XBool _XClassEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+    return lhs == rhs;
+}
+void _XClassDeinit(XRef _Nonnull obj) {
+    abort();
+}
+void _XClassDescribe(XRef _Nonnull lhs, XRef _Nonnull rhs) {
 
 }
-void _XRefDescribe(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer) {
-    XAssert(NULL != obj, __func__, "");
-    XCompressedType typeId = XCompressedTypeNone;
-    _XRefGetClass(obj, &typeId, __func__);
-    XAssert(typeId <= XCompressedTypeMax, __func__, "");
-}
-//XHashCode _XClassHash(XRef _Nonnull obj) {
-//
-//    return 0;
-//}
-//
-//XBool _XClassEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-//
-//    return 0;
-//}
-//void _XClassDeinit(XRef _Nonnull obj) {
-//
-//}
-//void _XClassDescribe(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-//
-//}
-//
-//XHashCode _XConstantValueHash(XRef _Nonnull obj) {
-//
-//    return 0;
-//}
-//
-//XBool _XConstantValueEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-//
-//    return 0;
-//}
-//void _XConstantValueDeinit(XRef _Nonnull obj) {
-//
-//}
-//void _XConstantValueDescribe(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-//
-//}
-//
-//XHashCode _XValueHash(XRef _Nonnull obj) {
-//
-//    return 0;
-//}
-//XBool _XValueEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-//
-//    return 0;
-//}
-//void _XValueDeinit(XRef _Nonnull obj) {
-//
-//}
-//void _XValueDescribe(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-//
-//}
-//
-//XHashCode _XCollectionHash(XRef _Nonnull obj) {
-//
-//    return 0;
-//}
-//XBool _XCollectionEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-//
-//    return 0;
-//}
-//void _XCollectionDeinit(XRef _Nonnull obj) {
-//
-//}
-//void _XCollectionDescribe(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-//
-//}
 
-XHashCode _XObjectHash(XRef _Nonnull obj) {
-    XAssert(NULL != obj, __func__, "");
+
+void _XConstantValueCheck(XRef _Nonnull obj, const char * _Nonnull func, const char * _Nonnull desc) {
+    XAssert((&_XNullShared == obj || &_XBooleanTrue == obj || &_XBooleanFalse == obj), func, desc);
+}
+
+XHashCode _XConstantValueHash(XRef _Nonnull obj) {
+    if (&_XNullShared == obj) {
+        return 0;
+    } else if (&_XBooleanTrue == obj) {
+        return 1;
+    } else if (&_XBooleanFalse == obj) {
+        return 0;
+    } else {
+        XAssert(false, __func__, "");
+    }
+    return 0;
+}
+
+XBool _XConstantValueEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+    _XConstantValueCheck(lhs, __func__, "");
+    _XConstantValueCheck(rhs, __func__, "");
+    return lhs == rhs;
+}
+void _XConstantValueDeinit(XRef _Nonnull obj) {
+    abort();
+}
+void _XConstantValueDescribe(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer) {
+
+}
+
+XHashCode _XValueHash(XRef _Nonnull obj) {
+    XCompressedType typeId = XRefGetTaggedCompressedType(obj);
+    XAssert(typeId <= XCompressedTypeValue, __func__, "");
+
+    
+    return 0;
+}
+XBool _XValueEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+    XCompressedType typeId1 = XRefGetTaggedCompressedType(lhs);
+    XCompressedType typeId2 = XRefGetTaggedCompressedType(rhs);
+    XAssert(typeId1 <= XCompressedTypeValue, __func__, "");
+    XAssert(typeId2 <= XCompressedTypeValue, __func__, "");
+    if(typeId1 != typeId2) {
+        return false;
+    }
+
+    
+    
+    
+    
+    
     XCompressedType typeId = XCompressedTypeNone;
-    _XRefGetClass(obj, &typeId, __func__);
-    XAssert(typeId > XCompressedTypeMax, __func__, "");
+    XAssert(typeId <= XCompressedTypeValue, __func__, "");
+
+    
+    
+    return 0;
+}
+void _XValueDeinit(XRef _Nonnull obj) {
+    XCompressedType typeId = XRefGetTaggedCompressedType(obj);
+    XAssert(typeId <= XCompressedTypeValue, __func__, "");
+
+}
+void _XValueDescribe(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer) {
+    XCompressedType typeId = XRefGetTaggedCompressedType(obj);
+    XAssert(typeId <= XCompressedTypeValue, __func__, "");
+
+}
+
+XHashCode _XCollectionHash(XRef _Nonnull obj) {
+    XCompressedType typeId = XHeapRefGetCompressedType(obj);
+    XAssert((typeId >= XCompressedTypePackage && typeId <= XCompressedTypeMax), __func__, "");
 
     return 0;
+}
+XBool _XCollectionEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
+    XCompressedType typeId0 = XHeapRefGetCompressedType(lhs);
+    XAssert((typeId0 >= XCompressedTypePackage && typeId0 <= XCompressedTypeMax), __func__, "");
+    XCompressedType typeId1 = XHeapRefGetCompressedType(rhs);
+    XAssert((typeId1 >= XCompressedTypePackage && typeId1 <= XCompressedTypeMax), __func__, "");
+    return (lhs == rhs);
+}
+void _XCollectionDeinit(XRef _Nonnull obj) {
+    XCompressedType typeId = XHeapRefGetCompressedType(obj);
+    XAssert((typeId >= XCompressedTypePackage && typeId <= XCompressedTypeMax), __func__, "");
+
+}
+void _XCollectionDescribe(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer) {
+    XCompressedType typeId = XHeapRefGetCompressedType(obj);
+    XAssert((typeId >= XCompressedTypePackage && typeId <= XCompressedTypeMax), __func__, "");
+
+}
+
+XHashCode _XObjectHash(XRef _Nonnull obj) {
+    return XAddressHash(obj);
 }
 XBool _XObjectEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
     XAssert(NULL != lhs, __func__, "");
@@ -220,15 +264,8 @@ void _XObjectDescribe(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer) {
 
 }
 
-#define _XRefKindMake(Type) \
-{\
-.hash = _XRefHash,\
-.equal = _XRefEqual,\
-.deinit = _XRefDeinit,\
-.describe = _XRefDescribe,\
-}
 
-#define _XRefKindMakeObject(Type) \
+#define _XRefKindMake(Type) \
 {\
 .hash = _X##Type##Hash,\
 .equal = _X##Type##Equal,\
@@ -241,7 +278,7 @@ const _XRefKind_t _XRefKindTable[] __attribute__((aligned(64))) = {
     _XRefKindMake(ConstantValue),
     _XRefKindMake(Value),
     _XRefKindMake(Collection),
-    _XRefKindMakeObject(Object),
+    _XRefKindMake(Object),
 };
 
 #define X_BUILD_RefKindId_Class X_BUILD_UInt(0)

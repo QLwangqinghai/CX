@@ -80,7 +80,12 @@ typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
 #endif
 
 
-
+struct __XRefKind {
+    XRefHashCode_f _Nonnull hash;
+    XRefEqual_f _Nonnull equal;
+    XRefDeinit_f _Nonnull deinit;
+    XRefDescribe_f _Nonnull describe;
+};
 typedef struct {
     _Atomic(XFastUInt) rcInfo;
 } _XObjectCompressedBase;
@@ -214,7 +219,6 @@ typedef struct {
     _XByteStorageContent_t content;
 } _XByteStorage;
 
-extern XBool _XByteStorageUnpackedEqual(XByteStorageUnpacked_t * _Nonnull lhs, XByteStorageUnpacked_t * _Nonnull rhs, const char * _Nonnull func);
 //typedef void (*XCustomRelease_f)(XPtr _Nullable context, XPtr _Nonnull content, XUInt length);
 //typedef struct {
 //    XPtr _Nullable context;
@@ -349,6 +353,19 @@ extern XHashCode _XHashSInt64(XSInt64 i);
 extern XHashCode _XHashFloat64(XFloat64 d);
 extern XUInt32 _XELFHashBytes(XUInt8 * _Nullable bytes, XUInt32 length);
 
+static inline XHashCode XAddressHash(XPtr _Nonnull obj) {
+    return (XHashCode)(((uintptr_t)obj) >> 4);
+};
+
+static inline const XType_s * _Nonnull _XHeapRefGetTypeInfo(XHeapRef _Nonnull ref) {
+    XObjectBase_s * obj = (XObjectBase_s *)ref;
+    uintptr_t info = atomic_load(&(obj->typeInfo));
+    const XType_s * result = (const XType_s *)info;
+    XAssert(NULL != result, __func__, "");
+    return result;
+}
+
+    
 
 #pragma mark - weak
 

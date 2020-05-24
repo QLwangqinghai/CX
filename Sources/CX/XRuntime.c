@@ -275,11 +275,20 @@ XHashCode XHash(XUInt8 * _Nullable bytes, XUInt length) {
 XTaggedType XRefGetTaggedType(XRef _Nonnull ref) {
     XUInt v = (XUInt)((uintptr_t)ref);
     if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
-        XUInt64 clsId = (v & X_BUILD_TaggedObjectClassMask) >> X_BUILD_TaggedObjectClassShift;
+        XUInt clsId = (v & X_BUILD_TaggedObjectClassMask) >> X_BUILD_TaggedObjectClassShift;
         return (XTaggedType)clsId;
     }
     return XUInt32Max;
 }
+XCompressedType XRefGetTaggedCompressedType(XRef _Nonnull ref) {
+    XUInt v = (XUInt)((uintptr_t)ref);
+    if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
+        XUInt clsId = (v & X_BUILD_TaggedObjectClassMask) >> X_BUILD_TaggedObjectClassShift;
+        return _XRefTaggedObjectTypeTable[clsId];
+    }
+    return XCompressedTypeNone;
+}
+
 XCompressedType XHeapRefGetCompressedType(XHeapRef _Nonnull ref) {
     XUInt info = _XRefGetRcInfo(ref);
     if((info & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag) {

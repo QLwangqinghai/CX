@@ -144,9 +144,16 @@ const XType_s * _Nonnull _XRefGetClass(XRef _Nonnull ref, XCompressedType * _Nul
 }
 
 XClass _Nonnull XRefGetClass(XRef _Nonnull ref) {
-    assert(ref);
-    XClass info = (XClass)_XRefGetClass(ref, NULL, __func__);
-    return info;
+    XIndex typeId = XRefGetTypeId(ref);
+    if (typeId <= X_BUILD_TypeId_Max) {
+        return (XClass)(&(_XClassTable[typeId]));
+        //values
+    } else {
+        //Object
+        const XObjectType_s * type = _XObjectGetClass(ref, __func__);
+        assert(type);
+        return (XClass)type;
+    }
 }
 
 

@@ -155,7 +155,7 @@ extern const XTaggedType XTaggedTypeMax;
 
 extern XTaggedType XRefGetTaggedType(XRef _Nonnull ref);
 extern XIndex XRefGetTypeId(XRef _Nonnull ref);
-
+extern XIndex XHeapRefGetTypeId(XHeapRef _Nonnull ref);
 /// TODO: delete
 extern XCompressedType XHeapRefGetCompressedType(XHeapRef _Nonnull ref);
 

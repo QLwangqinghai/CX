@@ -13,23 +13,6 @@
 #include "XRuntimeInternal.h"
 
 
-
-extern const _XNull _XNullShared;
-extern const _XBoolean _XBooleanTrue;
-extern const _XBoolean _XBooleanFalse;
-
-
-
-XHashCode _XNullHash(_XNull * _Nonnull obj);
-XBool _XNullEqual(_XNull * _Nonnull lhs, _XNull * _Nonnull rhs);
-
-void _XNullDescribe(_XNull * _Nonnull obj, _XDescriptionBuffer _Nonnull buffer);
-
-XHashCode _XBooleanHash(_XBoolean * _Nonnull obj);
-XBool _XBooleanEqual(_XBoolean * _Nonnull lhs, _XBoolean * _Nonnull rhs);
-void _XBooleanDescribe(_XBoolean * _Nonnull obj, _XDescriptionBuffer _Nonnull buffer);
-
-
 XHashCode _XNumberUnpackedHash(_XNumber * _Nonnull obj);
 XBool _XNumberUnpackedEqual(XNumberUnpacked_t * _Nonnull lhs, XNumberUnpacked_t * _Nonnull rhs);
 void _XNumberUnpackedDescribe(XNumberUnpacked_t * _Nonnull obj, _XDescriptionBuffer _Nonnull buffer);

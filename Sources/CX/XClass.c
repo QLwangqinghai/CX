@@ -45,33 +45,6 @@ void _XClassDescribe(XRef _Nonnull lhs, XRef _Nonnull rhs) {
 
 }
 
-
-void _XConstantValueCheck(XRef _Nonnull obj, const char * _Nonnull func, const char * _Nonnull desc) {
-    XAssert((&_XNullShared == obj || &_XBooleanTrue == obj || &_XBooleanFalse == obj), func, desc);
-}
-
-XHashCode _XConstantValueHash(XRef _Nonnull obj) {
-    if (&_XNullShared == obj) {
-        return 0;
-    } else if (&_XBooleanTrue == obj) {
-        return 1;
-    } else if (&_XBooleanFalse == obj) {
-        return 0;
-    } else {
-        XAssert(false, __func__, "");
-    }
-    return 0;
-}
-
-XBool _XConstantValueEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-    _XConstantValueCheck(lhs, __func__, "");
-    _XConstantValueCheck(rhs, __func__, "");
-    return lhs == rhs;
-}
-void _XConstantValueDescribe(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer) {
-
-}
-
 XHashCode _XValueHash(XRef _Nonnull obj) {
 
     

@@ -316,11 +316,10 @@ static _XByteStorage * _Nonnull __XRefAsByteStorage(XRef _Nonnull ref, XBool * _
 #if BUILD_TARGET_RT_64_BIT
     __unused
 #endif
-    const XType_s * type = _XHeapRefGetClass(ref, &compressedType, func);
-    
-    if (XCompressedTypeString == compressedType) {
+    XIndex typeId = XHeapRefGetTypeId(ref);
+    if (X_BUILD_TypeId_String == typeId) {
         *isString = true;
-    } else if (XCompressedTypeData == compressedType) {
+    } else if (X_BUILD_TypeId_Data == typeId) {
         *isString = false;
     } else {
         XAssert(false, func, desc);

@@ -124,25 +124,6 @@ const XType_s * _Nonnull _XHeapRefGetClass(XHeapRef _Nonnull ref, XCompressedTyp
 }
 
 
-
-/*
- 32:
- bitcount: 6 .. 25 .. 1
- bitcount: 6 .. 57 .. 1
- */
-const XType_s * _Nonnull _XRefGetClass(XRef _Nonnull ref, XCompressedType * _Nullable compressedType, const char * _Nonnull func) {
-    XTaggedType taggedType = _XRefGetTaggedObjectTaggedType(ref);
-    const XType_s * result = NULL;
-    if (taggedType <= XTaggedTypeMax) {
-        if (compressedType) {
-            *compressedType = _XRefTaggedObjectTypeTable[taggedType];
-        }
-        result = _XRefTaggedObjectClassTable[taggedType];
-        return result;
-    }
-    return _XHeapRefGetClass(ref, compressedType, func);
-}
-
 XClass _Nonnull XRefGetClass(XRef _Nonnull ref) {
     XIndex typeId = XRefGetTypeId(ref);
     if (typeId <= X_BUILD_TypeId_Max) {
@@ -277,6 +258,16 @@ XCompressedType XHeapRefGetCompressedType(XHeapRef _Nonnull ref) {
     }
 }
 
+XTaggedType XRefGetTaggedType(XRef _Nonnull ref) {
+    XUInt v = (XUInt)((uintptr_t)ref);
+    if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
+        XUInt taggedType = ((X_BUILD_TaggedObjectClassMask & v) >> X_BUILD_TaggedObjectClassShift);
+        return (XTaggedType)taggedType;
+    } else {
+        return XIndexNotFound;
+    }
+}
+
 XIndex XRefGetTypeId(XRef _Nonnull ref) {
     XUInt v = (XUInt)((uintptr_t)ref);
     if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
@@ -303,6 +294,10 @@ XIndex XRefGetTypeId(XRef _Nonnull ref) {
                 }
             }
                 break;
+            default: {
+                abort();
+            }
+                break;
         }
     } else {
         XAssert(NULL != ref, __func__, "");
@@ -314,6 +309,20 @@ XIndex XRefGetTypeId(XRef _Nonnull ref) {
         }
     }
 }
+
+
+XIndex XHeapRefGetTypeId(XHeapRef _Nonnull ref) {
+    XUInt v = (XUInt)((uintptr_t)ref);
+    XAssert((v & X_BUILD_TaggedMask) != X_BUILD_TaggedObjectFlag, __func__, "");
+    XAssert(NULL != ref, __func__, "");
+    XUInt info = _XRefGetRcInfo(ref);
+    if((info & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag) {
+        return ((info & X_BUILD_CompressedRcTypeMask) >> X_BUILD_CompressedRcTypeShift) + X_BUILD_TypeId_CompressedTypeMin;
+    } else {
+        return XIndexNotFound;
+    }
+}
+
 
 const XObjectType_s * _Nonnull _XObjectGetClass(_XObject * _Nonnull object, const char * _Nonnull func) {
     uintptr_t info = atomic_load(&(object->_runtime.typeInfo));

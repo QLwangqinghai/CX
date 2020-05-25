@@ -124,8 +124,4 @@ extern XHashCode _XClassHash(XRef _Nonnull obj);
 extern XBool _XClassEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
 extern void _XClassDescribe(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer);
 
-extern XHashCode _XConstantValueHash(XRef _Nonnull obj);
-extern XBool _XConstantValueEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
-extern void _XConstantValueDescribe(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer);
-
 #endif /* XClass_h */

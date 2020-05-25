@@ -14,12 +14,12 @@
 #pragma mark - rc
 
 
-void _XCollectionDispatchDeinit(XHeapRef _Nonnull ref, const XType_s * type, const char * _Nonnull func) {
+void _XCompressedDispatchDeinit(XHeapRef _Nonnull ref, XCompressedType type, const char * _Nonnull func) {
 
 }
 
 
-void _XObjectDispatchDeinit(_XObject * _Nonnull ref, const XType_s * type, const char * _Nonnull func) {
+void _XObjectDispatchDeinit(_XObject * _Nonnull ref, const XObjectType_s * type, const char * _Nonnull func) {
     
 }
 
@@ -84,11 +84,11 @@ void _XRefRelease(XHeapRef _Nonnull ref, const char * _Nonnull func) {
         
         if (rcInfo < X_BUILD_CompressedRcBase) {
             //do dealloc
-            const XType_s * type = _XRefGetClassWithCompressedType((newRcInfo & X_BUILD_CompressedRcTypeMask) >> X_BUILD_CompressedRcTypeShift);
-            _XCollectionDispatchDeinit(ref, type, func);
+            XCompressedType type = ((newRcInfo & X_BUILD_CompressedRcTypeMask) >> X_BUILD_CompressedRcTypeShift);
+            _XCompressedDispatchDeinit(ref, type, func);
         }
     } else {
-        const XType_s * type = NULL;
+        const XObjectType_s * type = NULL;
         XBool locked = false;
         _XWeakTable * table = _XWeakTableGet((uintptr_t)ref);
         do {
@@ -110,7 +110,7 @@ void _XRefRelease(XHeapRef _Nonnull ref, const char * _Nonnull func) {
                     if ((newRcInfo & X_BUILD_RcHasWeakMask) == X_BUILD_RcHasWeakFlag) {
                         //clearWeak
                         if (!locked) {
-                          _XWeakTableLock(table);
+                            _XWeakTableLock(table);
                             locked = true;
                         }
                     } else {

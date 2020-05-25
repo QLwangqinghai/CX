@@ -166,8 +166,6 @@ extern void XRefRelease(XRef _Nonnull ref);
 #pragma mark - equalTo
 
 extern XBool XClassEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
-extern XBool XNullEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
-extern XBool XBooleanEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
 extern XBool XNumberEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
 extern XBool XStringEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
 extern XBool XDataEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
@@ -177,8 +175,6 @@ extern XBool XValueEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
 #pragma mark - hash
 
 extern XHashCode XClassHash(XRef _Nonnull ref);
-extern XHashCode XNullHash(XRef _Nonnull ref);
-extern XHashCode XBooleanHash(XRef _Nonnull ref);
 extern XHashCode XNumberHash(XRef _Nonnull ref);
 extern XHashCode XStringHash(XRef _Nonnull ref);
 extern XHashCode XDataHash(XRef _Nonnull ref);

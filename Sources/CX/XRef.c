@@ -100,17 +100,6 @@ XNull _Nonnull XNullCreate(void) {
 //    return (XBoolean)&_XBooleanFalse;
 //}
 
-XBool XBooleanEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-    //XBoolean 不允许自己构建， 只可以使用 XBooleanTrue、XBooleanFalse;
-    XAssert((lhs == XBooleanTrue || lhs == XBooleanFalse), __func__, "lhs error");
-    XAssert((rhs == XBooleanTrue || rhs == XBooleanFalse), __func__, "rhs error");
-    return lhs == rhs;
-};
-
-XHashCode XBooleanHash(XRef _Nonnull ref) {
-    XAssert((ref == XBooleanTrue || ref == XBooleanFalse), __func__, "ref error");
-    return ((const _XBoolean *)ref)->content.value ? 1 : 0;
-}
 
 XBoolean _Nonnull XBooleanCreate(XBool value) {
     if (value) {

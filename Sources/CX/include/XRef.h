@@ -17,11 +17,25 @@ extern "C" {
 
 #pragma mark - XClass
 
+#pragma mark -
 
+typedef struct {
+    uintptr_t ref;
+    XHashCode hashCode;
+#if BUILD_TARGET_RT_64_BIT
+    XIndex typeId: 32;
+    XIndex descriptionLength: 32;
+#else
+    XIndex typeId: 16;
+    XIndex descriptionLength: 16;
+#endif
+    const char * _Nonnull description;
+} XTaggedConstantValue;
+
+extern const XTaggedConstantValue XTaggedConstantValueTable[3];
 
 #pragma mark - XNull
 
-extern const XNull _Nonnull XNullShared(void);
 extern XNull _Nonnull XNullCreate(void);
 
 #pragma mark - XBoolean

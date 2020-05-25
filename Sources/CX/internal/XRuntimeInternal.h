@@ -50,6 +50,15 @@ typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
  flag: 1, value = 1
 */
 
+/*
+ flag: 2
+ isnumber: 1 total: 3, subtype: 4
+ isDate: 1 total: 4
+ isDataOrString
+ 
+ 
+ */
+
 
 #if BUILD_TARGET_RT_64_BIT
 
@@ -58,11 +67,24 @@ typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
 
 #define X_BUILD_TaggedObjectClassMask    0x6000000000000000ULL
 #define X_BUILD_TaggedObjectClassShift    61ULL
-#define X_BUILD_TaggedObjectClassNumber   0x0ULL
+
+#define X_BUILD_TaggedConstantValueIndexMask 0xFFFFFFFFFFFFFFFULL
+
+#define X_BUILD_TaggedConstantValue   0x0ULL
+#define X_BUILD_TaggedObjectClassNumber   0x2000000000000000ULL
+#define X_BUILD_TaggedObjectClassDate    0x4000000000000000ULL
+#define X_BUILD_TaggedObjectByteStorage   0x6000000000000000ULL
+
+#define X_BUILD_TaggedObjectByteStorageDataFlag   0x1000000000000000ULL
+
 #define X_BUILD_TaggedObjectClassString  0x2000000000000000ULL
 #define X_BUILD_TaggedObjectClassData    0x4000000000000000ULL
-#define X_BUILD_TaggedObjectClassDate    0x6000000000000000ULL
 #define X_BUILD_TaggedObjectContentShift 1ULL
+
+
+#define X_BUILD_TaggedConstantValueNull 0x8000000000000001ULL
+#define X_BUILD_TaggedConstantValueBooleanTrue 0x8000000000000003ULL
+#define X_BUILD_TaggedConstantValueBooleanFalse 0x8000000000000005ULL
 
 #else
 
@@ -71,13 +93,30 @@ typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
 
 #define X_BUILD_TaggedObjectClassMask    0x60000000UL
 #define X_BUILD_TaggedObjectClassShift   29UL
-#define X_BUILD_TaggedObjectClassNumber  0x0UL
-#define X_BUILD_TaggedObjectClassString  0x20000000UL
-#define X_BUILD_TaggedObjectClassData    0x40000000UL
-#define X_BUILD_TaggedObjectClassDate    0x60000000UL
+
+#define X_BUILD_TaggedConstantValueIndexMask 0xFFFFFFFUL
+
+#define X_BUILD_TaggedConstantValue   0x0UL
+#define X_BUILD_TaggedObjectClassNumber  0x20000000UL
+#define X_BUILD_TaggedObjectClassDate    0x40000000UL
+#define X_BUILD_TaggedObjectByteStorage  0x60000000UL
+
+#define X_BUILD_TaggedObjectByteStorageDataFlag   0x10000000UL
+
 #define X_BUILD_TaggedObjectContentShift 1UL
 
+#define X_BUILD_TaggedConstantValueNull 0x80000001UL
+#define X_BUILD_TaggedConstantValueBooleanTrue 0x80000003UL
+#define X_BUILD_TaggedConstantValueBooleanFalse 0x80000005UL
+
+
 #endif
+
+#define X_BUILD_TaggedConstantValueMin X_BUILD_TaggedConstantValueNull
+
+#define X_BUILD_TaggedConstantValueMax X_BUILD_TaggedConstantValueBooleanFalse
+
+
 
 
 struct __XRefKind {
@@ -334,13 +373,12 @@ extern void _XWeakPackageRelease(_WeakPackage * _Nonnull WeakPackage);
     
 #pragma mark - runtime
 
+extern void _XRefDeinit(XRef _Nonnull obj);
 
 //如果ref是个 TaggedObject 返回值有效，否则返回 XCompressedTypeNone
 extern XTaggedType _XRefGetTaggedObjectTaggedType(XRef _Nonnull ref);
 
-extern const XType_s * _Nullable _XRefGetTaggedObjectClass(XRef _Nonnull ref);
-
-extern const XType_s * _Nonnull _XObjectGetClass(_XObject * _Nonnull object, const char * _Nonnull func);
+extern const XObjectType_s * _Nonnull _XObjectGetClass(_XObject * _Nonnull object, const char * _Nonnull func);
 extern const XType_s * _Nonnull _XHeapRefGetClass(XHeapRef _Nonnull ref, XCompressedType * _Nullable compressedType, const char * _Nonnull func);
     
 extern const XType_s * _Nonnull _XRefGetClass(XRef _Nonnull ref, XCompressedType * _Nullable compressedType, const char * _Nonnull func);

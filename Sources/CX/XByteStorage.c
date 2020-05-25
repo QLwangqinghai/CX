@@ -156,12 +156,12 @@ void _XBufferRelease(_XBuffer * _Nonnull buffer) {
 
 #if BUILD_TARGET_RT_64_BIT
 #define X_BUILD_TaggedByteStorageContentMask 0xFFFFFFFFFFFFFFULL
-#define X_BUILD_TaggedByteStorageContentLengthMask 0xfULL
+#define X_BUILD_TaggedByteStorageContentLengthMask 0x7ULL
 #define X_BUILD_TaggedByteStorageContentLengthShift 57ULL
 #define X_BUILD_TaggedByteStorageContentLengthMax 0x7UL
 #else
 #define X_BUILD_TaggedByteStorageContentMask 0xFFFFFFUL
-#define X_BUILD_TaggedByteStorageContentLengthMask 0xFUL
+#define X_BUILD_TaggedByteStorageContentLengthMask 0x7UL
 #define X_BUILD_TaggedByteStorageContentLengthShift 25ULL
 #define X_BUILD_TaggedByteStorageContentLengthMax 0x3UL
 #endif
@@ -331,7 +331,7 @@ static _XByteStorage * _Nonnull __XRefAsByteStorage(XRef _Nonnull ref, XBool * _
 XByteStorageUnpacked_t _XByteStorageUnpack(XPtr _Nonnull ref, const char * _Nonnull func, const char * _Nonnull desc) {
     XByteStorageUnpacked_t result = {};
     XTaggedType type = XRefGetTaggedType(ref);
-    if (XTaggedTypeMax < type) {
+    if (type > XTaggedTypeMax) {
         XBool isString = false;
         _XByteStorage * storage = __XRefAsByteStorage(ref, &isString, func, desc);
         result.isString = isString ? 1 : 0;
@@ -346,13 +346,12 @@ XByteStorageUnpacked_t _XByteStorageUnpack(XPtr _Nonnull ref, const char * _Nonn
         }
         return result;
     } else {
-        if (XTaggedTypeString == type) {
-            result.isString = 1;
-        } else if (XTaggedTypeData == type) {
-            result.isString = 0;
+        if (XTaggedTypeByteStorage == type) {
+
         } else {
             XAssert(false, func, desc);
         }
+        result.isString = ((X_BUILD_TaggedObjectByteStorageDataFlag & (XUInt)ref) == X_BUILD_TaggedObjectByteStorageDataFlag) ? 0 : 1;
         result.contentType = 0;
 
 #if BUILD_TARGET_RT_64_BIT

@@ -53,47 +53,52 @@ XHashCode XClassHash(XRef _Nonnull cls) {
     return 0;
 }
 
+#define XTaggedConstantValueMake(Ref, HashCode, TypeId, DescriptionLength, Description) \
+{\
+.ref = Ref,\
+.hashCode = HashCode,\
+.typeId = TypeId,\
+.descriptionLength = DescriptionLength,\
+.description = #Description,\
+}
+
+const XTaggedConstantValue XTaggedConstantValueTable[3] = {
+    XTaggedConstantValueMake(X_BUILD_TaggedConstantValueNull, 0, X_BUILD_TypeId_Null, 4, null),
+    XTaggedConstantValueMake(X_BUILD_TaggedConstantValueBooleanTrue, 1, X_BUILD_TypeId_Boolean, 4, true),
+    XTaggedConstantValueMake(X_BUILD_TaggedConstantValueBooleanFalse, 0, X_BUILD_TypeId_Boolean, 5, false),
+};
+
+
 #pragma mark - XNull
 
-const _XNull _XNullShared = {
-    ._runtime = _XConstantObjectBaseMake(XClassOf(Null)),
-};
-const XNull _Nonnull XNullShared() {
-    return (XNull)&_XNullShared;
-}
+//const _XNull _XNullShared = {
+//    ._runtime = _XConstantObjectBaseMake(XClassOf(Null)),
+//};
+//const XNull _Nonnull XNullShared() {
+//    return (XNull)&_XNullShared;
+//}
 
-XBool XNullEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
-    //XNull 不允许自己构建， 只可以使用 XNullShared;
-    assert(lhs == XNullShared);
-    assert(rhs == XNullShared);
-    return true;
-};
-
-XHashCode XNullHash(XRef _Nonnull ref) {
-    assert(ref == XNullShared);
-    return 0;
-}
-extern XNull _Nonnull XNullCreate(void) {
-    return XNullShared;
+XNull _Nonnull XNullCreate(void) {
+    return (XNull)((uintptr_t)X_BUILD_TaggedConstantValueNull);
 }
 
 #pragma mark - XBoolean
 
-const _XBoolean _XBooleanTrue = {
-    ._runtime = _XConstantObjectBaseMake(XClassOf(Boolean)),
-    .content = {.value = true},
-};
-const _XBoolean _XBooleanFalse = {
-    ._runtime = _XConstantObjectBaseMake(XClassOf(Boolean)),
-    .content = {.value = false},
-};
+//const _XBoolean _XBooleanTrue = {
+//    ._runtime = _XConstantObjectBaseMake(XClassOf(Boolean)),
+//    .content = {.value = true},
+//};
+//const _XBoolean _XBooleanFalse = {
+//    ._runtime = _XConstantObjectBaseMake(XClassOf(Boolean)),
+//    .content = {.value = false},
+//};
 
-const XBoolean _Nonnull XBooleanTrue() {
-    return (XBoolean)&_XBooleanTrue;
-};
-const XBoolean _Nonnull XBooleanFalse() {
-    return (XBoolean)&_XBooleanFalse;
-}
+//const XBoolean _Nonnull XBooleanTrue() {
+//    return (XBoolean)&_XBooleanTrue;
+//};
+//const XBoolean _Nonnull XBooleanFalse() {
+//    return (XBoolean)&_XBooleanFalse;
+//}
 
 XBool XBooleanEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
     //XBoolean 不允许自己构建， 只可以使用 XBooleanTrue、XBooleanFalse;
@@ -108,13 +113,17 @@ XHashCode XBooleanHash(XRef _Nonnull ref) {
 }
 
 XBoolean _Nonnull XBooleanCreate(XBool value) {
-    return value ? XBooleanTrue : XBooleanFalse;
+    if (value) {
+        return (XBoolean)((uintptr_t)X_BUILD_TaggedConstantValueBooleanTrue);
+    } else {
+        return (XBoolean)((uintptr_t)X_BUILD_TaggedConstantValueBooleanFalse);
+    }
 }
 
 XBool XBooleanGetValue(XBoolean _Nonnull ref) {
-    if (ref == XBooleanTrue) {
+    if (ref == (XBoolean)((uintptr_t)X_BUILD_TaggedConstantValueBooleanTrue)) {
         return true;
-    } else if (ref == XBooleanFalse) {
+    } else if (ref == (XBoolean)((uintptr_t)X_BUILD_TaggedConstantValueBooleanFalse)) {
         return false;
     } else {
         XAssert(false, __func__, "ref error");
@@ -390,7 +399,7 @@ void XPackageUnpack(XPackageRef _Nonnull ref, XPackageContent_t * _Nonnull conte
 XRef _Nonnull XRefRetain(XRef _Nonnull ref) {
     XAssert(NULL != ref, __func__, "ref is Null");
     XTaggedType type = XRefGetTaggedType(ref);
-    if (type < XTaggedTypeMax) {
+    if (type <= XTaggedTypeMax) {
         return ref;
     }
     return _XRefRetain(ref, __func__);
@@ -398,7 +407,7 @@ XRef _Nonnull XRefRetain(XRef _Nonnull ref) {
 void XRefRelease(XRef _Nonnull ref) {
     XAssert(NULL != ref, __func__, "ref is Null");
     XTaggedType type = XRefGetTaggedType(ref);
-    if (type < XTaggedTypeMax) {
+    if (type <= XTaggedTypeMax) {
         return;
     }
     _XRefRelease(ref, __func__);

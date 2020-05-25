@@ -22,9 +22,11 @@ typedef XBool (*XRefEqual_f)(XRef _Nonnull lhs, XRef _Nonnull rhs);
 typedef void (*XRefDeinit_f)(XRef _Nonnull obj);
 typedef void (*XRefDescribe_f)(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer);
 
-struct __XRefKind;
-typedef struct __XRefKind _XRefKind_t;
-typedef const _XRefKind_t * XRefKind;
+typedef XUInt XRefKind;
+
+//struct __XRefKind;
+//typedef struct __XRefKind _XRefKind_t;
+//typedef const _XRefKind_t * XRefKind;
     
 struct _XAllocator;
 typedef const struct _XAllocator * _XAllocatorPtr;
@@ -45,7 +47,7 @@ typedef struct {
 #endif
     
 typedef struct _XTypeBase {
-    XRefKind _Nonnull kind;
+    XRefKind kind;
     const char * _Nonnull name;
 } XTypeBase_s;
 
@@ -64,16 +66,15 @@ typedef struct {
     XRefDescribe_f _Nonnull describe;
 } XObjectType_s;
 
-extern XRefKind _Nonnull XRefKindClass;
-extern XRefKind _Nonnull XRefKindConstantValue;
-extern XRefKind _Nonnull XRefKindValue;
-extern XRefKind _Nonnull XRefKindCollection;
-extern XRefKind _Nonnull XRefKindObject;
+//extern XRefKind _Nonnull XRefKindClass;
+//extern XRefKind _Nonnull XRefKindConstantValue;
+//extern XRefKind _Nonnull XRefKindValue;
+//extern XRefKind _Nonnull XRefKindCollection;
+//extern XRefKind _Nonnull XRefKindObject;
 
 
 extern XHashCode XRefHash(XRef _Nonnull obj);
 extern XBool XRefEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
-extern void XRefDeinit(XRef _Nonnull obj);
 extern void XRefDescribe(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer);
 
     
@@ -138,22 +139,24 @@ typedef XRef _Nonnull (*XRefAllocate_f)(_XAllocatorPtr _Nonnull allocator, XClas
 typedef void (*XRefDeallocate_f)(_XAllocatorPtr _Nonnull allocator, XObject _Nonnull obj);
 
 
-extern XRefKind _Nonnull XRefGetKind(XRef _Nonnull ref);
+extern XRefKind XRefGetKind(XRef _Nonnull ref);
 extern XClass _Nonnull XRefGetClass(XRef _Nonnull ref);
-extern XBool XRefIsMetaClass(XRef _Nonnull ref);
+extern XBool XRefIsMetaType(XRef _Nonnull ref);
 
     
-typedef XUInt32 XTaggedType;
+typedef XUInt XTaggedType;
+
+extern const XTaggedType XTaggedTypeConstantValue;
 extern const XTaggedType XTaggedTypeNumber;
-extern const XTaggedType XTaggedTypeString;
-extern const XTaggedType XTaggedTypeData;
 extern const XTaggedType XTaggedTypeDate;
+extern const XTaggedType XTaggedTypeByteStorage;
 extern const XTaggedType XTaggedTypeMax;
 //others error
 
-    
 extern XTaggedType XRefGetTaggedType(XRef _Nonnull ref);
-extern XCompressedType XRefGetTaggedCompressedType(XRef _Nonnull ref);
+extern XIndex XRefGetTypeId(XRef _Nonnull ref);
+
+/// TODO: delete
 extern XCompressedType XHeapRefGetCompressedType(XHeapRef _Nonnull ref);
 
 

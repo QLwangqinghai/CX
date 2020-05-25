@@ -316,7 +316,7 @@ static _XByteStorage * _Nonnull __XRefAsByteStorage(XRef _Nonnull ref, XBool * _
 #if BUILD_TARGET_RT_64_BIT
     __unused
 #endif
-    XIndex typeId = XHeapRefGetTypeId(ref);
+    XIndex typeId = _XHeapRefGetTypeId(ref);
     if (X_BUILD_TypeId_String == typeId) {
         *isString = true;
     } else if (X_BUILD_TypeId_Data == typeId) {
@@ -329,7 +329,7 @@ static _XByteStorage * _Nonnull __XRefAsByteStorage(XRef _Nonnull ref, XBool * _
 
 XByteStorageUnpacked_t _XByteStorageUnpack(XPtr _Nonnull ref, const char * _Nonnull func, const char * _Nonnull desc) {
     XByteStorageUnpacked_t result = {};
-    XTaggedType type = XRefGetTaggedType(ref);
+    XTaggedType type = _XRefGetTaggedType(ref);
     if (type > XTaggedTypeMax) {
         XBool isString = false;
         _XByteStorage * storage = __XRefAsByteStorage(ref, &isString, func, desc);

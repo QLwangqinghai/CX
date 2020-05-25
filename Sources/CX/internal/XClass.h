@@ -47,6 +47,7 @@
 
 #define X_BUILD_TypeId_Max X_BUILD_TypeId_Set
 
+#define X_BUILD_TypeId_CollectionMin X_BUILD_TypeId_Package
 
 
 #define X_BUILD_TypeId_CompressedTypeMin X_BUILD_TypeId_Number
@@ -97,22 +98,8 @@ extern const XType_s _XClassTable[];
 
 #define XClassOf(Type) ((XClass)_XClassOf(Type))
 
-
-static inline const XType_s * _Nullable _XRefGetClassWithCompressedType(XCompressedType id) {
-    if (id <= 0 || id > XCompressedTypeMax) {
-        return NULL;
-    } else {
-        return &(_XClassTable[id + X_BUILD_TypeId_CompressedTypeMin - 1]);
-    }
-}
 extern const XObjectType_s XObjectTypeRootObject;
 extern const XClass _Nonnull XClassObject;// = (const XClass)&XObjectTypeRootObject;
-
-//extern const XType_s * const _Nonnull _XRefTaggedObjectClassTable[4];
-//extern const XCompressedType _XRefTaggedObjectTypeTable[4];
-//extern const XRefKind _XRefTaggedObjectKindTable[4];
-
-
 
 
 extern XHashCode _XObjectHash(XRef _Nonnull obj);

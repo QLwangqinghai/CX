@@ -71,41 +71,17 @@ const XTaggedConstantValue XTaggedConstantValueTable[3] = {
 
 #pragma mark - XNull
 
-//const _XNull _XNullShared = {
-//    ._runtime = _XConstantObjectBaseMake(XClassOf(Null)),
-//};
-//const XNull _Nonnull XNullShared() {
-//    return (XNull)&_XNullShared;
-//}
 
 XNull _Nonnull XNullCreate(void) {
-    return (XNull)((uintptr_t)X_BUILD_TaggedConstantValueNull);
+    return X_BUILD_TaggedConstantValueNull;
 }
-
 #pragma mark - XBoolean
-
-//const _XBoolean _XBooleanTrue = {
-//    ._runtime = _XConstantObjectBaseMake(XClassOf(Boolean)),
-//    .content = {.value = true},
-//};
-//const _XBoolean _XBooleanFalse = {
-//    ._runtime = _XConstantObjectBaseMake(XClassOf(Boolean)),
-//    .content = {.value = false},
-//};
-
-//const XBoolean _Nonnull XBooleanTrue() {
-//    return (XBoolean)&_XBooleanTrue;
-//};
-//const XBoolean _Nonnull XBooleanFalse() {
-//    return (XBoolean)&_XBooleanFalse;
-//}
-
 
 XBoolean _Nonnull XBooleanCreate(XBool value) {
     if (value) {
-        return (XBoolean)((uintptr_t)X_BUILD_TaggedConstantValueBooleanTrue);
+        return XBooleanTrue;
     } else {
-        return (XBoolean)((uintptr_t)X_BUILD_TaggedConstantValueBooleanFalse);
+        return XBooleanFalse;
     }
 }
 
@@ -220,21 +196,9 @@ XValue _Nonnull XValueCreate(XUInt flag, XPtr _Nullable content, XSize contentSi
     return ref;
 }
 static _XValue * _Nonnull __XRefAsValue(XValue _Nonnull ref, const char * _Nonnull func) {
-    XCompressedType compressedType = XCompressedTypeNone;
-    
-#if BUILD_TARGET_RT_64_BIT
-    __unused
-#endif
-    XClass info = _XHeapRefGetClass(ref, &compressedType, func);
-    
-#if BUILD_TARGET_RT_64_BIT
-    XAssert(XCompressedTypeValue == compressedType, func, "not Value instance");
+    XIndex typeId = _XHeapRefGetTypeId(ref);
+    XAssert(X_BUILD_TypeId_Value == typeId, func, "not Value instance");
     return (_XValue *)ref;
-#else
-    const XType_s * type = (const XType_s *)info;
-    XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Value - 1].base.identifier, func, "not Value instance");
-    return (_XValue *)ref;
-#endif
 }
 XSize XValueGetSize(XValue _Nonnull ref) {
     XAssert(NULL != ref, __func__, "require ref != NULL");
@@ -311,21 +275,9 @@ XPackageRef _Nonnull XPackageCreate(XUInt flag, XU8Char * _Nonnull typeName, XSi
 }
 
 static _XPackage * _Nonnull __XRefAsPackage(XPackageRef _Nonnull ref, const char * _Nonnull func) {
-    XCompressedType compressedType = XCompressedTypeNone;
-    
-#if BUILD_TARGET_RT_64_BIT
-    __unused
-#endif
-    XClass info = _XHeapRefGetClass(ref, &compressedType, func);
-    
-#if BUILD_TARGET_RT_64_BIT
-    XAssert(XCompressedTypePackage == compressedType, func, "not Object instance");
+    XIndex typeId = _XHeapRefGetTypeId(ref);
+    XAssert(X_BUILD_TypeId_Package == typeId, func, "not Value instance");
     return (_XPackage *)ref;
-#else
-    const XType_s * type = (const XType_s *)info;
-    XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Package - 1].base.identifier, func, "not Object instance");
-    return (_XPackage *)ref;
-#endif
 }
 
 XSize XPackageGetSize(XPackageRef _Nonnull ref) {
@@ -387,7 +339,7 @@ void XPackageUnpack(XPackageRef _Nonnull ref, XPackageContent_t * _Nonnull conte
 
 XRef _Nonnull XRefRetain(XRef _Nonnull ref) {
     XAssert(NULL != ref, __func__, "ref is Null");
-    XTaggedType type = XRefGetTaggedType(ref);
+    XTaggedType type = _XRefGetTaggedType(ref);
     if (type <= XTaggedTypeMax) {
         return ref;
     }
@@ -395,7 +347,7 @@ XRef _Nonnull XRefRetain(XRef _Nonnull ref) {
 }
 void XRefRelease(XRef _Nonnull ref) {
     XAssert(NULL != ref, __func__, "ref is Null");
-    XTaggedType type = XRefGetTaggedType(ref);
+    XTaggedType type = _XRefGetTaggedType(ref);
     if (type <= XTaggedTypeMax) {
         return;
     }

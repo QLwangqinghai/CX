@@ -163,24 +163,13 @@ XDate _Nonnull XDateCreate(XUInt flag, XTimeInterval time) {
 }
 
 static _XDate * _Nonnull __XRefAsDate(XDate _Nonnull ref, const char * _Nonnull func) {
-   XCompressedType compressedType = XCompressedTypeNone;
-    
-#if BUILD_TARGET_RT_64_BIT
-    __unused
-#endif
-    const XType_s * type = _XHeapRefGetClass(ref, &compressedType, func);
-    
-#if BUILD_TARGET_RT_64_BIT
-    XAssert(XCompressedTypeDate == compressedType, func, "not Date instance");
+    XIndex typeId = _XHeapRefGetTypeId(ref);
+    XAssert(X_BUILD_TypeId_Date == typeId, func, "not Date instance");
     return (_XDate *)ref;
-#else
-    XAssert(type->base.identifier == _XClassTable[X_BUILD_CompressedType_Date - 1].base.identifier, func, "not Number instance");
-    return (_XDate *)ref;
-#endif
 }
 
 void __XDateUnpack(XDate _Nonnull ref, XTimeInterval * _Nonnull valuePtr, const char * _Nonnull func) {
-    XTaggedType type = XRefGetTaggedType(ref);
+    XTaggedType type = _XRefGetTaggedType(ref);
     if (type > XTaggedTypeMax) {
         _XDate * date = __XRefAsDate(ref, func);
         XTimeInterval content = date->content.time;

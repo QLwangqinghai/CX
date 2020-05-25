@@ -81,11 +81,6 @@ typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
 #define X_BUILD_TaggedObjectClassData    0x4000000000000000ULL
 #define X_BUILD_TaggedObjectContentShift 1ULL
 
-
-#define X_BUILD_TaggedConstantValueNull 0x8000000000000001ULL
-#define X_BUILD_TaggedConstantValueBooleanTrue 0x8000000000000003ULL
-#define X_BUILD_TaggedConstantValueBooleanFalse 0x8000000000000005ULL
-
 #else
 
 #define X_BUILD_TaggedMask 0x80000001UL
@@ -104,11 +99,6 @@ typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
 #define X_BUILD_TaggedObjectByteStorageDataFlag   0x10000000UL
 
 #define X_BUILD_TaggedObjectContentShift 1UL
-
-#define X_BUILD_TaggedConstantValueNull 0x80000001UL
-#define X_BUILD_TaggedConstantValueBooleanTrue 0x80000003UL
-#define X_BUILD_TaggedConstantValueBooleanFalse 0x80000005UL
-
 
 #endif
 
@@ -141,42 +131,8 @@ typedef struct {
 }
 
 
-struct _XTypeIdentifier;
-typedef struct _XTypeIdentifier _XTypeIdentifier_s;
-typedef const struct _XTypeIdentifier * _XTypeIdentifierPtr;
-
-struct _XTypeIdentifier {
-    const char * _Nonnull name;
-    XRefHashCode_f _Nullable hashCode;
-    XRefEqual_f _Nonnull equalTo;
-    XRefCompare_f _Nullable compare;
-};
-
-
-
-
-
 #pragma mark - XNull
-
-typedef struct {
-    XUInt __;
-} _XNullContent_t;
-
-typedef struct {
-    XObjectBase_s _runtime;
-    _XNullContent_t content;
-} _XNull;
-
 #pragma mark - XBoolean
-
-typedef struct {
-    XBool value;
-} _XBooleanContent_t;
-
-typedef struct {
-    XObjectBase_s _runtime;
-    _XBooleanContent_t content;
-} _XBoolean;
 
 #pragma mark - XNumber
 
@@ -373,15 +329,14 @@ extern void _XWeakPackageRelease(_WeakPackage * _Nonnull WeakPackage);
     
 #pragma mark - runtime
 
-extern void _XRefDeinit(XRef _Nonnull obj);
-
-//如果ref是个 TaggedObject 返回值有效，否则返回 XCompressedTypeNone
-extern XTaggedType _XRefGetTaggedObjectTaggedType(XRef _Nonnull ref);
-
+extern XTaggedType _XRefGetTaggedType(XRef _Nonnull ref);
+extern XIndex _XHeapRefGetTypeId(XHeapRef _Nonnull ref);
 extern const XObjectType_s * _Nonnull _XObjectGetClass(_XObject * _Nonnull object, const char * _Nonnull func);
-extern const XType_s * _Nonnull _XHeapRefGetClass(XHeapRef _Nonnull ref, XCompressedType * _Nullable compressedType, const char * _Nonnull func);
+
+
+#pragma mark - runtime-life
     
-extern const XType_s * _Nonnull _XRefGetClass(XRef _Nonnull ref, XCompressedType * _Nullable compressedType, const char * _Nonnull func);
+extern void _XRefDeinit(XRef _Nonnull obj);
 
     
 #pragma mark - hash

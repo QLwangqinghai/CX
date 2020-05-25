@@ -131,7 +131,6 @@ void _XObjectDescribe(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer) {
 //XRefKind _Nonnull XRefKindCollection = XRefKindOf(Collection);
 //XRefKind _Nonnull XRefKindObject = XRefKindOf(Object);
 
-
 const XCompressedType XCompressedTypeNumber = X_BUILD_CompressedType_Number;
 const XCompressedType XCompressedTypeDate = X_BUILD_CompressedType_Date;
 const XCompressedType XCompressedTypeString = X_BUILD_CompressedType_String;
@@ -237,27 +236,3 @@ const XClass _Nonnull XClassSet = XClassOf(Set);
 
 const XClass _Nonnull XClassObject = (const XClass)&XObjectTypeRootObject;
 
-
-
-//const XClass _Nonnull XClassObject = XClassOf(Object);
-
-//const XType_s * const _Nonnull _XRefTaggedObjectClassTable[4] = {
-//    &(_XClassTable[X_BUILD_TypeId_Number]),
-//    &(_XClassTable[X_BUILD_TypeId_String]),
-//    &(_XClassTable[X_BUILD_TypeId_Data]),
-//    &(_XClassTable[X_BUILD_TypeId_Date]),
-//};
-//
-//const XCompressedType _XRefTaggedObjectTypeTable[4] = {
-//    X_BUILD_CompressedType_Number,
-//    X_BUILD_CompressedType_String,
-//    X_BUILD_CompressedType_Data,
-//    X_BUILD_CompressedType_Date,
-//};
-//
-//const XRefKind _XRefTaggedObjectKindTable[4] = {
-//    XRefKindOfNormal(Number),
-//    XRefKindOfNormal(String),
-//    XRefKindOfNormal(Data),
-//    XRefKindOfNormal(Date),
-//};

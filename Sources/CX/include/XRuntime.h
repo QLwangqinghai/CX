@@ -13,6 +13,24 @@ extern "C" {
 #endif
 
 #include "XType.h"
+    
+    
+
+#if BUILD_TARGET_RT_64_BIT
+
+#define X_BUILD_TaggedConstantValueNull 0x8000000000000001ULL
+#define X_BUILD_TaggedConstantValueBooleanTrue 0x8000000000000003ULL
+#define X_BUILD_TaggedConstantValueBooleanFalse 0x8000000000000005ULL
+    
+#else
+    
+#define X_BUILD_TaggedConstantValueNull 0x80000001UL
+#define X_BUILD_TaggedConstantValueBooleanTrue 0x80000003UL
+#define X_BUILD_TaggedConstantValueBooleanFalse 0x80000005UL
+    
+    
+#endif
+
 
 typedef XPtr _XDescriptionBuffer;
 typedef XComparisonResult (*XRefCompare_f)(XRef _Nonnull lhs, XRef _Nonnull rhs);
@@ -153,9 +171,7 @@ extern const XTaggedType XTaggedTypeByteStorage;
 extern const XTaggedType XTaggedTypeMax;
 //others error
 
-extern XTaggedType XRefGetTaggedType(XRef _Nonnull ref);
 extern XIndex XRefGetTypeId(XRef _Nonnull ref);
-extern XIndex XHeapRefGetTypeId(XHeapRef _Nonnull ref);
 /// TODO: delete
 extern XCompressedType XHeapRefGetCompressedType(XHeapRef _Nonnull ref);
 

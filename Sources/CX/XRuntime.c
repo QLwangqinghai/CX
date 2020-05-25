@@ -56,9 +56,8 @@ XRefKind XRefGetKind(XRef _Nonnull ref) {
     XAssert(NULL != ref, __func__, "ref is NULL");
 
     XIndex typeId = XRefGetTypeId(ref);
-    if (typeId <= X_BUILD_TypeId_Max) {
+    if (typeId <= X_BUILD_TypeId_Max) {//values
         return _XClassTable[typeId].base.kind;
-        //values
     } else {
         //Object
         const XObjectType_s * type = _XObjectGetClass(ref, __func__);
@@ -84,45 +83,12 @@ XBool XRefIsMetaType(XRef _Nonnull ref) {
     }
 }
 
-
 XUInt _XRefGetRcInfo(XRef _Nonnull ref) {
     _XObjectCompressedBase * obj = (_XObjectCompressedBase *)ref;
     _Atomic(XFastUInt) * tmp = &(obj->rcInfo);
     XFastUInt info = atomic_load(tmp);
     return info;
 }
-
-XTaggedType _XRefGetTaggedObjectTaggedType(XRef _Nonnull ref) {
-    XUInt v = (XUInt)((uintptr_t)ref);
-    if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
-        XUInt id = ((X_BUILD_TaggedObjectClassMask & v) >> X_BUILD_TaggedObjectClassShift);
-        //id 只有4个值
-        return (XTaggedType)id;
-    } else {
-        return XUIntMax;
-    }
-}
-
-const XType_s * _Nonnull _XHeapRefGetClass(XHeapRef _Nonnull ref, XCompressedType * _Nullable compressedType, const char * _Nonnull func) {
-    XUInt info = _XRefGetRcInfo(ref);
-    if((info & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag) {
-        XCompressedType clsId = (XCompressedType)((info & X_BUILD_CompressedRcTypeMask) >> X_BUILD_CompressedRcTypeShift);
-        const XType_s * type = _XRefGetClassWithCompressedType(clsId);
-        XAssert(NULL != type, func, "not ref");
-        if (NULL != compressedType) {
-            *compressedType = clsId;
-        }
-        return type;
-    } else {
-        XObjectBase_s * obj = (XObjectBase_s *)ref;
-        uintptr_t info = atomic_load(&(obj->typeInfo));
-        const XType_s * type = (const XType_s *)info;
-        XRefKind kind = type->base.kind;
-        XAssert(((kind >= XRefKindOfNormal(MetaType) && kind <= XRefKindOfNormal(Boolean)) || X_BUILD_TypeKindObject == kind), func, "");
-        return type;
-    }
-}
-
 
 XClass _Nonnull XRefGetClass(XRef _Nonnull ref) {
     XIndex typeId = XRefGetTypeId(ref);
@@ -258,7 +224,7 @@ XCompressedType XHeapRefGetCompressedType(XHeapRef _Nonnull ref) {
     }
 }
 
-XTaggedType XRefGetTaggedType(XRef _Nonnull ref) {
+XTaggedType _XRefGetTaggedType(XRef _Nonnull ref) {
     XUInt v = (XUInt)((uintptr_t)ref);
     if ((v & X_BUILD_TaggedMask) == X_BUILD_TaggedObjectFlag) {
         XUInt taggedType = ((X_BUILD_TaggedObjectClassMask & v) >> X_BUILD_TaggedObjectClassShift);
@@ -311,10 +277,7 @@ XIndex XRefGetTypeId(XRef _Nonnull ref) {
 }
 
 
-XIndex XHeapRefGetTypeId(XHeapRef _Nonnull ref) {
-    XUInt v = (XUInt)((uintptr_t)ref);
-    XAssert((v & X_BUILD_TaggedMask) != X_BUILD_TaggedObjectFlag, __func__, "");
-    XAssert(NULL != ref, __func__, "");
+XIndex _XHeapRefGetTypeId(XHeapRef _Nonnull ref) {
     XUInt info = _XRefGetRcInfo(ref);
     if((info & X_BUILD_CompressedRcMask) == X_BUILD_CompressedRcFlag) {
         return ((info & X_BUILD_CompressedRcTypeMask) >> X_BUILD_CompressedRcTypeShift) + X_BUILD_TypeId_CompressedTypeMin;
@@ -357,15 +320,42 @@ XHashCode XRefHash(XRef _Nonnull obj) {
     } else if (typeId < X_BUILD_TypeId_CompressedTypeMin) {
         //常量
         return XTaggedConstantValueTable[(uintptr_t)obj - X_BUILD_TaggedConstantValueMin].hashCode;
-    } else if (typeId <= X_BUILD_TypeId_Max) {
+    } if (typeId <= X_BUILD_TypeId_Max) {
+        switch (typeId) {
+            case X_BUILD_TypeId_Number: {
+                return false;
+            }
+                break;
+            case X_BUILD_TypeId_Date: {
+                return false;
+                
+            }
+                break;
+            case X_BUILD_TypeId_String: {
+                return false;
+                
+            }
+                break;
+            case X_BUILD_TypeId_Data: {
+                return false;
+                
+            }
+                break;
+            case X_BUILD_TypeId_Value: {
+                return false;
+                
+            }
+                break;
+            default: {
+                return XAddressHash(obj);
+            }
+                break;
+        }
 
-
-        //values
     } else {
         //Object
-        
+        return _XObjectHash(obj);
     }
-    return 0;
 }
 XBool XRefEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
     XAssert(NULL != lhs, __func__, "");
@@ -380,15 +370,45 @@ XBool XRefEqual(XRef _Nonnull lhs, XRef _Nonnull rhs) {
     } else if (typeId < X_BUILD_TypeId_CompressedTypeMin) {
         //常量
         return lhs == rhs;
-    } else if (typeId <= X_BUILD_TypeId_Max) {
+    } else if (typeId < X_BUILD_TypeId_CollectionMin) {
+        //TODO: FIX
 
-        
-        //values
+        switch (typeId) {
+            case X_BUILD_TypeId_Number: {
+                return false;
+            }
+                break;
+            case X_BUILD_TypeId_Date: {
+                return false;
+
+            }
+                break;
+            case X_BUILD_TypeId_String: {
+                return false;
+
+            }
+                break;
+            case X_BUILD_TypeId_Data: {
+                return false;
+
+            }
+                break;
+            case X_BUILD_TypeId_Value: {
+                return false;
+
+            }
+                break;
+            default: {
+                return lhs == rhs;
+            }
+                break;
+        }
+    } else if (typeId <= X_BUILD_TypeId_Max) {
+        return lhs == rhs;
     } else {
         //Object
         return _XObjectEqual(lhs, rhs);
     }
-    return false;
 }
 void _XRefDeinit(XRef _Nonnull obj) {
     XAssert(NULL != obj, __func__, "");
@@ -399,9 +419,39 @@ void _XRefDeinit(XRef _Nonnull obj) {
         //常量
         XAssert(false, __func__, "");
     } else if (typeId <= X_BUILD_TypeId_Max) {
-
-
         //values
+
+        //Collection
+        switch (typeId) {
+            case X_BUILD_TypeId_Number: {
+
+            }
+                break;
+            case X_BUILD_TypeId_Date: {
+
+                
+            }
+                break;
+            case X_BUILD_TypeId_String: {
+
+                
+            }
+                break;
+            case X_BUILD_TypeId_Data: {
+
+                
+            }
+                break;
+            case X_BUILD_TypeId_Value: {
+
+                
+            }
+                break;
+            default: {
+
+            }
+                break;
+        }
     } else {
         //Object
         _XObjectDeinit(obj);
@@ -417,12 +467,38 @@ void XRefDescribe(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer) {
     } else if (typeId < X_BUILD_TypeId_CompressedTypeMin) {
         //常量
         const XTaggedConstantValue * value = &(XTaggedConstantValueTable[(uintptr_t)obj - X_BUILD_TaggedConstantValueMin]);
-
-
     } else if (typeId <= X_BUILD_TypeId_Max) {
-
-
         //values
+        switch (typeId) {
+            case X_BUILD_TypeId_Number: {
+
+            }
+                break;
+            case X_BUILD_TypeId_Date: {
+
+                
+            }
+                break;
+            case X_BUILD_TypeId_String: {
+
+                
+            }
+                break;
+            case X_BUILD_TypeId_Data: {
+
+                
+            }
+                break;
+            case X_BUILD_TypeId_Value: {
+
+                
+            }
+                break;
+            default: {
+
+            }
+                break;
+        }
     } else {
         //Object
         _XObjectDescribe(obj, buffer);

@@ -35,13 +35,15 @@ typedef struct {
 extern const XTaggedConstantValue XTaggedConstantValueTable[3];
 
 #pragma mark - XNull
-
+    
+#define XNullShare (XNull)((uintptr_t)X_BUILD_TaggedConstantValueNull)
 extern XNull _Nonnull XNullCreate(void);
 
 #pragma mark - XBoolean
 
-extern const XBoolean _Nonnull XBooleanTrue(void);
-extern const XBoolean _Nonnull XBooleanFalse(void);
+#define XBooleanTrue (XBoolean)((uintptr_t)X_BUILD_TaggedConstantValueBooleanTrue)
+#define XBooleanFalse (XBoolean)((uintptr_t)X_BUILD_TaggedConstantValueBooleanFalse)
+
 extern XBoolean _Nonnull XBooleanCreate(XBool value);
 extern XBool XBooleanGetValue(XBoolean _Nonnull ref);
 

@@ -13,22 +13,17 @@ extern "C" {
 #endif
 
 #include "XType.h"
-    
-    
 
+#pragma mark - ConstantValue
+    
 #if BUILD_TARGET_RT_64_BIT
-
 #define X_BUILD_TaggedConstantValueNull 0x8000000000000001ULL
 #define X_BUILD_TaggedConstantValueBooleanTrue 0x8000000000000003ULL
 #define X_BUILD_TaggedConstantValueBooleanFalse 0x8000000000000005ULL
-    
 #else
-    
 #define X_BUILD_TaggedConstantValueNull 0x80000001UL
 #define X_BUILD_TaggedConstantValueBooleanTrue 0x80000003UL
 #define X_BUILD_TaggedConstantValueBooleanFalse 0x80000005UL
-    
-    
 #endif
 
 
@@ -41,10 +36,6 @@ typedef void (*XRefDeinit_f)(XRef _Nonnull obj);
 typedef void (*XRefDescribe_f)(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer);
 
 typedef XUInt XRefKind;
-
-//struct __XRefKind;
-//typedef struct __XRefKind _XRefKind_t;
-//typedef const _XRefKind_t * XRefKind;
     
 struct _XAllocator;
 typedef const struct _XAllocator * _XAllocatorPtr;
@@ -74,7 +65,6 @@ typedef struct {
     XTypeBase_s base;
 } XType_s;
 
-
 typedef struct {
     XObjectBase_s _runtime;
     XTypeBase_s base;
@@ -84,12 +74,9 @@ typedef struct {
     XRefDescribe_f _Nonnull describe;
 } XObjectType_s;
 
-//extern XRefKind _Nonnull XRefKindClass;
-//extern XRefKind _Nonnull XRefKindConstantValue;
-//extern XRefKind _Nonnull XRefKindValue;
-//extern XRefKind _Nonnull XRefKindCollection;
-//extern XRefKind _Nonnull XRefKindObject;
 
+
+#pragma mark - api
 
 extern XHashCode XRefHash(XRef _Nonnull obj);
 extern XBool XRefEqual(XRef _Nonnull lhs, XRef _Nonnull rhs);
@@ -100,13 +87,6 @@ typedef XUInt32 XNumberType;
 
 
 #define X_BUILD_ObjectRcFlagReadOnly ((XUInt)1)
-
-#if BUILD_TARGET_RT_64_BIT
-    #define X_BUILD_UInt(value) value##ULL
-#else
-    #define X_BUILD_UInt(value) value##UL
-
-#endif
 
 typedef XUInt XCompressedType;
 
@@ -140,9 +120,9 @@ extern const XClass _Nonnull XClassNull;//1
 extern const XClass _Nonnull XClassBoolean;//2
 
 extern const XClass _Nonnull XClassNumber;//3
-extern const XClass _Nonnull XClassString;//4
-extern const XClass _Nonnull XClassData;//5
-extern const XClass _Nonnull XClassDate;//6
+extern const XClass _Nonnull XClassDate;//4
+extern const XClass _Nonnull XClassString;//5
+extern const XClass _Nonnull XClassData;//6
 extern const XClass _Nonnull XClassValue;//7
 extern const XClass _Nonnull XClassPackage;//8
 
@@ -163,7 +143,6 @@ extern XBool XRefIsMetaType(XRef _Nonnull ref);
 
     
 typedef XUInt XTaggedType;
-
 extern const XTaggedType XTaggedTypeConstantValue;
 extern const XTaggedType XTaggedTypeNumber;
 extern const XTaggedType XTaggedTypeDate;

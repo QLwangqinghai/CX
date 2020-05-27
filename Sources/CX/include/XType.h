@@ -201,8 +201,13 @@ typedef int64_t XTimeInterval;
 #define XFastUIntMax UINT_FAST32_MAX
     
 #endif
-    
-    
+
+#if BUILD_TARGET_RT_64_BIT
+    #define X_BUILD_UInt(value) value##ULL
+#else
+    #define X_BUILD_UInt(value) value##UL
+#endif
+
     
 typedef XSInt32 XComparisonResult;
 extern const XComparisonResult XCompareLessThan;

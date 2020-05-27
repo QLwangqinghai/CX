@@ -254,6 +254,67 @@ defined (BIT_ZERO_ON_LEFT) || defined(m68k) || defined(__sparc)
 #endif
 #endif
 
+
+#if defined(__x86_64) || defined(_M_AMD64) || defined(_M_X64)
+    #define BUILD_TARGET_RT_64_BIT 1
+    #define BUILD_TARGET_RT_32_BIT 0
+    #define BUILD_TARGET_X86_64
+#elif defined(__x86) || defined(__i386) || defined(__i386__) || defined(_M_IX86)
+    #define BUILD_TARGET_RT_64_BIT 0
+    #define BUILD_TARGET_RT_32_BIT 1
+    #define BUILD_TARGET_X86_32
+#elif defined(__aarch64__)
+    #define BUILD_TARGET_RT_64_BIT 1
+    #define BUILD_TARGET_RT_32_BIT 0
+    #define BUILD_TARGET_AARCH64
+#elif defined(__arm) || defined(__arm__) || defined(_M_ARM)
+    #define BUILD_TARGET_RT_64_BIT 0
+    #define BUILD_TARGET_RT_32_BIT 1
+    #define BUILD_TARGET_ARM
+#elif (defined(__PPC64__) || defined(__powerpc64__)) && defined(_LITTLE_ENDIAN)
+    #define BUILD_TARGET_RT_64_BIT 1
+    #define BUILD_TARGET_RT_32_BIT 0
+    #define BUILD_TARGET_PPC64LE
+#elif defined(__mips__) && !defined(__LP64__)
+    #define BUILD_TARGET_RT_64_BIT 0
+    #define BUILD_TARGET_RT_32_BIT 1
+    #define BUILD_TARGET_MIPS
+#elif defined(__mips__) && defined(__LP64__)
+    #define BUILD_TARGET_RT_64_BIT 1
+    #define BUILD_TARGET_RT_32_BIT 0
+    #define BUILD_TARGET_MIPS64
+#elif defined(__pnacl__)
+    #define BUILD_TARGET_RT_64_BIT 0
+    #define BUILD_TARGET_RT_32_BIT 1
+    #define BUILD_TARGET_PNACL
+#elif defined(__wasm__)
+    #define BUILD_TARGET_RT_64_BIT 0
+    #define BUILD_TARGET_RT_32_BIT 1
+
+#elif defined(__asmjs__)
+    #define BUILD_TARGET_RT_64_BIT 0
+    #define BUILD_TARGET_RT_32_BIT 1
+
+#elif defined(__myriad2__)
+    #define BUILD_TARGET_RT_64_BIT 0
+    #define BUILD_TARGET_RT_32_BIT 1
+
+#else
+    #error "Unknown target CPU"
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* Make sure we can test for ARM just checking for __arm__, since sometimes
  * __arm is defined but __arm__ is not. */
 #if defined(__arm) && !defined(__arm__)
@@ -267,16 +328,6 @@ defined (BIT_ZERO_ON_LEFT) || defined(m68k) || defined(__sparc)
 #if defined(__sparc) && !defined(__sparc__)
 #define __sparc__
 #endif
-
-
-#if __LLP64__ || __LP64__ || __POINTER_WIDTH__-0 == 64
-#define BUILD_TARGET_RT_64_BIT 1
-#define BUILD_TARGET_RT_32_BIT 0
-#else
-#define BUILD_TARGET_RT_64_BIT 0
-#define BUILD_TARGET_RT_32_BIT 1
-#endif
-
 
 #if __LITTLE_ENDIAN__
 #define BUILD_TARGET_RT_LITTLE_ENDIAN 1

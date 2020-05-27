@@ -10,12 +10,38 @@
 #include "XMemory.h"
 #include "internal/XClass.h"
 
+#pragma mark - private
+
+typedef XSize (*_XContentDeinit_f)(XPtr _Nonnull content);
+
+
+const _XContentDeinit_f _XContentDeinitTable[] = {
+    _XNumberContentDeinit,
+    _XDateContentDeinit,
+    _XByteStorageContentDeinit,
+    _XByteStorageContentDeinit,
+    _XValueContentDeinit,
+    _XPackageContentDeinit,
+    _XWeakPackageContentDeinit,
+    _XArrayContentDeinit,
+    _XStorageContentDeinit,
+    _XMapContentDeinit,
+    _XSetContentDeinit,
+};
+
+
+void _XAllocatorCompressedDeallocate(XCompressedType type, XSize contentSize, XRef _Nonnull obj);
+
+
 
 #pragma mark - rc
 
-
 void _XCompressedDispatchDeinit(XHeapRef _Nonnull ref, XCompressedType type, const char * _Nonnull func) {
-
+    _XCompressedObject * obj = (_XCompressedObject *)ref;
+    void * content = &(obj->content[0]);
+    _XContentDeinit_f deinit = _XContentDeinitTable[type];
+    XSize contentSize = deinit(content);
+    _XAllocatorCompressedDeallocate(type, contentSize, ref);
 }
 
 
@@ -200,23 +226,16 @@ void _XAllocatorDefaultObjectDeallocate(_XAllocatorPtr _Nonnull allocator, XObje
 }
 
 
-XPtr _Nonnull _XAllocatorCompressedMemoryAllocate(_XAllocatorPtr _Nonnull allocator, XSize size) {
-    XAssert(allocator == &_XCollectionAllocator, __func__, "");
+XPtr _Nonnull _XAllocatorCompressedMemoryAllocate(XSize size) {
     return _XAllocatorMemoryAllocate(size, __func__);
 }
-void _XAllocatorCompressedMemoryDeallocate(_XAllocatorPtr _Nonnull allocator, XPtr _Nonnull ptr) {
-    XAssert(allocator == &_XCollectionAllocator, __func__, "");
+void _XAllocatorCompressedMemoryDeallocate(XPtr _Nonnull ptr, XSize size) {
     return _XAllocatorMemoryDeallocate(ptr, __func__);
 }
 
-typedef XRef _Nonnull (*XRefAllocate11_f)(_XAllocatorPtr _Nonnull allocator, XClass _Nonnull cls, XSize contentSize, XObjectRcFlag flag);
-
-XRef _Nonnull _XAllocatorCompressedAllocate(_XAllocatorPtr _Nonnull allocator, XClass _Nonnull cls, XSize contentSize, XObjectRcFlag flag) {
-    XAssert(allocator == &_XCollectionAllocator, __func__, "");
+XRef _Nonnull _XAllocatorCompressedAllocate(XCompressedType ctype, XSize contentSize, XObjectRcFlag flag) {
+    XAssert(ctype <= XCompressedTypeMax, __func__, "");
     _XObjectCompressedBase * ref = _XAllocatorMemoryAllocate(contentSize + sizeof(_XObjectCompressedBase), __func__);
-
-    XUInt type = XCompressedTypeOfClass(cls);
-    XAssert(type <= XCompressedTypeMax, __func__, "class error");
     
     /* compressed == true
      counter
@@ -224,7 +243,7 @@ XRef _Nonnull _XAllocatorCompressedAllocate(_XAllocatorPtr _Nonnull allocator, X
      compressed: 1
      */
     
-    type = type << X_BUILD_CompressedRcTypeShift;
+    XUInt type = ctype << X_BUILD_CompressedRcTypeShift;
     XUInt rc = 0;
     if ((XObjectRcFlagStatic | flag) == XObjectRcFlagStatic) {
         rc = X_BUILD_CompressedRcMax;
@@ -236,6 +255,12 @@ XRef _Nonnull _XAllocatorCompressedAllocate(_XAllocatorPtr _Nonnull allocator, X
     
     return ref;
 }
+void _XAllocatorCompressedDeallocate(XCompressedType type, XSize contentSize, XRef _Nonnull obj) {
+    
+    
+}
+
+
 void _XAllocatorCollectionDeallocate(_XAllocatorPtr _Nonnull allocator, XObject _Nonnull obj) {
     XAssert(allocator == &_XCollectionAllocator, __func__, "");
 

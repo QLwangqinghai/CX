@@ -71,9 +71,8 @@ const XTaggedConstantValue XTaggedConstantValueTable[3] = {
 
 #pragma mark - XNull
 
-
 XNull _Nonnull XNullCreate(void) {
-    return X_BUILD_TaggedConstantValueNull;
+    return XNullShare;
 }
 #pragma mark - XBoolean
 
@@ -312,29 +311,6 @@ void XPackageUnpack(XPackageRef _Nonnull ref, XPackageContent_t * _Nonnull conte
 
 
 
-
-//typedef struct {
-//    XObjectBase_s _runtime;
-//} _XNull;
-//
-//typedef struct {
-//    XObjectBase_s _runtime;
-//    XBool value;
-//} _XBoolean;
-//
-//typedef struct {
-//    _XObjectCompressedBase _runtime;
-//    XSize size;
-//    XUInt8 content[0];
-//} _XNumber;
-//
-//typedef struct {
-//    _XObjectCompressedBase _runtime;
-//    XSize size;
-//    XUInt8 content[0];
-//} _XValue;
-
-
 #pragma mark - XRef
 
 XRef _Nonnull XRefRetain(XRef _Nonnull ref) {
@@ -355,3 +331,63 @@ void XRefRelease(XRef _Nonnull ref) {
 }
 
 
+
+
+
+XSize _XNumberContentDeinit(XPtr _Nonnull content) {
+    XSize contentSize = sizeof(_XNumberContent_t);
+
+    #if BUILD_TARGET_RT_64_BIT
+    _XNumberContent_t * tmp = (_XNumberContent_t *)content;
+    if (XNumberTypeSInt64 == tmp->type || XNumberTypeUInt64 == tmp->type || XNumberTypeFloat64 == tmp->type) {
+        contentSize += sizeof(XUInt64);
+    }
+    #endif
+    bzero(content, contentSize);
+    return contentSize;
+}
+XSize _XDateContentDeinit(XPtr _Nonnull content) {
+    XSize contentSize = sizeof(_XDateContent_t);
+    bzero(content, contentSize);
+    return contentSize;
+}
+XSize _XByteStorageContentDeinit(XPtr _Nonnull content) {
+    XSize contentSize = sizeof(_XByteStorage);
+    bzero(content, contentSize);
+    return contentSize;
+}
+XSize _XValueContentDeinit(XPtr _Nonnull content) {
+    XSize contentSize = sizeof(_XValueContent_t);
+    bzero(content, contentSize);
+    return contentSize;
+}
+XSize _XPackageContentDeinit(XPtr _Nonnull content) {
+    XSize contentSize = sizeof(_XPackageContent_t);
+    bzero(content, contentSize);
+    return contentSize;
+}
+XSize _XWeakPackageContentDeinit(XPtr _Nonnull content) {
+    XSize contentSize = sizeof(_WeakPackageContent_t);
+    bzero(content, contentSize);
+    return contentSize;
+}
+XSize _XArrayContentDeinit(XPtr _Nonnull content) {
+    XSize contentSize = sizeof(_XCollectionContent_t);
+    bzero(content, contentSize);
+    return contentSize;
+}
+XSize _XStorageContentDeinit(XPtr _Nonnull content) {
+    XSize contentSize = sizeof(_XCollectionContent_t);
+    bzero(content, contentSize);
+    return contentSize;
+}
+XSize _XMapContentDeinit(XPtr _Nonnull content) {
+    XSize contentSize = sizeof(_XCollectionContent_t);
+    bzero(content, contentSize);
+    return contentSize;
+}
+XSize _XSetContentDeinit(XPtr _Nonnull content) {
+    XSize contentSize = sizeof(_XCollectionContent_t);
+    bzero(content, contentSize);
+    return contentSize;
+}

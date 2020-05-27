@@ -103,18 +103,9 @@ typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
 #endif
 
 #define X_BUILD_TaggedConstantValueMin X_BUILD_TaggedConstantValueNull
-
 #define X_BUILD_TaggedConstantValueMax X_BUILD_TaggedConstantValueBooleanFalse
 
 
-
-
-struct __XRefKind {
-    XRefHashCode_f _Nonnull hash;
-    XRefEqual_f _Nonnull equal;
-    XRefDeinit_f _Nonnull deinit;
-    XRefDescribe_f _Nonnull describe;
-};
 typedef struct {
     _Atomic(XFastUInt) rcInfo;
 } _XObjectCompressedBase;
@@ -129,6 +120,11 @@ typedef struct {
     .rcInfo = ATOMIC_VAR_INIT(X_BUILD_RcMax),\
     .typeInfo = ATOMIC_VAR_INIT((uintptr_t)(type)),\
 }
+
+typedef struct {
+    _XObjectCompressedBase _runtime;
+    XUInt8 content[sizeof(XUInt)];
+} _XCompressedObject;
 
 
 #pragma mark - XNull
@@ -166,6 +162,16 @@ typedef struct {
     _XNumberContent_t content;
 } _XNumber;
 
+#pragma mark - XDate
+
+typedef struct {
+    XTimeInterval time;
+} _XDateContent_t;
+
+typedef struct {
+    _XObjectCompressedBase _runtime;
+    _XDateContent_t content;
+} _XDate;
 
 #pragma mark - XString
     
@@ -228,16 +234,7 @@ typedef _XByteStorage _XString;
 
 typedef _XByteStorage _XData;
 
-#pragma mark - XDate
 
-typedef struct {
-    XTimeInterval time;
-} _XDateContent_t;
-
-typedef struct {
-    _XObjectCompressedBase _runtime;
-    _XDateContent_t content;
-} _XDate;
 
 #pragma mark - XValue
 
@@ -295,8 +292,11 @@ typedef struct __WeakPackage {
 
 #pragma mark - XCollection
 typedef struct {
+    XPtr _Nonnull collection;
+} _XCollectionContent_t;
+typedef struct {
     _XObjectCompressedBase _runtime;
-    XPtr _Nonnull content;
+    _XCollectionContent_t content;
 } _XCollection;
 
 #pragma mark - XArray
@@ -335,10 +335,24 @@ extern const XObjectType_s * _Nonnull _XObjectGetClass(_XObject * _Nonnull objec
 
 
 #pragma mark - runtime-life
-    
+
+extern XSize _XNumberContentDeinit(XPtr _Nonnull content);
+extern XSize _XDateContentDeinit(XPtr _Nonnull content);
+extern XSize _XByteStorageContentDeinit(XPtr _Nonnull content);
+
+extern XSize _XValueContentDeinit(XPtr _Nonnull content);
+extern XSize _XPackageContentDeinit(XPtr _Nonnull content);
+extern XSize _XWeakPackageContentDeinit(XPtr _Nonnull content);
+
+extern XSize _XArrayContentDeinit(XPtr _Nonnull content);
+extern XSize _XStorageContentDeinit(XPtr _Nonnull content);
+extern XSize _XMapContentDeinit(XPtr _Nonnull content);
+extern XSize _XSetContentDeinit(XPtr _Nonnull content);
+
+
 extern void _XRefDeinit(XRef _Nonnull obj);
 
-    
+
 #pragma mark - hash
     
 extern XHashCode _XHashUInt64(XUInt64 i);
@@ -346,18 +360,9 @@ extern XHashCode _XHashSInt64(XSInt64 i);
 extern XHashCode _XHashFloat64(XFloat64 d);
 extern XUInt32 _XELFHashBytes(XUInt8 * _Nullable bytes, XUInt32 length);
 
-static inline XHashCode XAddressHash(XPtr _Nonnull obj) {
+static inline XHashCode _XAddressHash(XPtr _Nonnull obj) {
     return (XHashCode)(((uintptr_t)obj) >> 4);
 };
-
-static inline const XType_s * _Nonnull _XHeapRefGetTypeInfo(XHeapRef _Nonnull ref) {
-    XObjectBase_s * obj = (XObjectBase_s *)ref;
-    uintptr_t info = atomic_load(&(obj->typeInfo));
-    const XType_s * result = (const XType_s *)info;
-    XAssert(NULL != result, __func__, "");
-    return result;
-}
-
     
 
 #pragma mark - weak
@@ -372,10 +377,7 @@ extern _XWeakTable * _Nonnull _XWeakTableGet(uintptr_t address);
 extern void _XWeakTableLock(_XWeakTable * _Nonnull table);
 extern void _XWeakTableUnlock(_XWeakTable * _Nonnull table);
 
-    
-    
-    
-    
+
 #if defined(__cplusplus)
 }  // extern C
 #endif

@@ -347,7 +347,7 @@ XHashCode XRefHash(XRef _Nonnull obj) {
             }
                 break;
             default: {
-                return XAddressHash(obj);
+                return _XAddressHash(obj);
             }
                 break;
         }
@@ -504,4 +504,7 @@ void XRefDescribe(XRef _Nonnull obj, _XDescriptionBuffer _Nonnull buffer) {
         _XObjectDescribe(obj, buffer);
     }
 }
+
+
+
 

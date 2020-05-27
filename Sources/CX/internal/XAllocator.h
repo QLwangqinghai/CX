@@ -99,6 +99,12 @@ extern const _XAllocator_s _XWeakPackageAllocator;
 XRef _Nonnull _XRefRetain(XHeapRef _Nonnull ref, const char * _Nonnull func);
 void _XRefRelease(XHeapRef _Nonnull ref, const char * _Nonnull func);
 
+XPtr _Nonnull _XAllocatorCompressedMemoryAllocate(XSize size);
+void _XAllocatorCompressedMemoryDeallocate(XPtr _Nonnull ptr, XSize size);
+
+XRef _Nonnull _XAllocatorCompressedAllocate(XCompressedType type, XSize contentSize, XObjectRcFlag flag);
+
+
 #if defined(__cplusplus)
 }  // extern C
 #endif

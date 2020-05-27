@@ -15,7 +15,7 @@
 #ifndef OPENSSL_HEADER_BYTESTRING_H
 #define OPENSSL_HEADER_BYTESTRING_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 
 #include "CNIOBoringSSL_span.h"
 

@@ -123,7 +123,7 @@
 #ifndef OPENSSL_HEADER_BN_H
 #define OPENSSL_HEADER_BN_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 #include "CNIOBoringSSL_thread.h"
 
 #include <sys/types.h>

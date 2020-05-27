@@ -16,7 +16,7 @@
 #define _GNU_SOURCE  // needed for madvise() and MAP_ANONYMOUS on Linux.
 #endif
 
-#include <CNIOBoringSSL_base.h>
+#include <XCryptoBase.h>
 
 #include "fork_detect.h"
 

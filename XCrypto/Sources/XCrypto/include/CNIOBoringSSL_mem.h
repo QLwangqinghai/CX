@@ -57,7 +57,7 @@
 #ifndef OPENSSL_HEADER_MEM_H
 #define OPENSSL_HEADER_MEM_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 
 #include <stdlib.h>
 #include <stdarg.h>

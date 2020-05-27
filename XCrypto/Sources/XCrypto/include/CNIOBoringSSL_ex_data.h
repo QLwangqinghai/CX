@@ -109,7 +109,7 @@
 #ifndef OPENSSL_HEADER_EX_DATA_H
 #define OPENSSL_HEADER_EX_DATA_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 
 #include "CNIOBoringSSL_stack.h"
 

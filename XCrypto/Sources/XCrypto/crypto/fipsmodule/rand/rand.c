@@ -22,7 +22,6 @@
 #include <unistd.h>
 #endif
 
-#include <CNIOBoringSSL_chacha.h>
 #include <CNIOBoringSSL_cpu.h>
 #include <CNIOBoringSSL_mem.h>
 

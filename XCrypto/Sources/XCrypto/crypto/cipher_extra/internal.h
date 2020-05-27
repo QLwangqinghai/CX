@@ -57,7 +57,7 @@
 #ifndef OPENSSL_HEADER_CIPHER_EXTRA_INTERNAL_H
 #define OPENSSL_HEADER_CIPHER_EXTRA_INTERNAL_H
 
-#include <CNIOBoringSSL_base.h>
+#include "XCryptoBase.h"
 
 #include "../internal.h"
 

@@ -15,7 +15,7 @@
 #ifndef OPENSSL_HEADER_PKCS7_H
 #define OPENSSL_HEADER_PKCS7_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 
 #include "CNIOBoringSSL_stack.h"
 

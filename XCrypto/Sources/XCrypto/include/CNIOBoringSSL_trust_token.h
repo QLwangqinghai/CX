@@ -15,7 +15,7 @@
 #ifndef OPENSSL_HEADER_TRUST_TOKEN_H
 #define OPENSSL_HEADER_TRUST_TOKEN_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 #include "CNIOBoringSSL_stack.h"
 
 #if defined(__cplusplus)

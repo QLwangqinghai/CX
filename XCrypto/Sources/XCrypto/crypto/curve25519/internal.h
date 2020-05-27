@@ -19,7 +19,7 @@
 extern "C" {
 #endif
 
-#include <CNIOBoringSSL_base.h>
+#include <XCryptoBase.h>
 
 #include "../internal.h"
 

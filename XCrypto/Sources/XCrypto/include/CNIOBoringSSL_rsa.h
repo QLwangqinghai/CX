@@ -57,7 +57,7 @@
 #ifndef OPENSSL_HEADER_RSA_H
 #define OPENSSL_HEADER_RSA_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 
 #include "CNIOBoringSSL_engine.h"
 #include "CNIOBoringSSL_ex_data.h"

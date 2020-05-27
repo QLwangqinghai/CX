@@ -53,7 +53,7 @@
 #ifndef OPENSSL_HEADER_ECDSA_H
 #define OPENSSL_HEADER_ECDSA_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 
 #include "CNIOBoringSSL_ec_key.h"
 

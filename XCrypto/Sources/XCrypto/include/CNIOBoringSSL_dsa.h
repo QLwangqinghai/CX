@@ -60,7 +60,7 @@
 #ifndef OPENSSL_HEADER_DSA_H
 #define OPENSSL_HEADER_DSA_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 
 #include "CNIOBoringSSL_engine.h"
 #include "CNIOBoringSSL_ex_data.h"

@@ -49,7 +49,7 @@
 #ifndef OPENSSL_HEADER_MODES_INTERNAL_H
 #define OPENSSL_HEADER_MODES_INTERNAL_H
 
-#include <CNIOBoringSSL_base.h>
+#include <XCryptoBase.h>
 
 #include <CNIOBoringSSL_aes.h>
 #include <CNIOBoringSSL_cpu.h>

@@ -15,7 +15,7 @@
 #ifndef OPENSSL_HEADER_CRYPTO_CPU_ARM_LINUX_H
 #define OPENSSL_HEADER_CRYPTO_CPU_ARM_LINUX_H
 
-#include <CNIOBoringSSL_base.h>
+#include <XCryptoBase.h>
 
 #include <string.h>
 

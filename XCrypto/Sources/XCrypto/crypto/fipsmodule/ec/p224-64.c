@@ -17,7 +17,7 @@
 // Inspired by Daniel J. Bernstein's public domain nistp224 implementation
 // and Adam Langley's public domain 64-bit C implementation of curve25519.
 
-#include <CNIOBoringSSL_base.h>
+#include <XCryptoBase.h>
 
 #include <CNIOBoringSSL_bn.h>
 #include <CNIOBoringSSL_ec.h>

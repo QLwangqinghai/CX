@@ -57,7 +57,7 @@
 #ifndef OPENSSL_HEADER_STACK_H
 #define OPENSSL_HEADER_STACK_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 
 #include "CNIOBoringSSL_type_check.h"
 

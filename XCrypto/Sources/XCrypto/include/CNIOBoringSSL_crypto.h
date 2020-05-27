@@ -15,7 +15,7 @@
 #ifndef OPENSSL_HEADER_CRYPTO_H
 #define OPENSSL_HEADER_CRYPTO_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 #include "CNIOBoringSSL_sha.h"
 
 // Upstream OpenSSL defines |OPENSSL_malloc|, etc., in crypto.h rather than

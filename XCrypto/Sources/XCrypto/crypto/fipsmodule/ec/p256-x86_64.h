@@ -19,7 +19,7 @@
 #ifndef OPENSSL_HEADER_EC_P256_X86_64_H
 #define OPENSSL_HEADER_EC_P256_X86_64_H
 
-#include <CNIOBoringSSL_base.h>
+#include <XCryptoBase.h>
 
 #include <CNIOBoringSSL_bn.h>
 

@@ -15,7 +15,7 @@
 #ifndef OPENSSL_HEADER_TRUST_TOKEN_INTERNAL_H
 #define OPENSSL_HEADER_TRUST_TOKEN_INTERNAL_H
 
-#include <CNIOBoringSSL_base.h>
+#include <XCryptoBase.h>
 #include <CNIOBoringSSL_ec.h>
 #include <CNIOBoringSSL_ec_key.h>
 #include <CNIOBoringSSL_nid.h>

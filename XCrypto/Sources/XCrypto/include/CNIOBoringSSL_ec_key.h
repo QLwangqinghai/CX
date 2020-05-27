@@ -68,7 +68,7 @@
 #ifndef OPENSSL_HEADER_EC_KEY_H
 #define OPENSSL_HEADER_EC_KEY_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 
 #include "CNIOBoringSSL_ec.h"
 #include "CNIOBoringSSL_engine.h"

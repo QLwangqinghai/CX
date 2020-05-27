@@ -15,7 +15,7 @@
 #ifndef OPENSSL_HEADER_CURVE25519_H
 #define OPENSSL_HEADER_CURVE25519_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 
 #if defined(__cplusplus)
 extern "C" {

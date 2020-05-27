@@ -58,7 +58,7 @@
 #ifndef HEADER_ASN1_H
 #define HEADER_ASN1_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 
 #include <time.h>
 

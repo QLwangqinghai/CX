@@ -57,7 +57,7 @@
 #ifndef OPENSSL_HEADER_PKCS8_H
 #define OPENSSL_HEADER_PKCS8_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 #include "CNIOBoringSSL_x509.h"
 
 

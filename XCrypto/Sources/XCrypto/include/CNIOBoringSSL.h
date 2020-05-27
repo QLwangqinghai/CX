@@ -18,7 +18,7 @@
 #include "CNIOBoringSSL_arm_arch.h"
 #include "CNIOBoringSSL_asn1_mac.h"
 #include "CNIOBoringSSL_asn1t.h"
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 #include "CNIOBoringSSL_bio.h"
 #include "CNIOBoringSSL_blowfish.h"
 #include "CNIOBoringSSL_boringssl_prefix_symbols.h"

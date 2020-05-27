@@ -57,7 +57,7 @@
 #ifndef OPENSSL_HEADER_OBJ_H
 #define OPENSSL_HEADER_OBJ_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 
 #include "CNIOBoringSSL_bytestring.h"
 #include "CNIOBoringSSL_nid.h"

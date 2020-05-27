@@ -15,7 +15,7 @@
 #ifndef OPENSSL_HEADER_SSL_SPAN_H
 #define OPENSSL_HEADER_SSL_SPAN_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 
 #if !defined(BORINGSSL_NO_CXX)
 

@@ -15,7 +15,7 @@
 #ifndef OPENSSL_HEADER_POLY1305_H
 #define OPENSSL_HEADER_POLY1305_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 
 #ifdef  __cplusplus
 extern "C" {

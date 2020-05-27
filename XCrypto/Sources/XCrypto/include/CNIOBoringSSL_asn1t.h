@@ -57,7 +57,7 @@
 #ifndef HEADER_ASN1T_H
 #define HEADER_ASN1T_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 #include "CNIOBoringSSL_asn1.h"
 
 #ifdef  __cplusplus

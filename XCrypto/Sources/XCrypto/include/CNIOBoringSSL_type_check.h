@@ -57,7 +57,7 @@
 #ifndef OPENSSL_HEADER_TYPE_CHECK_H
 #define OPENSSL_HEADER_TYPE_CHECK_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 
 #if defined(__cplusplus)
 extern "C" {

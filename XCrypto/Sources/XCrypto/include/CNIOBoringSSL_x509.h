@@ -63,7 +63,7 @@
 #ifndef HEADER_X509_H
 #define HEADER_X509_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 
 #include <time.h>
 

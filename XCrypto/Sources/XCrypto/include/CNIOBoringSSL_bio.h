@@ -57,7 +57,7 @@
 #ifndef OPENSSL_HEADER_BIO_H
 #define OPENSSL_HEADER_BIO_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 
 #include <stdio.h>  // For FILE
 

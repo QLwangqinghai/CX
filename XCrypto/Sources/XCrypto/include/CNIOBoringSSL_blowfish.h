@@ -57,7 +57,7 @@
 #ifndef OPENSSL_HEADER_BLOWFISH_H
 #define OPENSSL_HEADER_BLOWFISH_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 
 #ifdef  __cplusplus
 extern "C" {

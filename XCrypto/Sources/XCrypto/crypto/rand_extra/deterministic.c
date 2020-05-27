@@ -18,7 +18,6 @@
 
 #include <string.h>
 
-#include <CNIOBoringSSL_chacha.h>
 
 #include "../internal.h"
 #include "../fipsmodule/rand/internal.h"

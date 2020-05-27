@@ -150,7 +150,7 @@
 #ifndef OPENSSL_HEADER_TLS1_H
 #define OPENSSL_HEADER_TLS1_H
 
-#include "CNIOBoringSSL_base.h"
+#include "XCryptoBase.h"
 
 #ifdef  __cplusplus
 extern "C" {

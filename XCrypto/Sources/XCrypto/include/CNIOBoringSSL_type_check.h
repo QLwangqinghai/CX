@@ -73,6 +73,7 @@ extern "C" {
 // later depends on libc and, in glibc, depends on being built in C11 mode. We
 // do not require this, for now, so use |_Static_assert| directly.
 #define OPENSSL_STATIC_ASSERT(cond, msg) _Static_assert(cond, msg)
+
 #endif
 
 // CHECKED_CAST casts |p| from type |from| to type |to|.

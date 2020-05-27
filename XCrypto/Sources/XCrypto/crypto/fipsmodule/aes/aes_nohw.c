@@ -60,11 +60,15 @@
 // we do not have PSHUFB available to arbitrarily permute bytes.
 
 #if defined(OPENSSL_SSE2)
+
 typedef __m128i aes_word_t;
 // AES_NOHW_WORD_SIZE is sizeof(aes_word_t). alignas(sizeof(T)) does not work in
 // MSVC, so we define a constant.
+
 #define AES_NOHW_WORD_SIZE 16
+
 #define AES_NOHW_BATCH_SIZE 8
+
 #define AES_NOHW_ROW0_MASK \
   _mm_set_epi32(0x000000ff, 0x000000ff, 0x000000ff, 0x000000ff)
 #define AES_NOHW_ROW1_MASK \
@@ -103,6 +107,7 @@ static inline aes_word_t aes_nohw_not(aes_word_t a) {
   _mm_slli_si128((a), (i))
 #define aes_nohw_shift_right(/* aes_word_t */ a, /* const */ i) \
   _mm_srli_si128((a), (i))
+
 #else  // !OPENSSL_SSE2
 #if defined(OPENSSL_64_BIT)
 typedef uint64_t aes_word_t;
@@ -151,10 +156,8 @@ static inline aes_word_t aes_nohw_shift_right(aes_word_t a, aes_word_t i) {
 }
 #endif  // OPENSSL_SSE2
 
-OPENSSL_STATIC_ASSERT(AES_NOHW_BATCH_SIZE * 128 == 8 * 8 * sizeof(aes_word_t),
-                      "batch size does not match word size");
-OPENSSL_STATIC_ASSERT(AES_NOHW_WORD_SIZE == sizeof(aes_word_t),
-                      "AES_NOHW_WORD_SIZE is incorrect");
+OPENSSL_STATIC_ASSERT(AES_NOHW_BATCH_SIZE * 128 == 8 * 8 * sizeof(aes_word_t), "batch size does not match word size");
+OPENSSL_STATIC_ASSERT(AES_NOHW_WORD_SIZE == sizeof(aes_word_t), "AES_NOHW_WORD_SIZE is incorrect");
 
 
 // Block representations.

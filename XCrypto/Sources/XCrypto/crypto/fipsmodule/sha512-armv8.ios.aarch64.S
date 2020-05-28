@@ -1,4 +1,4 @@
-#define BORINGSSL_PREFIX CNIOBoringSSL
+#define BORINGSSL_PREFIX XCrypto
 #if defined(__aarch64__) && defined(__APPLE__)
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
@@ -1078,8 +1078,8 @@ LK512:
 .align	2
 .align	2
 #ifndef	__KERNEL__
-.comm	_OPENSSL_armcap_P,4,4
-.private_extern	_OPENSSL_armcap_P
+.comm	_XCRYPTO_ARMcap_P,4,4
+.private_extern	_XCRYPTO_ARMcap_P
 #endif
 #endif  // !OPENSSL_NO_ASM
 #endif  // defined(__aarch64__) && defined(__APPLE__)

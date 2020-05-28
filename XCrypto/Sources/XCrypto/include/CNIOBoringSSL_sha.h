@@ -97,7 +97,7 @@ OPENSSL_EXPORT void SHA1_Transform(SHA_CTX *sha,
                                    const uint8_t block[SHA_CBLOCK]);
 
 struct sha_state_st {
-#if defined(OPENSSL_WINDOWS)
+#if defined(XCRYPTO_WINDOWS)
   uint32_t h[5];
 #else
   // wpa_supplicant accesses |h0|..|h4| so we must support those names

@@ -14,7 +14,7 @@
 
 #include "internal.h"
 
-#if defined(OPENSSL_WINDOWS_THREADS)
+#if defined(XCRYPTO_WINDOWS_THREADS)
 
 OPENSSL_MSVC_PRAGMA(warning(push, 3))
 #include <windows.h>
@@ -24,7 +24,7 @@ OPENSSL_MSVC_PRAGMA(warning(pop))
 #include <string.h>
 
 #include <CNIOBoringSSL_mem.h>
-#include <CNIOBoringSSL_type_check.h>
+
 
 
 OPENSSL_STATIC_ASSERT(sizeof(CRYPTO_MUTEX) >= sizeof(SRWLOCK),
@@ -257,4 +257,4 @@ int CRYPTO_set_thread_local(thread_local_data_t index, void *value,
   return 1;
 }
 
-#endif  // OPENSSL_WINDOWS_THREADS
+#endif  // XCRYPTO_WINDOWS_THREADS

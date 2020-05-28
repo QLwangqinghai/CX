@@ -716,7 +716,7 @@ void CRYPTO_gcm128_tag(GCM128_CONTEXT *ctx, unsigned char *tag, size_t len) {
                  len <= sizeof(ctx->Xi.c) ? len : sizeof(ctx->Xi.c));
 }
 
-#if defined(OPENSSL_X86) || defined(OPENSSL_X86_64)
+#if defined(OPENSSL_X86) || defined(XCRYPTO_X86_64)
 int crypto_gcm_clmul_enabled(void) {
 #if defined(GHASH_ASM_X86) || defined(GHASH_ASM_X86_64)
   const uint32_t *ia32cap = OPENSSL_ia32cap_get();

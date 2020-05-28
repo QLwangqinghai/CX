@@ -1,4 +1,4 @@
-#define BORINGSSL_PREFIX CNIOBoringSSL
+#define BORINGSSL_PREFIX XCrypto
 #if defined(__arm__) && defined(__linux__)
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
@@ -148,8 +148,8 @@ K512:
 	WORD64(0x5fcb6fab,0x3ad6faec,	0x6c44198c,0x4a475817)
 .size	K512,.-K512
 #if __ARM_MAX_ARCH__>=7 && !defined(__KERNEL__)
-.LOPENSSL_armcap:
-.word	OPENSSL_armcap_P-.Lsha512_block_data_order
+.LXCRYPTO_ARMcap:
+.word	XCRYPTO_ARMcap_P-.Lsha512_block_data_order
 .skip	32-4
 #else
 .skip	32
@@ -166,8 +166,8 @@ sha512_block_data_order:
 	adr	r3,.Lsha512_block_data_order
 #endif
 #if __ARM_MAX_ARCH__>=7 && !defined(__KERNEL__)
-	ldr	r12,.LOPENSSL_armcap
-	ldr	r12,[r3,r12]		@ OPENSSL_armcap_P
+	ldr	r12,.LXCRYPTO_ARMcap
+	ldr	r12,[r3,r12]		@ XCRYPTO_ARMcap_P
 #ifdef	__APPLE__
 	ldr	r12,[r12]
 #endif
@@ -1888,8 +1888,8 @@ sha512_block_data_order_neon:
 .align	2
 .align	2
 #if __ARM_MAX_ARCH__>=7 && !defined(__KERNEL__)
-.comm	OPENSSL_armcap_P,4,4
-.hidden	OPENSSL_armcap_P
+.comm	XCRYPTO_ARMcap_P,4,4
+.hidden	XCRYPTO_ARMcap_P
 #endif
 #endif
 #endif  // !OPENSSL_NO_ASM

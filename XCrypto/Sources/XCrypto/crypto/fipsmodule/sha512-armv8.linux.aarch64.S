@@ -1,4 +1,4 @@
-#define BORINGSSL_PREFIX CNIOBoringSSL
+#define BORINGSSL_PREFIX XCrypto
 #if defined(__aarch64__) && defined(__linux__)
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
@@ -1079,8 +1079,8 @@ sha512_block_data_order:
 .align	2
 .align	2
 #ifndef	__KERNEL__
-.comm	OPENSSL_armcap_P,4,4
-.hidden	OPENSSL_armcap_P
+.comm	XCRYPTO_ARMcap_P,4,4
+.hidden	XCRYPTO_ARMcap_P
 #endif
 #endif
 #endif  // !OPENSSL_NO_ASM

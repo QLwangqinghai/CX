@@ -14,7 +14,7 @@
 
 #include <CNIOBoringSSL_cpu.h>
 
-#if defined(OPENSSL_AARCH64) && defined(OPENSSL_FUCHSIA) && \
+#if defined(OPENSSL_AARCH64) && defined(XCRYPTO_FUCHSIA) && \
     !defined(OPENSSL_STATIC_ARMCAP)
 
 #include <zircon/features.h>
@@ -25,7 +25,7 @@
 
 #include "internal.h"
 
-extern uint32_t OPENSSL_armcap_P;
+extern uint32_t XCRYPTO_ARMcap_P;
 
 void OPENSSL_cpuid_setup(void) {
   uint32_t hwcap;
@@ -36,19 +36,19 @@ void OPENSSL_cpuid_setup(void) {
     return;
   }
 
-  OPENSSL_armcap_P |= ARMV7_NEON;
+  XCRYPTO_ARMcap_P |= ARMV7_NEON;
 
   if (hwcap & ZX_ARM64_FEATURE_ISA_AES) {
-    OPENSSL_armcap_P |= ARMV8_AES;
+    XCRYPTO_ARMcap_P |= ARMV8_AES;
   }
   if (hwcap & ZX_ARM64_FEATURE_ISA_PMULL) {
-    OPENSSL_armcap_P |= ARMV8_PMULL;
+    XCRYPTO_ARMcap_P |= ARMV8_PMULL;
   }
   if (hwcap & ZX_ARM64_FEATURE_ISA_SHA1) {
-    OPENSSL_armcap_P |= ARMV8_SHA1;
+    XCRYPTO_ARMcap_P |= ARMV8_SHA1;
   }
   if (hwcap & ZX_ARM64_FEATURE_ISA_SHA2) {
-    OPENSSL_armcap_P |= ARMV8_SHA256;
+    XCRYPTO_ARMcap_P |= ARMV8_SHA256;
   }
 }
 

@@ -16,7 +16,7 @@
 
 #include <XCryptoBase.h>
 #include <CNIOBoringSSL_err.h>
-#include <CNIOBoringSSL_type_check.h>
+
 
 
 OPENSSL_STATIC_ASSERT(ERR_LIB_NONE == 1, "library value changed");

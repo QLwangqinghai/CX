@@ -123,11 +123,11 @@ function mangle_symbols {
 
     # Now edit the headers again to add the symbol mangling.
     echo "ADDING symbol mangling"
-    perl -pi -e '$_ .= qq(\n#define BORINGSSL_PREFIX CNIOBoringSSL\n) if /#define OPENSSL_HEADER_BASE_H/' "$DSTROOT/include/openssl/base.h"
+    perl -pi -e '$_ .= qq(\n#define BORINGSSL_PREFIX XCrypto\n) if /#define OPENSSL_HEADER_BASE_H/' "$DSTROOT/include/openssl/base.h"
 
     for assembly_file in $(find "$DSTROOT" -name "*.S")
     do
-        $sed -i '1 i #define BORINGSSL_PREFIX CNIOBoringSSL' "$assembly_file"
+        $sed -i '1 i #define BORINGSSL_PREFIX XCrypto' "$assembly_file"
     done
     namespace_inlines "$DSTROOT"
 }
@@ -297,18 +297,14 @@ cat << EOF > "$DSTROOT/include/CNIOBoringSSL.h"
 #include "CNIOBoringSSL_asn1t.h"
 #include "XCryptoBase.h"
 #include "CNIOBoringSSL_bio.h"
-#include "CNIOBoringSSL_blowfish.h"
 #include "CNIOBoringSSL_boringssl_prefix_symbols.h"
 #include "CNIOBoringSSL_boringssl_prefix_symbols_asm.h"
-#include "CNIOBoringSSL_cast.h"
 #include "CNIOBoringSSL_chacha.h"
 #include "CNIOBoringSSL_cmac.h"
 #include "CNIOBoringSSL_conf.h"
 #include "CNIOBoringSSL_cpu.h"
 #include "CNIOBoringSSL_curve25519.h"
 #include "CNIOBoringSSL_des.h"
-#include "CNIOBoringSSL_dtls1.h"
-#include "CNIOBoringSSL_e_os2.h"
 #include "CNIOBoringSSL_ec.h"
 #include "CNIOBoringSSL_ec_key.h"
 #include "CNIOBoringSSL_ecdsa.h"

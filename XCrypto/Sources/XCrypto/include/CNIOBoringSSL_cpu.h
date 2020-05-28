@@ -71,7 +71,7 @@ extern "C" {
 // Runtime CPU feature support
 
 
-#if defined(OPENSSL_X86) || defined(OPENSSL_X86_64)
+#if defined(OPENSSL_X86) || defined(XCRYPTO_X86_64)
 // OPENSSL_ia32cap_P contains the Intel CPUID bits when running on an x86 or
 // x86-64 system.
 //
@@ -103,7 +103,7 @@ OPENSSL_INLINE const uint32_t *OPENSSL_ia32cap_get(void) {
 
 #endif
 
-#if defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64)
+#if defined(XCRYPTO_ARM) || defined(OPENSSL_AARCH64)
 
 #if defined(OPENSSL_APPLE)
 // iOS builds use the static ARM configuration.
@@ -113,7 +113,7 @@ OPENSSL_INLINE const uint32_t *OPENSSL_ia32cap_get(void) {
 #if !defined(OPENSSL_STATIC_ARMCAP)
 
 // CRYPTO_is_NEON_capable_at_runtime returns true if the current CPU has a NEON
-// unit. Note that |OPENSSL_armcap_P| also exists and contains the same
+// unit. Note that |XCRYPTO_ARMcap_P| also exists and contains the same
 // information in a form that's easier for assembly to use.
 OPENSSL_EXPORT char CRYPTO_is_NEON_capable_at_runtime(void);
 
@@ -125,14 +125,14 @@ OPENSSL_INLINE int CRYPTO_is_NEON_capable(void) {
   // hand-written NEON assembly. For now, continue to apply the workaround even
   // when the compiler is instructed to freely emit NEON code. See
   // https://crbug.com/341598 and https://crbug.com/606629.
-#if (defined(__ARM_NEON__) || defined(__ARM_NEON)) && !defined(OPENSSL_ARM)
+#if (defined(__ARM_NEON__) || defined(__ARM_NEON)) && !defined(XCRYPTO_ARM)
   return 1;
 #else
   return CRYPTO_is_NEON_capable_at_runtime();
 #endif
 }
 
-#if defined(OPENSSL_ARM)
+#if defined(XCRYPTO_ARM)
 // CRYPTO_has_broken_NEON returns one if the current CPU is known to have a
 // broken NEON unit. See https://crbug.com/341598.
 OPENSSL_EXPORT int CRYPTO_has_broken_NEON(void);
@@ -178,17 +178,17 @@ OPENSSL_INLINE int CRYPTO_is_ARMv8_PMULL_capable(void) {
 }
 
 #endif  // OPENSSL_STATIC_ARMCAP
-#endif  // OPENSSL_ARM || OPENSSL_AARCH64
+#endif  // XCRYPTO_ARM || OPENSSL_AARCH64
 
-#if defined(OPENSSL_PPC64LE)
+#if defined(XCRYPTO_PPC64LE)
 
 // CRYPTO_is_PPC64LE_vcrypto_capable returns true iff the current CPU supports
 // the Vector.AES category of instructions.
 int CRYPTO_is_PPC64LE_vcrypto_capable(void);
 
-extern unsigned long OPENSSL_ppc64le_hwcap2;
+extern unsigned long XCRYPTO_PPC64LE_hwcap2;
 
-#endif  // OPENSSL_PPC64LE
+#endif  // XCRYPTO_PPC64LE
 
 #if defined(BORINGSSL_DISPATCH_TEST)
 // Runtime CPU dispatch testing support

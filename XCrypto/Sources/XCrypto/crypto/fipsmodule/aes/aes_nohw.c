@@ -109,7 +109,7 @@ static inline aes_word_t aes_nohw_not(aes_word_t a) {
   _mm_srli_si128((a), (i))
 
 #else  // !OPENSSL_SSE2
-#if defined(OPENSSL_64_BIT)
+#if defined(XCRYPTO_64_BIT)
 typedef uint64_t aes_word_t;
 #define AES_NOHW_WORD_SIZE 8
 #define AES_NOHW_BATCH_SIZE 4
@@ -120,7 +120,7 @@ typedef uint64_t aes_word_t;
 #define AES_NOHW_COL01_MASK UINT64_C(0x00000000ffffffff)
 #define AES_NOHW_COL2_MASK UINT64_C(0x0000ffff00000000)
 #define AES_NOHW_COL3_MASK UINT64_C(0xffff000000000000)
-#else  // !OPENSSL_64_BIT
+#else  // !XCRYPTO_64_BIT
 typedef uint32_t aes_word_t;
 #define AES_NOHW_WORD_SIZE 4
 #define AES_NOHW_BATCH_SIZE 2
@@ -131,7 +131,7 @@ typedef uint32_t aes_word_t;
 #define AES_NOHW_COL01_MASK 0x0000ffff
 #define AES_NOHW_COL2_MASK 0x00ff0000
 #define AES_NOHW_COL3_MASK 0xff000000
-#endif  // OPENSSL_64_BIT
+#endif  // XCRYPTO_64_BIT
 
 static inline aes_word_t aes_nohw_and(aes_word_t a, aes_word_t b) {
   return a & b;
@@ -241,7 +241,7 @@ static inline void aes_nohw_batch_set(AES_NOHW_BATCH *batch,
   assert(i < AES_NOHW_BATCH_SIZE);
 #if defined(OPENSSL_SSE2)
   batch->w[i] = in[0];
-#elif defined(OPENSSL_64_BIT)
+#elif defined(XCRYPTO_64_BIT)
   batch->w[i] = in[0];
   batch->w[i + 4] = in[1];
 #else
@@ -260,7 +260,7 @@ static inline void aes_nohw_batch_get(const AES_NOHW_BATCH *batch,
   assert(i < AES_NOHW_BATCH_SIZE);
 #if defined(OPENSSL_SSE2)
   out[0] = batch->w[i];
-#elif defined(OPENSSL_64_BIT)
+#elif defined(XCRYPTO_64_BIT)
   out[0] = batch->w[i];
   out[1] = batch->w[i + 4];
 #else
@@ -289,7 +289,7 @@ static inline aes_word_t aes_nohw_delta_swap(aes_word_t a, aes_word_t mask,
 //
 // These transformations are generalizations of the output of
 // http://programming.sirrida.de/calcperm.php on smaller inputs.
-#if defined(OPENSSL_64_BIT)
+#if defined(XCRYPTO_64_BIT)
 static inline uint64_t aes_nohw_compact_word(uint64_t a) {
   // Numbering the 64/2 = 16 4-bit chunks, least to most significant, we swap
   // quartets of those chunks:
@@ -314,7 +314,7 @@ static inline uint64_t aes_nohw_uncompact_word(uint64_t a) {
   a = aes_nohw_delta_swap(a, UINT64_C(0x00f000f000f000f0), 4);
   return a;
 }
-#else   // !OPENSSL_64_BIT
+#else   // !XCRYPTO_64_BIT
 static inline uint32_t aes_nohw_compact_word(uint32_t a) {
   // Numbering the 32/2 = 16 pairs of bits, least to most significant, we swap:
   //   0 1 2 3 | 4 5 6 7 | 8  9 10 11 | 12 13 14 15 =>
@@ -342,7 +342,7 @@ static inline uint32_t aes_nohw_word_from_bytes(uint8_t a0, uint8_t a1,
   return (uint32_t)a0 | ((uint32_t)a1 << 8) | ((uint32_t)a2 << 16) |
          ((uint32_t)a3 << 24);
 }
-#endif  // OPENSSL_64_BIT
+#endif  // XCRYPTO_64_BIT
 #endif  // !OPENSSL_SSE2
 
 static inline void aes_nohw_compact_block(aes_word_t out[AES_NOHW_BLOCK_WORDS],
@@ -350,7 +350,7 @@ static inline void aes_nohw_compact_block(aes_word_t out[AES_NOHW_BLOCK_WORDS],
   memcpy(out, in, 16);
 #if defined(OPENSSL_SSE2)
   // No conversions needed.
-#elif defined(OPENSSL_64_BIT)
+#elif defined(XCRYPTO_64_BIT)
   uint64_t a0 = aes_nohw_compact_word(out[0]);
   uint64_t a1 = aes_nohw_compact_word(out[1]);
   out[0] = (a0 & UINT64_C(0x00000000ffffffff)) | (a1 << 32);
@@ -376,7 +376,7 @@ static inline void aes_nohw_uncompact_block(
     uint8_t out[16], const aes_word_t in[AES_NOHW_BLOCK_WORDS]) {
 #if defined(OPENSSL_SSE2)
   memcpy(out, in, 16);  // No conversions needed.
-#elif defined(OPENSSL_64_BIT)
+#elif defined(XCRYPTO_64_BIT)
   uint64_t a0 = in[0];
   uint64_t a1 = in[1];
   uint64_t b0 =
@@ -432,7 +432,7 @@ static inline void aes_nohw_uncompact_block(
 #else
 static inline void aes_nohw_swap_bits(aes_word_t *a, aes_word_t *b,
                                       uint32_t mask, aes_word_t shift) {
-#if defined(OPENSSL_64_BIT)
+#if defined(XCRYPTO_64_BIT)
   aes_word_t mask_w = (((uint64_t)mask) << 32) | mask;
 #else
   aes_word_t mask_w = mask;
@@ -741,7 +741,7 @@ static void aes_nohw_inv_shift_rows(AES_NOHW_BATCH *batch) {
 static inline aes_word_t aes_nohw_rotate_rows_down(aes_word_t v) {
 #if defined(OPENSSL_SSE2)
   return _mm_or_si128(_mm_srli_epi32(v, 8), _mm_slli_epi32(v, 24));
-#elif defined(OPENSSL_64_BIT)
+#elif defined(XCRYPTO_64_BIT)
   return ((v >> 4) & UINT64_C(0x0fff0fff0fff0fff)) |
          ((v << 12) & UINT64_C(0xf000f000f000f000));
 #else
@@ -754,7 +754,7 @@ static inline aes_word_t aes_nohw_rotate_rows_down(aes_word_t v) {
 static inline aes_word_t aes_nohw_rotate_rows_twice(aes_word_t v) {
 #if defined(OPENSSL_SSE2)
   return _mm_or_si128(_mm_srli_epi32(v, 16), _mm_slli_epi32(v, 16));
-#elif defined(OPENSSL_64_BIT)
+#elif defined(XCRYPTO_64_BIT)
   return ((v >> 8) & UINT64_C(0x00ff00ff00ff00ff)) |
          ((v << 8) & UINT64_C(0xff00ff00ff00ff00));
 #else

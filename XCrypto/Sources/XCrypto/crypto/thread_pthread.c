@@ -21,7 +21,7 @@
 #include <string.h>
 
 #include <CNIOBoringSSL_mem.h>
-#include <CNIOBoringSSL_type_check.h>
+
 
 
 OPENSSL_STATIC_ASSERT(sizeof(CRYPTO_MUTEX) >= sizeof(pthread_rwlock_t),

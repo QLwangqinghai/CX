@@ -57,7 +57,7 @@
 #include <CNIOBoringSSL_cpu.h>
 
 
-#if !defined(OPENSSL_NO_ASM) && (defined(OPENSSL_X86) || defined(OPENSSL_X86_64))
+#if !defined(OPENSSL_NO_ASM) && (defined(OPENSSL_X86) || defined(XCRYPTO_X86_64))
 
 #include <inttypes.h>
 #include <stdio.h>
@@ -86,7 +86,7 @@ static void OPENSSL_cpuid(uint32_t *out_eax, uint32_t *out_ebx,
   *out_ebx = (uint32_t)tmp[1];
   *out_ecx = (uint32_t)tmp[2];
   *out_edx = (uint32_t)tmp[3];
-#elif defined(__pic__) && defined(OPENSSL_32_BIT)
+#elif defined(__pic__) && defined(XCRYPTO_32_BIT)
   // Inline assembly may not clobber the PIC register. For 32-bit, this is EBX.
   // See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=47602.
   __asm__ volatile (
@@ -288,4 +288,4 @@ void OPENSSL_cpuid_setup(void) {
   }
 }
 
-#endif  // !OPENSSL_NO_ASM && (OPENSSL_X86 || OPENSSL_X86_64)
+#endif  // !OPENSSL_NO_ASM && (OPENSSL_X86 || XCRYPTO_X86_64)

@@ -20,9 +20,9 @@
 
 
 #if !defined(OPENSSL_NO_ASM) && !defined(OPENSSL_STATIC_ARMCAP) && \
-    (defined(OPENSSL_X86) || defined(OPENSSL_X86_64) || \
-     defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64) || \
-     defined(OPENSSL_PPC64LE))
+    (defined(OPENSSL_X86) || defined(XCRYPTO_X86_64) || \
+     defined(XCRYPTO_ARM) || defined(OPENSSL_AARCH64) || \
+     defined(XCRYPTO_PPC64LE))
 // x86, x86_64, the ARMs and ppc64le need to record the result of a
 // cpuid/getauxval call for the asm to work correctly, unless compiled without
 // asm code.
@@ -45,7 +45,7 @@
 // undesirable, so all assembly-referenced symbols should be hidden. CPU
 // capabilities are the only such symbols defined in C. Explicitly hide them,
 // rather than rely on being built with -fvisibility=hidden.
-#if defined(OPENSSL_WINDOWS)
+#if defined(XCRYPTO_WINDOWS)
 #define HIDDEN
 #else
 #define HIDDEN __attribute__((visibility("hidden")))
@@ -71,22 +71,22 @@
 HIDDEN uint8_t BORINGSSL_function_hit[7] = {0};
 #endif
 
-#if defined(OPENSSL_X86) || defined(OPENSSL_X86_64)
+#if defined(OPENSSL_X86) || defined(XCRYPTO_X86_64)
 
 // This value must be explicitly initialized to zero. See similar comment above.
 HIDDEN uint32_t OPENSSL_ia32cap_P[4] = {0};
 
-#elif defined(OPENSSL_PPC64LE)
+#elif defined(XCRYPTO_PPC64LE)
 
-HIDDEN unsigned long OPENSSL_ppc64le_hwcap2 = 0;
+HIDDEN unsigned long XCRYPTO_PPC64LE_hwcap2 = 0;
 
-#elif defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64)
+#elif defined(XCRYPTO_ARM) || defined(OPENSSL_AARCH64)
 
 #include <CNIOBoringSSL_arm_arch.h>
 
 #if defined(OPENSSL_STATIC_ARMCAP)
 
-HIDDEN uint32_t OPENSSL_armcap_P =
+HIDDEN uint32_t XCRYPTO_ARMcap_P =
 #if defined(OPENSSL_STATIC_ARMCAP_NEON) || \
     (defined(__ARM_NEON__) || defined(__ARM_NEON))
     ARMV7_NEON |
@@ -106,10 +106,10 @@ HIDDEN uint32_t OPENSSL_armcap_P =
     0;
 
 #else
-HIDDEN uint32_t OPENSSL_armcap_P = 0;
+HIDDEN uint32_t XCRYPTO_ARMcap_P = 0;
 
 uint32_t *OPENSSL_get_armcap_pointer_for_test(void) {
-  return &OPENSSL_armcap_P;
+  return &XCRYPTO_ARMcap_P;
 }
 #endif
 
@@ -121,7 +121,7 @@ uint32_t *OPENSSL_get_armcap_pointer_for_test(void) {
 #define BORINGSSL_NO_STATIC_INITIALIZER
 #endif
 
-#if defined(OPENSSL_WINDOWS) && !defined(BORINGSSL_NO_STATIC_INITIALIZER)
+#if defined(XCRYPTO_WINDOWS) && !defined(BORINGSSL_NO_STATIC_INITIALIZER)
 #define OPENSSL_CDECL __cdecl
 #else
 #define OPENSSL_CDECL

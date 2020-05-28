@@ -1,4 +1,4 @@
-#define BORINGSSL_PREFIX CNIOBoringSSL
+#define BORINGSSL_PREFIX XCrypto
 #if defined(__arm__) && defined(__linux__)
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
@@ -31,8 +31,8 @@
 
 #if __ARM_MAX_ARCH__>=7
 .align	5
-.LOPENSSL_armcap:
-.word	OPENSSL_armcap_P-.Lbn_mul_mont
+.LXCRYPTO_ARMcap:
+.word	XCRYPTO_ARMcap_P-.Lbn_mul_mont
 #endif
 
 .globl	bn_mul_mont
@@ -48,7 +48,7 @@ bn_mul_mont:
 	tst	ip,#7
 	bne	.Lialu
 	adr	r0,.Lbn_mul_mont
-	ldr	r2,.LOPENSSL_armcap
+	ldr	r2,.LXCRYPTO_ARMcap
 	ldr	r0,[r0,r2]
 #ifdef	__APPLE__
 	ldr	r0,[r0]
@@ -971,8 +971,8 @@ bn_mul8x_mont_neon:
 .align	2
 .align	2
 #if __ARM_MAX_ARCH__>=7
-.comm	OPENSSL_armcap_P,4,4
-.hidden	OPENSSL_armcap_P
+.comm	XCRYPTO_ARMcap_P,4,4
+.hidden	XCRYPTO_ARMcap_P
 #endif
 #endif
 #endif  // !OPENSSL_NO_ASM

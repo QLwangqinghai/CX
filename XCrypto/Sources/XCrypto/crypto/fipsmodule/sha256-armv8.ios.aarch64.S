@@ -1,4 +1,4 @@
-#define BORINGSSL_PREFIX CNIOBoringSSL
+#define BORINGSSL_PREFIX XCrypto
 #if defined(__aarch64__) && defined(__APPLE__)
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
@@ -67,11 +67,11 @@
 _sha256_block_data_order:
 #ifndef	__KERNEL__
 #if __has_feature(hwaddress_sanitizer) && __clang_major__ >= 10
-	adrp	x16,:pg_hi21_nc:_OPENSSL_armcap_P
+	adrp	x16,:pg_hi21_nc:_XCRYPTO_ARMcap_P
 #else
-	adrp	x16,_OPENSSL_armcap_P@PAGE
+	adrp	x16,_XCRYPTO_ARMcap_P@PAGE
 #endif
-	ldr	w16,[x16,_OPENSSL_armcap_P@PAGEOFF]
+	ldr	w16,[x16,_XCRYPTO_ARMcap_P@PAGEOFF]
 	tst	w16,#ARMV8_SHA256
 	b.ne	Lv8_entry
 #endif
@@ -1206,8 +1206,8 @@ Loop_hw:
 
 #endif
 #ifndef	__KERNEL__
-.comm	_OPENSSL_armcap_P,4,4
-.private_extern	_OPENSSL_armcap_P
+.comm	_XCRYPTO_ARMcap_P,4,4
+.private_extern	_XCRYPTO_ARMcap_P
 #endif
 #endif  // !OPENSSL_NO_ASM
 #endif  // defined(__aarch64__) && defined(__APPLE__)

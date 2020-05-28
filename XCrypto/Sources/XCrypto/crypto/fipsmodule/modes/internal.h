@@ -183,7 +183,7 @@ typedef struct {
   unsigned mres, ares;
 } GCM128_CONTEXT;
 
-#if defined(OPENSSL_X86) || defined(OPENSSL_X86_64)
+#if defined(OPENSSL_X86) || defined(XCRYPTO_X86_64)
 // crypto_gcm_clmul_enabled returns one if the CLMUL implementation of GCM is
 // used.
 int crypto_gcm_clmul_enabled(void);
@@ -268,7 +268,7 @@ void gcm_ghash_nohw(uint64_t Xi[2], const u128 Htable[16], const uint8_t *inp,
 
 #if !defined(OPENSSL_NO_ASM)
 
-#if defined(OPENSSL_X86) || defined(OPENSSL_X86_64)
+#if defined(OPENSSL_X86) || defined(XCRYPTO_X86_64)
 #define GCM_FUNCREF
 void gcm_init_clmul(u128 Htable[16], const uint64_t Xi[2]);
 void gcm_gmult_clmul(uint64_t Xi[2], const u128 Htable[16]);
@@ -286,7 +286,7 @@ void gcm_gmult_ssse3(uint64_t Xi[2], const u128 Htable[16]);
 void gcm_ghash_ssse3(uint64_t Xi[2], const u128 Htable[16], const uint8_t *in,
                      size_t len);
 
-#if defined(OPENSSL_X86_64)
+#if defined(XCRYPTO_X86_64)
 #define GHASH_ASM_X86_64
 void gcm_init_avx(u128 Htable[16], const uint64_t Xi[2]);
 void gcm_gmult_avx(uint64_t Xi[2], const u128 Htable[16]);
@@ -298,13 +298,13 @@ size_t aesni_gcm_encrypt(const uint8_t *in, uint8_t *out, size_t len,
                          const AES_KEY *key, uint8_t ivec[16], uint64_t *Xi);
 size_t aesni_gcm_decrypt(const uint8_t *in, uint8_t *out, size_t len,
                          const AES_KEY *key, uint8_t ivec[16], uint64_t *Xi);
-#endif  // OPENSSL_X86_64
+#endif  // XCRYPTO_X86_64
 
 #if defined(OPENSSL_X86)
 #define GHASH_ASM_X86
 #endif  // OPENSSL_X86
 
-#elif defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64)
+#elif defined(XCRYPTO_ARM) || defined(OPENSSL_AARCH64)
 #define GHASH_ASM_ARM
 #define GCM_FUNCREF
 
@@ -324,7 +324,7 @@ void gcm_gmult_neon(uint64_t Xi[2], const u128 Htable[16]);
 void gcm_ghash_neon(uint64_t Xi[2], const u128 Htable[16], const uint8_t *inp,
                     size_t len);
 
-#elif defined(OPENSSL_PPC64LE)
+#elif defined(XCRYPTO_PPC64LE)
 #define GHASH_ASM_PPC64LE
 #define GCM_FUNCREF
 void gcm_init_p8(u128 Htable[16], const uint64_t Xi[2]);

@@ -50,7 +50,6 @@
 #define OPENSSL_HEADER_AES_H
 
 #include <XCryptoBase.h>
-#include "CNIOBoringSSL_type_check.h"
 
 #if defined(__cplusplus)
 extern "C" {

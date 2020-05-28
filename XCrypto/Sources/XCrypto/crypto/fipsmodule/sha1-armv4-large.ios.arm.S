@@ -1,4 +1,4 @@
-#define BORINGSSL_PREFIX CNIOBoringSSL
+#define BORINGSSL_PREFIX XCrypto
 #if defined(__arm__) && defined(__APPLE__)
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
@@ -35,8 +35,8 @@ _sha1_block_data_order:
 #if __ARM_MAX_ARCH__>=7
 Lsha1_block:
 	adr	r3,Lsha1_block
-	ldr	r12,LOPENSSL_armcap
-	ldr	r12,[r3,r12]		@ OPENSSL_armcap_P
+	ldr	r12,LXCRYPTO_ARMcap
+	ldr	r12,[r3,r12]		@ XCRYPTO_ARMcap_P
 #ifdef	__APPLE__
 	ldr	r12,[r12]
 #endif
@@ -503,8 +503,8 @@ LK_20_39:.word	0x6ed9eba1
 LK_40_59:.word	0x8f1bbcdc
 LK_60_79:.word	0xca62c1d6
 #if __ARM_MAX_ARCH__>=7
-LOPENSSL_armcap:
-.word	OPENSSL_armcap_P-Lsha1_block
+LXCRYPTO_ARMcap:
+.word	XCRYPTO_ARMcap_P-Lsha1_block
 #endif
 .byte	83,72,65,49,32,98,108,111,99,107,32,116,114,97,110,115,102,111,114,109,32,102,111,114,32,65,82,77,118,52,47,78,69,79,78,47,65,82,77,118,56,44,32,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
 .align	2
@@ -1510,12 +1510,12 @@ Loop_v8:
 
 #endif
 #if __ARM_MAX_ARCH__>=7
-.comm	_OPENSSL_armcap_P,4
+.comm	_XCRYPTO_ARMcap_P,4
 .non_lazy_symbol_pointer
-OPENSSL_armcap_P:
-.indirect_symbol	_OPENSSL_armcap_P
+XCRYPTO_ARMcap_P:
+.indirect_symbol	_XCRYPTO_ARMcap_P
 .long	0
-.private_extern	_OPENSSL_armcap_P
+.private_extern	_XCRYPTO_ARMcap_P
 #endif
 #endif  // !OPENSSL_NO_ASM
 #endif  // defined(__arm__) && defined(__APPLE__)

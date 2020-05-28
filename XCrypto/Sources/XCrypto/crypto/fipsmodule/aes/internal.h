@@ -26,7 +26,7 @@ extern "C" {
 
 #if !defined(OPENSSL_NO_ASM)
 
-#if defined(OPENSSL_X86) || defined(OPENSSL_X86_64)
+#if defined(OPENSSL_X86) || defined(XCRYPTO_X86_64)
 #define HWAES
 #define HWAES_ECB
 
@@ -35,7 +35,7 @@ OPENSSL_INLINE int hwaes_capable(void) {
 }
 
 #define VPAES
-#if defined(OPENSSL_X86_64)
+#if defined(XCRYPTO_X86_64)
 #define VPAES_CTR32
 #endif
 #define VPAES_CBC
@@ -43,12 +43,12 @@ OPENSSL_INLINE int vpaes_capable(void) {
   return (OPENSSL_ia32cap_get()[1] & (1 << (41 - 32))) != 0;
 }
 
-#elif defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64)
+#elif defined(XCRYPTO_ARM) || defined(OPENSSL_AARCH64)
 #define HWAES
 
 OPENSSL_INLINE int hwaes_capable(void) { return CRYPTO_is_ARMv8_AES_capable(); }
 
-#if defined(OPENSSL_ARM)
+#if defined(XCRYPTO_ARM)
 #define BSAES
 #define VPAES
 #define VPAES_CTR32
@@ -63,7 +63,7 @@ OPENSSL_INLINE int vpaes_capable(void) { return CRYPTO_is_NEON_capable(); }
 OPENSSL_INLINE int vpaes_capable(void) { return CRYPTO_is_NEON_capable(); }
 #endif
 
-#elif defined(OPENSSL_PPC64LE)
+#elif defined(XCRYPTO_PPC64LE)
 #define HWAES
 
 OPENSSL_INLINE int hwaes_capable(void) {

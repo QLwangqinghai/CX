@@ -128,14 +128,14 @@
 #endif
 
 #if defined(OPENSSL_THREADS) && \
-    (!defined(OPENSSL_WINDOWS) || defined(__MINGW32__))
+    (!defined(XCRYPTO_WINDOWS) || defined(__MINGW32__))
 #include <pthread.h>
 #define OPENSSL_PTHREADS
 #endif
 
 #if defined(OPENSSL_THREADS) && !defined(OPENSSL_PTHREADS) && \
-    defined(OPENSSL_WINDOWS)
-#define OPENSSL_WINDOWS_THREADS
+    defined(XCRYPTO_WINDOWS)
+#define XCRYPTO_WINDOWS_THREADS
 OPENSSL_MSVC_PRAGMA(warning(push, 3))
 #include <windows.h>
 OPENSSL_MSVC_PRAGMA(warning(pop))
@@ -146,22 +146,22 @@ extern "C" {
 #endif
 
 
-#if defined(OPENSSL_X86) || defined(OPENSSL_X86_64) || defined(OPENSSL_ARM) || \
-    defined(OPENSSL_AARCH64) || defined(OPENSSL_PPC64LE)
+#if defined(OPENSSL_X86) || defined(XCRYPTO_X86_64) || defined(XCRYPTO_ARM) || \
+    defined(OPENSSL_AARCH64) || defined(XCRYPTO_PPC64LE)
 // OPENSSL_cpuid_setup initializes the platform-specific feature cache.
 void OPENSSL_cpuid_setup(void);
 #endif
 
-#if (defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64)) && \
+#if (defined(XCRYPTO_ARM) || defined(OPENSSL_AARCH64)) && \
     !defined(OPENSSL_STATIC_ARMCAP)
-// OPENSSL_get_armcap_pointer_for_test returns a pointer to |OPENSSL_armcap_P|
+// OPENSSL_get_armcap_pointer_for_test returns a pointer to |XCRYPTO_ARMcap_P|
 // for unit tests. Any modifications to the value must be made after
 // |CRYPTO_library_init| but before any other function call in BoringSSL.
 OPENSSL_EXPORT uint32_t *OPENSSL_get_armcap_pointer_for_test(void);
 #endif
 
 
-#if (!defined(_MSC_VER) || defined(__clang__)) && defined(OPENSSL_64_BIT)
+#if (!defined(_MSC_VER) || defined(__clang__)) && defined(XCRYPTO_64_BIT)
 #define BORINGSSL_HAS_UINT128
 typedef __int128_t int128_t;
 typedef __uint128_t uint128_t;
@@ -242,12 +242,12 @@ static inline int buffers_alias(const uint8_t *a, size_t a_len,
 // bits. Since we want to be able to do constant-time operations on a
 // |BN_ULONG|, |crypto_word_t| is defined as an unsigned value with the native
 // word length.
-#if defined(OPENSSL_64_BIT)
+#if defined(XCRYPTO_64_BIT)
 typedef uint64_t crypto_word_t;
-#elif defined(OPENSSL_32_BIT)
+#elif defined(XCRYPTO_32_BIT)
 typedef uint32_t crypto_word_t;
 #else
-#error "Must define either OPENSSL_32_BIT or OPENSSL_64_BIT"
+#error "Must define either XCRYPTO_32_BIT or XCRYPTO_64_BIT"
 #endif
 
 #define CONSTTIME_TRUE_W ~((crypto_word_t)0)
@@ -446,7 +446,7 @@ static inline int constant_time_select_int(crypto_word_t mask, int a, int b) {
 #if !defined(OPENSSL_THREADS)
 typedef uint32_t CRYPTO_once_t;
 #define CRYPTO_ONCE_INIT 0
-#elif defined(OPENSSL_WINDOWS_THREADS)
+#elif defined(XCRYPTO_WINDOWS_THREADS)
 typedef INIT_ONCE CRYPTO_once_t;
 #define CRYPTO_ONCE_INIT INIT_ONCE_STATIC_INIT
 #elif defined(OPENSSL_PTHREADS)
@@ -504,7 +504,7 @@ struct CRYPTO_STATIC_MUTEX {
   char padding;  // Empty structs have different sizes in C and C++.
 };
 #define CRYPTO_STATIC_MUTEX_INIT { 0 }
-#elif defined(OPENSSL_WINDOWS_THREADS)
+#elif defined(XCRYPTO_WINDOWS_THREADS)
 struct CRYPTO_STATIC_MUTEX {
   SRWLOCK lock;
 };

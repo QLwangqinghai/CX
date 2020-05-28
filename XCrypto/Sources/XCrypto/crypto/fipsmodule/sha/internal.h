@@ -22,10 +22,10 @@ extern "C" {
 #endif
 
 
-#if defined(OPENSSL_PPC64LE) ||                          \
+#if defined(XCRYPTO_PPC64LE) ||                          \
     (!defined(OPENSSL_NO_ASM) &&                         \
-     (defined(OPENSSL_X86) || defined(OPENSSL_X86_64) || \
-      defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64)))
+     (defined(OPENSSL_X86) || defined(XCRYPTO_X86_64) || \
+      defined(XCRYPTO_ARM) || defined(OPENSSL_AARCH64)))
 // POWER has an intrinsics-based implementation of SHA-1 and thus the functions
 // normally defined in assembly are available even with |OPENSSL_NO_ASM| in
 // this case.
@@ -35,8 +35,8 @@ void sha1_block_data_order(uint32_t *state, const uint8_t *in,
 #endif
 
 #if !defined(OPENSSL_NO_ASM) &&                         \
-    (defined(OPENSSL_X86) || defined(OPENSSL_X86_64) || \
-     defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64))
+    (defined(OPENSSL_X86) || defined(XCRYPTO_X86_64) || \
+     defined(XCRYPTO_ARM) || defined(OPENSSL_AARCH64))
 #define SHA256_ASM
 #define SHA512_ASM
 void sha256_block_data_order(uint32_t *state, const uint8_t *in,

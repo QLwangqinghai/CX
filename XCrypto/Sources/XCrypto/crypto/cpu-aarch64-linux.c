@@ -14,7 +14,7 @@
 
 #include <CNIOBoringSSL_cpu.h>
 
-#if defined(OPENSSL_AARCH64) && defined(OPENSSL_LINUX) && \
+#if defined(OPENSSL_AARCH64) && defined(XCRYPTO_LINUX) && \
     !defined(OPENSSL_STATIC_ARMCAP)
 
 #include <sys/auxv.h>
@@ -24,7 +24,7 @@
 #include "internal.h"
 
 
-extern uint32_t OPENSSL_armcap_P;
+extern uint32_t XCRYPTO_ARMcap_P;
 
 void OPENSSL_cpuid_setup(void) {
   unsigned long hwcap = getauxval(AT_HWCAP);
@@ -43,19 +43,19 @@ void OPENSSL_cpuid_setup(void) {
     return;
   }
 
-  OPENSSL_armcap_P |= ARMV7_NEON;
+  XCRYPTO_ARMcap_P |= ARMV7_NEON;
 
   if (hwcap & kAES) {
-    OPENSSL_armcap_P |= ARMV8_AES;
+    XCRYPTO_ARMcap_P |= ARMV8_AES;
   }
   if (hwcap & kPMULL) {
-    OPENSSL_armcap_P |= ARMV8_PMULL;
+    XCRYPTO_ARMcap_P |= ARMV8_PMULL;
   }
   if (hwcap & kSHA1) {
-    OPENSSL_armcap_P |= ARMV8_SHA1;
+    XCRYPTO_ARMcap_P |= ARMV8_SHA1;
   }
   if (hwcap & kSHA256) {
-    OPENSSL_armcap_P |= ARMV8_SHA256;
+    XCRYPTO_ARMcap_P |= ARMV8_SHA256;
   }
 }
 

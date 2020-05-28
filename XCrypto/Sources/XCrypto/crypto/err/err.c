@@ -113,7 +113,7 @@
 #include <inttypes.h>
 #include <string.h>
 
-#if defined(OPENSSL_WINDOWS)
+#if defined(XCRYPTO_WINDOWS)
 OPENSSL_MSVC_PRAGMA(warning(push, 3))
 #include <windows.h>
 OPENSSL_MSVC_PRAGMA(warning(pop))
@@ -642,7 +642,7 @@ void ERR_put_error(int library, int unused, int reason, const char *file,
   }
 
   if (library == ERR_LIB_SYS && reason == 0) {
-#if defined(OPENSSL_WINDOWS)
+#if defined(XCRYPTO_WINDOWS)
     reason = GetLastError();
 #else
     reason = errno;

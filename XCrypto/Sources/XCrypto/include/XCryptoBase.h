@@ -56,7 +56,7 @@
 #define OPENSSL_NO_ASM
 #endif
 
-#define BORINGSSL_PREFIX CNIOBoringSSL
+#define BORINGSSL_PREFIX XCrypto
 
 
 // This file should be the first included by all BoringSSL headers.
@@ -77,7 +77,6 @@
 // Include a BoringSSL-only header so consumers including this header without
 // setting up include paths do not accidentally pick up the system
 // opensslconf.h.
-#include "CNIOBoringSSL_is_boringssl.h"
 #include "CNIOBoringSSL_opensslconf.h"
 
 #if defined(BORINGSSL_PREFIX)
@@ -89,36 +88,37 @@ extern "C" {
 #endif
 
 
+
 #if defined(__x86_64) || defined(_M_AMD64) || defined(_M_X64)
-#define OPENSSL_64_BIT
-#define OPENSSL_X86_64
+#define XCRYPTO_64_BIT
+#define XCRYPTO_X86_64
 #elif defined(__x86) || defined(__i386) || defined(__i386__) || defined(_M_IX86)
-#define OPENSSL_32_BIT
+#define XCRYPTO_32_BIT
 #define OPENSSL_X86
 #elif defined(__aarch64__)
-#define OPENSSL_64_BIT
+#define XCRYPTO_64_BIT
 #define OPENSSL_AARCH64
 #elif defined(__arm) || defined(__arm__) || defined(_M_ARM)
-#define OPENSSL_32_BIT
-#define OPENSSL_ARM
+#define XCRYPTO_32_BIT
+#define XCRYPTO_ARM
 #elif (defined(__PPC64__) || defined(__powerpc64__)) && defined(_LITTLE_ENDIAN)
-#define OPENSSL_64_BIT
-#define OPENSSL_PPC64LE
+#define XCRYPTO_64_BIT
+#define XCRYPTO_PPC64LE
 #elif defined(__mips__) && !defined(__LP64__)
-#define OPENSSL_32_BIT
+#define XCRYPTO_32_BIT
 #define OPENSSL_MIPS
 #elif defined(__mips__) && defined(__LP64__)
-#define OPENSSL_64_BIT
-#define OPENSSL_MIPS64
+#define XCRYPTO_64_BIT
+#define XCRYPTO_MIPS64
 #elif defined(__pnacl__)
-#define OPENSSL_32_BIT
-#define OPENSSL_PNACL
+#define XCRYPTO_32_BIT
+#define XCRYPTO_PNACL
 #elif defined(__wasm__)
-#define OPENSSL_32_BIT
+#define XCRYPTO_32_BIT
 #elif defined(__asmjs__)
-#define OPENSSL_32_BIT
+#define XCRYPTO_32_BIT
 #elif defined(__myriad2__)
-#define OPENSSL_32_BIT
+#define XCRYPTO_32_BIT
 #else
 // Note BoringSSL only supports standard 32-bit and 64-bit two's-complement,
 // little-endian architectures. Functions will not produce the correct answer
@@ -132,23 +132,23 @@ extern "C" {
 // Note |TARGET_OS_MAC| is set for all Apple OS variants. |TARGET_OS_OSX|
 // targets macOS specifically.
 #if defined(TARGET_OS_OSX) && TARGET_OS_OSX
-#define OPENSSL_MACOS
+#define XCRYPTO_MACOS
 #endif
 #if defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE
-#define OPENSSL_IOS
+#define XCRYPTO_IOS
 #endif
 #endif
 
 #if defined(_WIN32)
-#define OPENSSL_WINDOWS
+#define XCRYPTO_WINDOWS
 #endif
 
 #if defined(__linux__)
-#define OPENSSL_LINUX
+#define XCRYPTO_LINUX
 #endif
 
 #if defined(__Fuchsia__)
-#define OPENSSL_FUCHSIA
+#define XCRYPTO_FUCHSIA
 #endif
 
 #if defined(TRUSTY)
@@ -157,7 +157,7 @@ extern "C" {
 #endif
 
 #if defined(__ANDROID_API__)
-#define OPENSSL_ANDROID
+#define XCRYPTO_ANDROID
 #endif
 
 // BoringSSL requires platform's locking APIs to make internal global state
@@ -193,7 +193,7 @@ extern "C" {
 
 #if defined(BORINGSSL_SHARED_LIBRARY)
 
-#if defined(OPENSSL_WINDOWS)
+#if defined(XCRYPTO_WINDOWS)
 
 #if defined(BORINGSSL_IMPLEMENTATION)
 #define OPENSSL_EXPORT __declspec(dllexport)
@@ -201,7 +201,7 @@ extern "C" {
 #define OPENSSL_EXPORT __declspec(dllimport)
 #endif
 
-#else  // defined(OPENSSL_WINDOWS)
+#else  // defined(XCRYPTO_WINDOWS)
 
 #if defined(BORINGSSL_IMPLEMENTATION)
 #define OPENSSL_EXPORT __attribute__((visibility("default")))
@@ -209,7 +209,7 @@ extern "C" {
 #define OPENSSL_EXPORT
 #endif
 
-#endif  // defined(OPENSSL_WINDOWS)
+#endif  // defined(XCRYPTO_WINDOWS)
 
 #else  // defined(BORINGSSL_SHARED_LIBRARY)
 
@@ -353,23 +353,6 @@ typedef struct NAME_CONSTRAINTS_st NAME_CONSTRAINTS;
 typedef struct Netscape_spkac_st NETSCAPE_SPKAC;
 typedef struct Netscape_spki_st NETSCAPE_SPKI;
 typedef struct RIPEMD160state_st RIPEMD160_CTX;
-typedef struct X509_POLICY_CACHE_st X509_POLICY_CACHE;
-typedef struct X509_POLICY_LEVEL_st X509_POLICY_LEVEL;
-typedef struct X509_POLICY_NODE_st X509_POLICY_NODE;
-typedef struct X509_POLICY_TREE_st X509_POLICY_TREE;
-typedef struct X509_VERIFY_PARAM_st X509_VERIFY_PARAM;
-typedef struct X509_algor_st X509_ALGOR;
-typedef struct X509_crl_info_st X509_CRL_INFO;
-typedef struct X509_crl_st X509_CRL;
-typedef struct X509_extension_st X509_EXTENSION;
-typedef struct X509_info_st X509_INFO;
-typedef struct X509_name_entry_st X509_NAME_ENTRY;
-typedef struct X509_name_st X509_NAME;
-typedef struct X509_pubkey_st X509_PUBKEY;
-typedef struct X509_req_info_st X509_REQ_INFO;
-typedef struct X509_req_st X509_REQ;
-typedef struct X509_sig_st X509_SIG;
-typedef struct X509_val_st X509_VAL;
 typedef struct bignum_ctx BN_CTX;
 typedef struct bignum_st BIGNUM;
 typedef struct bio_method_st BIO_METHOD;
@@ -403,14 +386,10 @@ typedef struct evp_pkey_ctx_st EVP_PKEY_CTX;
 typedef struct evp_pkey_method_st EVP_PKEY_METHOD;
 typedef struct evp_pkey_st EVP_PKEY;
 typedef struct hmac_ctx_st HMAC_CTX;
-typedef struct md4_state_st MD4_CTX;
 typedef struct md5_state_st MD5_CTX;
 typedef struct ossl_init_settings_st OPENSSL_INIT_SETTINGS;
-typedef struct pkcs12_st PKCS12;
-typedef struct pkcs8_priv_key_info_st PKCS8_PRIV_KEY_INFO;
 typedef struct private_key_st X509_PKEY;
 typedef struct rand_meth_st RAND_METHOD;
-typedef struct rc4_key_st RC4_KEY;
 typedef struct rsa_meth_st RSA_METHOD;
 typedef struct rsa_st RSA;
 typedef struct sha256_state_st SHA256_CTX;
@@ -418,32 +397,24 @@ typedef struct sha512_state_st SHA512_CTX;
 typedef struct sha_state_st SHA_CTX;
 typedef struct spake2_ctx_st SPAKE2_CTX;
 typedef struct srtp_protection_profile_st SRTP_PROTECTION_PROFILE;
-typedef struct ssl_cipher_st SSL_CIPHER;
-typedef struct ssl_ctx_st SSL_CTX;
-typedef struct ssl_method_st SSL_METHOD;
-typedef struct ssl_private_key_method_st SSL_PRIVATE_KEY_METHOD;
-typedef struct ssl_quic_method_st SSL_QUIC_METHOD;
-typedef struct ssl_session_st SSL_SESSION;
-typedef struct ssl_st SSL;
-typedef struct ssl_ticket_aead_method_st SSL_TICKET_AEAD_METHOD;
-typedef struct st_ERR_FNS ERR_FNS;
-typedef struct trust_token_st TRUST_TOKEN;
-typedef struct trust_token_client_st TRUST_TOKEN_CLIENT;
-typedef struct trust_token_issuer_st TRUST_TOKEN_ISSUER;
-typedef struct trust_token_method_st TRUST_TOKEN_METHOD;
-typedef struct v3_ext_ctx X509V3_CTX;
-typedef struct x509_attributes_st X509_ATTRIBUTE;
-typedef struct x509_cert_aux_st X509_CERT_AUX;
-typedef struct x509_cinf_st X509_CINF;
-typedef struct x509_crl_method_st X509_CRL_METHOD;
-typedef struct x509_lookup_st X509_LOOKUP;
-typedef struct x509_revoked_st X509_REVOKED;
-typedef struct x509_st X509;
-typedef struct x509_store_ctx_st X509_STORE_CTX;
-typedef struct x509_store_st X509_STORE;
-typedef struct x509_trust_st X509_TRUST;
+
+
+
 
 typedef void *OPENSSL_BLOCK;
+
+
+#if defined(__cplusplus) || (defined(_MSC_VER) && !defined(__clang__))
+// In C++ and non-clang MSVC, |static_assert| is a keyword.
+#define OPENSSL_STATIC_ASSERT(cond, msg) static_assert(cond, msg)
+#else
+// C11 defines the |_Static_assert| keyword and the |static_assert| macro in
+// assert.h. While the former is available at all versions in Clang and GCC, the
+// later depends on libc and, in glibc, depends on being built in C11 mode. We
+// do not require this, for now, so use |_Static_assert| directly.
+#define OPENSSL_STATIC_ASSERT(cond, msg) _Static_assert(cond, msg)
+#endif
+
 
 
 #if defined(__cplusplus)

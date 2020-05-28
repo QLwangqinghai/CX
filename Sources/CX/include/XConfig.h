@@ -14,7 +14,19 @@ extern "C" {
 #endif
 
 #ifdef __APPLE__
+#include <TargetConditionals.h>
 #include <AvailabilityMacros.h>
+
+#define X_TARGET_OS_MACOS   TARGET_OS_OSX
+#define X_TARGET_OS_IOS     TARGET_OS_IOS
+#define X_TARGET_OS_WATCH     TARGET_OS_WATCH
+
+#else
+
+#define X_TARGET_OS_MACOS   0
+#define X_TARGET_OS_IOS     0
+#define X_TARGET_OS_WATCH     0
+
 #endif
 
 #ifdef __linux__
@@ -32,46 +44,52 @@ extern "C" {
 #endif /* __ANDROID__ */
 
 
+#if X_TARGET_OS_MACOS || X_TARGET_OS_IOS || X_TARGET_OS_WATCH
+#define X_TARGET_OS_DARWIN   1
+#else
+#define X_TARGET_OS_DARWIN   0
+#endif
+
 #if __APPLE__
-#define BUILD_TARGET_OS_DARWIN       1
-#define BUILD_TARGET_OS_LINUX        0
-#define BUILD_TARGET_OS_WINDOWS      0
-#define BUILD_TARGET_OS_BSD          0
-#define BUILD_TARGET_OS_ANDROID      0
-#define BUILD_TARGET_OS_CYGWIN       0
+#define X_TARGET_OS_DARWIN       1
+#define X_TARGET_OS_LINUX        0
+#define X_TARGET_OS_WINDOWS      0
+#define X_TARGET_OS_BSD          0
+#define X_TARGET_OS_ANDROID      0
+#define X_TARGET_OS_CYGWIN       0
 #elif __ANDROID__
-#define BUILD_TARGET_OS_DARWIN       0
-#define BUILD_TARGET_OS_LINUX        1
-#define BUILD_TARGET_OS_WINDOWS      0
-#define BUILD_TARGET_OS_BSD          0
-#define BUILD_TARGET_OS_ANDROID      1
-#define BUILD_TARGET_OS_CYGWIN       0
+#define X_TARGET_OS_DARWIN       0
+#define X_TARGET_OS_LINUX        1
+#define X_TARGET_OS_WINDOWS      0
+#define X_TARGET_OS_BSD          0
+#define X_TARGET_OS_ANDROID      1
+#define X_TARGET_OS_CYGWIN       0
 #elif __linux__
-#define BUILD_TARGET_OS_DARWIN       0
-#define BUILD_TARGET_OS_LINUX        1
-#define BUILD_TARGET_OS_WINDOWS      0
-#define BUILD_TARGET_OS_BSD          0
-#define BUILD_TARGET_OS_ANDROID      0
-#define BUILD_TARGET_OS_CYGWIN       0
+#define X_TARGET_OS_DARWIN       0
+#define X_TARGET_OS_LINUX        1
+#define X_TARGET_OS_WINDOWS      0
+#define X_TARGET_OS_BSD          0
+#define X_TARGET_OS_ANDROID      0
+#define X_TARGET_OS_CYGWIN       0
 #elif __CYGWIN__
-#define BUILD_TARGET_OS_DARWIN       0
-#define BUILD_TARGET_OS_LINUX        1
-#define BUILD_TARGET_OS_WINDOWS      0
-#define BUILD_TARGET_OS_BSD          0
-#define BUILD_TARGET_OS_ANDROID      0
-#define BUILD_TARGET_OS_CYGWIN       1
+#define X_TARGET_OS_DARWIN       0
+#define X_TARGET_OS_LINUX        1
+#define X_TARGET_OS_WINDOWS      0
+#define X_TARGET_OS_BSD          0
+#define X_TARGET_OS_ANDROID      0
+#define X_TARGET_OS_CYGWIN       1
 #elif _WIN32 || _WIN64
-#define BUILD_TARGET_OS_DARWIN       0
-#define BUILD_TARGET_OS_LINUX        0
-#define BUILD_TARGET_OS_WINDOWS      1
-#define BUILD_TARGET_OS_BSD          0
-#define BUILD_TARGET_OS_ANDROID      0
+#define X_TARGET_OS_DARWIN       0
+#define X_TARGET_OS_LINUX        0
+#define X_TARGET_OS_WINDOWS      1
+#define X_TARGET_OS_BSD          0
+#define X_TARGET_OS_ANDROID      0
 #elif __unix__
-#define BUILD_TARGET_OS_DARWIN       0
-#define BUILD_TARGET_OS_LINUX        0
-#define BUILD_TARGET_OS_WINDOWS      0
-#define BUILD_TARGET_OS_BSD          1
-#define BUILD_TARGET_OS_ANDROID      0
+#define X_TARGET_OS_DARWIN       0
+#define X_TARGET_OS_LINUX        0
+#define X_TARGET_OS_WINDOWS      0
+#define X_TARGET_OS_BSD          1
+#define X_TARGET_OS_ANDROID      0
 #else
 #error unknown operating system
 #endif

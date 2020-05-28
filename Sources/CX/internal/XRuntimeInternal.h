@@ -24,7 +24,7 @@ typedef void (*XObjectDescribe_f)(XObject _Nonnull obj, _XDescriptionBuffer _Nul
 typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
 
 
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
     #pragma pack(push, 8)
 #else
     #pragma pack(push, 4)
@@ -60,7 +60,7 @@ typedef XObject _Nonnull (*XObjectCopy_f)(XObject _Nonnull obj);
  */
 
 
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
 
 #define X_BUILD_TaggedMask 0x8000000000000001ULL
 #define X_BUILD_TaggedObjectFlag 0x8000000000000001ULL
@@ -144,7 +144,7 @@ typedef union {
 } _XNumberBits_u;
 
 
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
 typedef struct {
     XUInt32 type;
     _XNumberBits32_u bits32;

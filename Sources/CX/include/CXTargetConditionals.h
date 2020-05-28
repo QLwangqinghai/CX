@@ -1,13 +1,13 @@
 //
-//  XConfig.h
+//  CXTargetConditionals.h
 //  CCFoundation
 //
 //  Created by vector on 2018/11/26.
 //  Copyright © 2018 com.wangqinghai. All rights reserved.
 //
 
-#ifndef XConfig_h
-#define XConfig_h
+#ifndef CXTargetConditionals_h
+#define CXTargetConditionals_h
 
 #if defined(__cplusplus)
 extern "C" {
@@ -257,48 +257,48 @@ defined (BIT_ZERO_ON_LEFT) || defined(m68k) || defined(__sparc)
 
 
 #if defined(__x86_64) || defined(_M_AMD64) || defined(_M_X64)
-    #define BUILD_TARGET_RT_64_BIT 1
-    #define BUILD_TARGET_RT_32_BIT 0
-    #define BUILD_TARGET_X86_64
+    #define CX_TARGET_RT_64_BIT 1
+    #define CX_TARGET_RT_32_BIT 0
+    #define CX_TARGET_CPU_X86_64
 #elif defined(__x86) || defined(__i386) || defined(__i386__) || defined(_M_IX86)
-    #define BUILD_TARGET_RT_64_BIT 0
-    #define BUILD_TARGET_RT_32_BIT 1
-    #define BUILD_TARGET_X86_32
+    #define CX_TARGET_RT_64_BIT 0
+    #define CX_TARGET_RT_32_BIT 1
+    #define CX_TARGET_CPU_X86
 #elif defined(__aarch64__)
-    #define BUILD_TARGET_RT_64_BIT 1
-    #define BUILD_TARGET_RT_32_BIT 0
-    #define BUILD_TARGET_AARCH64
+    #define CX_TARGET_RT_64_BIT 1
+    #define CX_TARGET_RT_32_BIT 0
+    #define CX_TARGET_CPU_AARCH64
 #elif defined(__arm) || defined(__arm__) || defined(_M_ARM)
-    #define BUILD_TARGET_RT_64_BIT 0
-    #define BUILD_TARGET_RT_32_BIT 1
-    #define BUILD_TARGET_ARM
+    #define CX_TARGET_RT_64_BIT 0
+    #define CX_TARGET_RT_32_BIT 1
+    #define CX_TARGET_CPU_ARM
 #elif (defined(__PPC64__) || defined(__powerpc64__)) && defined(_LITTLE_ENDIAN)
-    #define BUILD_TARGET_RT_64_BIT 1
-    #define BUILD_TARGET_RT_32_BIT 0
-    #define BUILD_TARGET_PPC64LE
+    #define CX_TARGET_RT_64_BIT 1
+    #define CX_TARGET_RT_32_BIT 0
+    #define CX_TARGET_CPU_PPC64LE
 #elif defined(__mips__) && !defined(__LP64__)
-    #define BUILD_TARGET_RT_64_BIT 0
-    #define BUILD_TARGET_RT_32_BIT 1
-    #define BUILD_TARGET_MIPS
+    #define CX_TARGET_RT_64_BIT 0
+    #define CX_TARGET_RT_32_BIT 1
+    #define CX_TARGET_CPU_MIPS
 #elif defined(__mips__) && defined(__LP64__)
-    #define BUILD_TARGET_RT_64_BIT 1
-    #define BUILD_TARGET_RT_32_BIT 0
-    #define BUILD_TARGET_MIPS64
+    #define CX_TARGET_RT_64_BIT 1
+    #define CX_TARGET_RT_32_BIT 0
+    #define CX_TARGET_CPU_MIPS64
 #elif defined(__pnacl__)
-    #define BUILD_TARGET_RT_64_BIT 0
-    #define BUILD_TARGET_RT_32_BIT 1
-    #define BUILD_TARGET_PNACL
+    #define CX_TARGET_RT_64_BIT 0
+    #define CX_TARGET_RT_32_BIT 1
+    #define CX_TARGET_CPU_PNACL
 #elif defined(__wasm__)
-    #define BUILD_TARGET_RT_64_BIT 0
-    #define BUILD_TARGET_RT_32_BIT 1
+    #define CX_TARGET_RT_64_BIT 0
+    #define CX_TARGET_RT_32_BIT 1
 
 #elif defined(__asmjs__)
-    #define BUILD_TARGET_RT_64_BIT 0
-    #define BUILD_TARGET_RT_32_BIT 1
+    #define CX_TARGET_RT_64_BIT 0
+    #define CX_TARGET_RT_32_BIT 1
 
 #elif defined(__myriad2__)
-    #define BUILD_TARGET_RT_64_BIT 0
-    #define BUILD_TARGET_RT_32_BIT 1
+    #define CX_TARGET_RT_64_BIT 0
+    #define CX_TARGET_RT_32_BIT 1
 
 #else
     #error "Unknown target CPU"
@@ -331,11 +331,11 @@ defined (BIT_ZERO_ON_LEFT) || defined(m68k) || defined(__sparc)
 #endif
 
 #if __LITTLE_ENDIAN__
-#define BUILD_TARGET_RT_LITTLE_ENDIAN 1
-#define BUILD_TARGET_RT_BIG_ENDIAN    0
+#define CX_TARGET_RT_LITTLE_ENDIAN 1
+#define CX_TARGET_RT_BIG_ENDIAN    0
 #elif __BIG_ENDIAN__
-#define BUILD_TARGET_RT_LITTLE_ENDIAN 0
-#define BUILD_TARGET_RT_BIG_ENDIAN    1
+#define CX_TARGET_RT_LITTLE_ENDIAN 0
+#define CX_TARGET_RT_BIG_ENDIAN    1
 #else
 #error unknown endian
 #endif
@@ -344,4 +344,4 @@ defined (BIT_ZERO_ON_LEFT) || defined(m68k) || defined(__sparc)
 }  // extern C
 #endif
 
-#endif /* XConfig_h */
+#endif /* CXTargetConditionals_h */

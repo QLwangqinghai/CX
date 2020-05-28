@@ -33,7 +33,7 @@ extern "C" {
 #if defined(__GNUC__)
 #include <stdbool.h>
 #endif
-#include "XConfig.h"
+#include "CXTargetConditionals.h"
 
 
 typedef _Bool XBool;
@@ -57,7 +57,7 @@ typedef uintptr_t XUIntptr;
 typedef intptr_t XSIntptr;
 
 
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
     typedef int64_t XSInt;
     typedef uint64_t XUInt;
 
@@ -182,7 +182,7 @@ typedef int64_t XTimeInterval;
 #define XFastSInt64 int_fast64_t
 #define XFastUInt64 uint_fast64_t
     
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
 #define XFastSInt int_fast64_t
 #define XFastUInt uint_fast64_t
     
@@ -202,7 +202,7 @@ typedef int64_t XTimeInterval;
     
 #endif
 
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
     #define X_BUILD_UInt(value) value##ULL
 #else
     #define X_BUILD_UInt(value) value##UL

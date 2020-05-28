@@ -102,8 +102,8 @@ K256:
 .size	K256,.-K256
 .word	0				@ terminator
 #if __ARM_MAX_ARCH__>=7 && !defined(__KERNEL__)
-.LXCRYPTO_ARMcap:
-.word	XCRYPTO_ARMcap_P-.Lsha256_block_data_order
+.LCX_TARGET_CPU_ARMcap:
+.word	CX_TARGET_CPU_ARMcap_P-.Lsha256_block_data_order
 #endif
 .align	5
 
@@ -118,8 +118,8 @@ sha256_block_data_order:
 	adr	r3,.Lsha256_block_data_order
 #endif
 #if __ARM_MAX_ARCH__>=7 && !defined(__KERNEL__)
-	ldr	r12,.LXCRYPTO_ARMcap
-	ldr	r12,[r3,r12]		@ XCRYPTO_ARMcap_P
+	ldr	r12,.LCX_TARGET_CPU_ARMcap
+	ldr	r12,[r3,r12]		@ CX_TARGET_CPU_ARMcap_P
 #ifdef	__APPLE__
 	ldr	r12,[r12]
 #endif
@@ -2833,8 +2833,8 @@ sha256_block_data_order_armv8:
 .align	2
 .align	2
 #if __ARM_MAX_ARCH__>=7 && !defined(__KERNEL__)
-.comm	XCRYPTO_ARMcap_P,4,4
-.hidden	XCRYPTO_ARMcap_P
+.comm	CX_TARGET_CPU_ARMcap_P,4,4
+.hidden	CX_TARGET_CPU_ARMcap_P
 #endif
 #endif
 #endif  // !XCRYPTO_NO_ASM

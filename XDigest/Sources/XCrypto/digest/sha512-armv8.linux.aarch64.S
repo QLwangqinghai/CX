@@ -1079,8 +1079,8 @@ sha512_block_data_order:
 .align	2
 .align	2
 #ifndef	__KERNEL__
-.comm	XCRYPTO_ARMcap_P,4,4
-.hidden	XCRYPTO_ARMcap_P
+.comm	CX_TARGET_CPU_ARMcap_P,4,4
+.hidden	CX_TARGET_CPU_ARMcap_P
 #endif
 #endif
 #endif  // !XCRYPTO_NO_ASM

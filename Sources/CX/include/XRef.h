@@ -22,7 +22,7 @@ extern "C" {
 typedef struct {
     uintptr_t ref;
     XHashCode hashCode;
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
     XIndex typeId: 32;
     XIndex descriptionLength: 32;
 #else

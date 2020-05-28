@@ -13,7 +13,7 @@
 //extern "C" {
 //#endif
 
-#include "XConfig.h"
+#include "CXTargetConditionals.h"
 #include "XType.h"
 #include "XObject.h"
 #include "XDevice.h"

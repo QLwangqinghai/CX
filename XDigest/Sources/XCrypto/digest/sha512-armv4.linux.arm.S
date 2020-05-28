@@ -148,8 +148,8 @@ K512:
 	WORD64(0x5fcb6fab,0x3ad6faec,	0x6c44198c,0x4a475817)
 .size	K512,.-K512
 #if __ARM_MAX_ARCH__>=7 && !defined(__KERNEL__)
-.LXCRYPTO_ARMcap:
-.word	XCRYPTO_ARMcap_P-.Lsha512_block_data_order
+.LCX_TARGET_CPU_ARMcap:
+.word	CX_TARGET_CPU_ARMcap_P-.Lsha512_block_data_order
 .skip	32-4
 #else
 .skip	32
@@ -166,8 +166,8 @@ sha512_block_data_order:
 	adr	r3,.Lsha512_block_data_order
 #endif
 #if __ARM_MAX_ARCH__>=7 && !defined(__KERNEL__)
-	ldr	r12,.LXCRYPTO_ARMcap
-	ldr	r12,[r3,r12]		@ XCRYPTO_ARMcap_P
+	ldr	r12,.LCX_TARGET_CPU_ARMcap
+	ldr	r12,[r3,r12]		@ CX_TARGET_CPU_ARMcap_P
 #ifdef	__APPLE__
 	ldr	r12,[r12]
 #endif
@@ -1888,8 +1888,8 @@ sha512_block_data_order_neon:
 .align	2
 .align	2
 #if __ARM_MAX_ARCH__>=7 && !defined(__KERNEL__)
-.comm	XCRYPTO_ARMcap_P,4,4
-.hidden	XCRYPTO_ARMcap_P
+.comm	CX_TARGET_CPU_ARMcap_P,4,4
+.hidden	CX_TARGET_CPU_ARMcap_P
 #endif
 #endif
 #endif  // !XCRYPTO_NO_ASM

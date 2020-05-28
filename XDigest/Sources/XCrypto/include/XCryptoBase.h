@@ -87,43 +87,6 @@ extern "C" {
 #endif
 
 
-#if defined(__x86_64) || defined(_M_AMD64) || defined(_M_X64)
-#define XCRYPTO_64_BIT
-#define XCRYPTO_X86_64
-#elif defined(__x86) || defined(__i386) || defined(__i386__) || defined(_M_IX86)
-#define XCRYPTO_32_BIT
-#define XCRYPTO_X86
-#elif defined(__aarch64__)
-#define XCRYPTO_64_BIT
-#define XCRYPTO_AARCH64
-#elif defined(__arm) || defined(__arm__) || defined(_M_ARM)
-#define XCRYPTO_32_BIT
-#define XCRYPTO_ARM
-#elif (defined(__PPC64__) || defined(__powerpc64__)) && defined(_LITTLE_ENDIAN)
-#define XCRYPTO_64_BIT
-#define XCRYPTO_PPC64LE
-#elif defined(__mips__) && !defined(__LP64__)
-#define XCRYPTO_32_BIT
-#define XCRYPTO_MIPS
-#elif defined(__mips__) && defined(__LP64__)
-#define XCRYPTO_64_BIT
-#define XCRYPTO_MIPS64
-#elif defined(__pnacl__)
-#define XCRYPTO_32_BIT
-#define XCRYPTO_PNACL
-#elif defined(__wasm__)
-#define XCRYPTO_32_BIT
-#elif defined(__asmjs__)
-#define XCRYPTO_32_BIT
-#elif defined(__myriad2__)
-#define XCRYPTO_32_BIT
-#else
-// Note BoringSSL only supports standard 32-bit and 64-bit two's-complement,
-// little-endian architectures. Functions will not produce the correct answer
-// on other systems. Run the crypto_test binary, notably
-// crypto/compiler_test.cc, before adding a new architecture.
-#error "Unknown target CPU"
-#endif
 
 #if defined(__APPLE__)
 #define XCRYPTO_APPLE
@@ -160,9 +123,57 @@ extern "C" {
 #include <assert.h>
 #include <string.h>
 
+
+#if defined(__GNUC__) && __GNUC__ >= 2
+static inline uint16_t CRYPTO_bswap2(uint16_t x) {
+  return __builtin_bswap16(x);
+}
+
+static inline uint32_t CRYPTO_bswap4(uint32_t x) {
+  return __builtin_bswap32(x);
+}
+
+static inline uint64_t CRYPTO_bswap8(uint64_t x) {
+  return __builtin_bswap64(x);
+}
+#elif defined(_MSC_VER)
+OPENSSL_MSVC_PRAGMA(warning(push, 3))
+#include <stdlib.h>
+OPENSSL_MSVC_PRAGMA(warning(pop))
+#pragma intrinsic(_byteswap_uint64, _byteswap_ulong, _byteswap_ushort)
+static inline uint16_t CRYPTO_bswap2(uint16_t x) {
+  return _byteswap_ushort(x);
+}
+
+static inline uint32_t CRYPTO_bswap4(uint32_t x) {
+  return _byteswap_ulong(x);
+}
+
+static inline uint64_t CRYPTO_bswap8(uint64_t x) {
+  return _byteswap_uint64(x);
+}
+#else
+static inline uint16_t CRYPTO_bswap2(uint16_t x) {
+  return (x >> 8) | (x << 8);
+}
+
+static inline uint32_t CRYPTO_bswap4(uint32_t x) {
+  x = (x >> 16) | (x << 16);
+  x = ((x & 0xff00ff00) >> 8) | ((x & 0x00ff00ff) << 8);
+  return x;
+}
+
+static inline uint64_t CRYPTO_bswap8(uint64_t x) {
+  return CRYPTO_bswap4(x >> 32) | (((uint64_t)CRYPTO_bswap4(x)) << 32);
+}
+#endif
+
+
 #define OPENSSL_memcpy memcpy
 #define OPENSSL_memset memset
-
+static inline void OPENSSL_cleanse(void *ptr, size_t len) {
+    bzero(ptr, len);
+}
 // BORINGSSL_API_VERSION is a positive integer that increments as BoringSSL
 // changes over time. The value itself is not meaningful. It will be incremented
 // whenever is convenient to coordinate an API change with consumers. This will

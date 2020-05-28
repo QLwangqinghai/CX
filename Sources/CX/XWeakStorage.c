@@ -29,7 +29,7 @@ _XWeakTableManager * _Nonnull _XWeakTableManagerShared(void) {
 _XWeakTable * _Nonnull _XWeakTableGet(uintptr_t address) {
     _XWeakTableManager * manager = _XWeakTableManagerShared();
     uintptr_t v = address;
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
     v = address >> X_BUILD_UInt(3);
 #else
     v = address >> X_BUILD_UInt(2);

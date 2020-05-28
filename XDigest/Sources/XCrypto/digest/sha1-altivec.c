@@ -65,7 +65,7 @@
 
 #include <XDigest.h>
 
-#if defined(XCRYPTO_PPC64LE)
+#if defined(CX_TARGET_CPU_PPC64LE)
 
 #include <altivec.h>
 
@@ -345,7 +345,7 @@ void sha1_block_data_order(uint32_t *state, const uint8_t *data, size_t num) {
   }
 }
 
-#endif  // XCRYPTO_PPC64LE
+#endif  // CX_TARGET_CPU_PPC64LE
 
 #undef K_00_19
 #undef K_20_39

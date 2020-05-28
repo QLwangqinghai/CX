@@ -14,7 +14,7 @@
 
 #pragma mark - base
 
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
     #define XByteStorageHashNoneFlag 0x8000000000000000ULL
     #define XByteStorageHashMask 0x7FFFFFFFFFFFFFFFULL
 #else
@@ -154,7 +154,7 @@ void _XBufferRelease(_XBuffer * _Nonnull buffer) {
  flag: 1, value = 1
 */
 
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
 #define X_BUILD_TaggedByteStorageContentMask 0xFFFFFFFFFFFFFFULL
 #define X_BUILD_TaggedByteStorageContentLengthMask 0x7ULL
 #define X_BUILD_TaggedByteStorageContentLengthShift 57ULL
@@ -195,7 +195,7 @@ static XRef _Nonnull _XByteStorageCreate(XBool isString, XObjectFlag flag, const
         XUInt bytes = 0;
         memcpy(&bytes, buffer, length);
         
-#if BUILD_TARGET_RT_BIG_ENDIAN
+#if CX_TARGET_RT_BIG_ENDIAN
         bytes = bytes >> X_BUILD_UInt(8);
 #endif
         XUInt len = length;
@@ -313,7 +313,7 @@ static _XByteStorage * _Nonnull _XByteStorageCreateWithBuffer(XBool isString, XO
 static _XByteStorage * _Nonnull __XRefAsByteStorage(XRef _Nonnull ref, XBool * _Nonnull isString, const char * _Nonnull func, const char * _Nonnull desc) {
     XCompressedType compressedType = XCompressedTypeNone;
     
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
     __unused
 #endif
     XIndex typeId = _XHeapRefGetTypeId(ref);
@@ -353,7 +353,7 @@ XByteStorageUnpacked_t _XByteStorageUnpack(XPtr _Nonnull ref, const char * _Nonn
         result.isString = ((X_BUILD_TaggedObjectByteStorageDataFlag & (XUInt)ref) == X_BUILD_TaggedObjectByteStorageDataFlag) ? 0 : 1;
         result.contentType = 0;
 
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
         XUInt64 v = (XUInt64)((uintptr_t)ref);
         XUInt64 storageContent = (v >> 1) & X_BUILD_TaggedByteStorageContentMask;
         XUInt64 len = (v >> X_BUILD_TaggedByteStorageContentLengthShift) & X_BUILD_TaggedByteStorageContentLengthMask;
@@ -372,7 +372,7 @@ XByteStorageUnpacked_t _XByteStorageUnpack(XPtr _Nonnull ref, const char * _Nonn
          0000bca
          */
         
-#if BUILD_TARGET_RT_BIG_ENDIAN
+#if CX_TARGET_RT_BIG_ENDIAN
         bytes |= (len << 56ULL);
 #else
         bytes = (bytes << 8ULL) | len;
@@ -386,7 +386,7 @@ XByteStorageUnpacked_t _XByteStorageUnpack(XPtr _Nonnull ref, const char * _Nonn
         XAssert(len <= X_BUILD_TaggedByteStorageContentLengthMax, __func__, "");
         
         XUInt32 bytes = storageContent;
-#if BUILD_TARGET_RT_BIG_ENDIAN
+#if CX_TARGET_RT_BIG_ENDIAN
         bytes |= (len << 24UL);
 #else
         bytes = (bytes << 8ULL) | len;
@@ -584,7 +584,7 @@ static XRange _XRangeOfString(const XUInt8 * _Nonnull bytes, size_t length) {
             
             uint16_t tmp = *(uint16_t *)(bytes + offset + 1);
             
-#if BUILD_TARGET_RT_BIG_ENDIAN
+#if CX_TARGET_RT_BIG_ENDIAN
             //大端
             if ((byte & 0xF) == 0 && (tmp & 0x2000) == 0) {
                 //0x0800 ~ 0xFFFF
@@ -615,7 +615,7 @@ static XRange _XRangeOfString(const XUInt8 * _Nonnull bytes, size_t length) {
             }
             uint32_t tmp = *(uint32_t *)(bytes + offset);
             
-#if BUILD_TARGET_RT_BIG_ENDIAN
+#if CX_TARGET_RT_BIG_ENDIAN
             //大端
             if ((tmp & 0x7300000) == 0) {
                 //0x10000 ~ 0x1FFFFF

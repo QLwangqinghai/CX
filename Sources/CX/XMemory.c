@@ -88,7 +88,7 @@ XComparisonResult XMemoryCompare(const XPtr _Nonnull lhs, const XPtr _Nonnull rh
         } else {
             XSize len = 0;
             XComparisonResult result = XCompareEqualTo;
-            #if BUILD_TARGET_RT_64_BIT
+            #if CX_TARGET_RT_64_BIT
                 if ((lhsV & X_BUILD_UInt(0x7)) == (rhsV & X_BUILD_UInt(0x7))) {
                     XSize s = lhsV & X_BUILD_UInt(0x7);
                     result = _XMemoryCompare((const XPtr)(left + len), (const XPtr)(right + len), s);

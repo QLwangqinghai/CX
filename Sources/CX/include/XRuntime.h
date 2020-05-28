@@ -16,7 +16,7 @@ extern "C" {
 
 #pragma mark - ConstantValue
     
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
 #define X_BUILD_TaggedConstantValueNull 0x8000000000000001ULL
 #define X_BUILD_TaggedConstantValueBooleanTrue 0x8000000000000003ULL
 #define X_BUILD_TaggedConstantValueBooleanFalse 0x8000000000000005ULL

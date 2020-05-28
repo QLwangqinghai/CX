@@ -58,7 +58,7 @@
 #include <string.h>
 
 #if !defined(XCRYPTO_NO_ASM) && \
-    (defined(XCRYPTO_X86_64) || defined(XCRYPTO_X86))
+    (defined(CX_TARGET_CPU_X86_64) || defined(CX_TARGET_CPU_X86))
 #define XCRYPTO_MD5_ASM
 extern void md5_block_asm_data_order(uint32_t *state, const uint8_t *data,
                                      size_t num);

@@ -41,7 +41,7 @@ taggedContent: {
 #define X_BUILD_TaggedDateSecondMax (XTimeIntervalMax / 1000000)
 
 
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
 
 #define X_BUILD_TaggedDateUnitMask 0x1000000000000000ULL
 #define X_BUILD_TaggedDateUnitFlagMillisecond 0x1000000000000000ULL
@@ -101,7 +101,7 @@ XDate _Nonnull XDateCreate(XUInt flag, XTimeInterval time) {
         return XDateMax;
     }
 
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
     if (X_BUILD_TaggedDateMin <= time && time <= X_BUILD_TaggedDateMax) {
         XSInt64 value = time;
         XUInt64 tmp = *(XUInt64 *)(&value);
@@ -178,7 +178,7 @@ void __XDateUnpack(XDate _Nonnull ref, XTimeInterval * _Nonnull valuePtr, const 
     }
     XAssert(XTaggedTypeDate == type, func, "not Date instance");
 
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
     XUInt64 v = (XUInt64)((uintptr_t)ref);
     XUInt64 tmp = (v >> 1) & X_BUILD_TaggedDateContentMask;
     XUInt64 bits = 0;

@@ -173,30 +173,6 @@ typedef __uint128_t uint128_t;
 #endif
 #endif
 
-#define OPENSSL_ARRAY_SIZE(array) (sizeof(array) / sizeof((array)[0]))
-
-// Have a generic fall-through for different versions of C/C++.
-#if defined(__cplusplus) && __cplusplus >= 201703L
-#define OPENSSL_FALLTHROUGH [[fallthrough]]
-#elif defined(__cplusplus) && __cplusplus >= 201103L && defined(__clang__)
-#define OPENSSL_FALLTHROUGH [[clang::fallthrough]]
-#elif defined(__cplusplus) && __cplusplus >= 201103L && defined(__GNUC__) && \
-    __GNUC__ >= 7
-#define OPENSSL_FALLTHROUGH [[gnu::fallthrough]]
-#elif defined(__GNUC__) && __GNUC__ >= 7 // gcc 7
-#define OPENSSL_FALLTHROUGH __attribute__ ((fallthrough))
-#elif defined(__clang__)
-#if __has_attribute(fallthrough) && __clang_major__ >= 5
-// Clang 3.5, at least, complains about "error: declaration does not declare
-// anything", possibily because we put a semicolon after this macro in
-// practice. Thus limit it to >= Clang 5, which does work.
-#define OPENSSL_FALLTHROUGH __attribute__ ((fallthrough))
-#else // clang versions that do not support fallthrough.
-#define OPENSSL_FALLTHROUGH
-#endif
-#else // C++11 on gcc 6, and all other cases
-#define OPENSSL_FALLTHROUGH
-#endif
 
 // For convenience in testing 64-bit generic code, we allow disabling SSE2
 // intrinsics via |OPENSSL_NO_SSE2_FOR_TESTING|. x86_64 always has SSE2

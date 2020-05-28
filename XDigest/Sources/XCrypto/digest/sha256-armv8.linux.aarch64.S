@@ -68,11 +68,11 @@
 sha256_block_data_order:
 #ifndef	__KERNEL__
 #if __has_feature(hwaddress_sanitizer) && __clang_major__ >= 10
-	adrp	x16,:pg_hi21_nc:XCRYPTO_ARMcap_P
+	adrp	x16,:pg_hi21_nc:CX_TARGET_CPU_ARMcap_P
 #else
-	adrp	x16,XCRYPTO_ARMcap_P
+	adrp	x16,CX_TARGET_CPU_ARMcap_P
 #endif
-	ldr	w16,[x16,:lo12:XCRYPTO_ARMcap_P]
+	ldr	w16,[x16,:lo12:CX_TARGET_CPU_ARMcap_P]
 	tst	w16,#ARMV8_SHA256
 	b.ne	.Lv8_entry
 #endif
@@ -1207,8 +1207,8 @@ sha256_block_armv8:
 .size	sha256_block_armv8,.-sha256_block_armv8
 #endif
 #ifndef	__KERNEL__
-.comm	XCRYPTO_ARMcap_P,4,4
-.hidden	XCRYPTO_ARMcap_P
+.comm	CX_TARGET_CPU_ARMcap_P,4,4
+.hidden	CX_TARGET_CPU_ARMcap_P
 #endif
 #endif
 #endif  // !XCRYPTO_NO_ASM

@@ -66,7 +66,7 @@
 
 
 
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
 
 #define X_BUILD_TaggedNumberNumberTypeMask 0xF00000000000000ULL
 #define X_BUILD_TaggedNumberSubtypeShift 57ULL
@@ -506,7 +506,7 @@ static XNumber _Nonnull __XNumberCreateUInt64(XNumberType type, XUInt64 value, c
     return result;
 }
 
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
 static inline XNumber _Nullable ___XNumberMakeFloat32(XFloat32 value, const char * _Nonnull func) {
     XUInt32 tmp = *(XUInt32 *)(&value);
     XUInt64 content = tmp;
@@ -701,7 +701,7 @@ void __XNumberUnpack(XNumber _Nonnull ref, XNumberUnpacked_t * _Nonnull ptr, con
                 XUInt tmp = (v >> X_BUILD_TaggedObjectContentShift) & X_BUILD_TaggedNumberContentMask;
                 XUInt32 content32 = (XUInt32)tmp;
 
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
                 XFloat32 f32 = *(XFloat32 *)(&content32);
                 XFloat64 f64 = f32;
                 content.bits.f = f64;
@@ -1059,7 +1059,7 @@ static inline XBool __XNumberConvertFloat64(XFloat64 value, XNumberType type, vo
 
 XNumberType __XNumberGetType(XNumber _Nonnull ref, const char * _Nonnull func) {
 
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
     XUInt64 v = (XUInt64)((uintptr_t)ref);
     if ((v & 0xE000000000000001ULL) == 0xE000000000000001ULL) {
         //53bits

@@ -12,7 +12,7 @@
 #include "XType.h"
 #include "XRuntimeInternal.h"
 
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
 #define X_BUILD_TypeKindObject 0x7FFFFFFFFFFFFFFFULL
 #define X_BUILD_TypeKindNotObjectMask 0x8000000000000000ULL
 #define X_BUILD_TypeKindNotObjectFlag 0x8000000000000000ULL

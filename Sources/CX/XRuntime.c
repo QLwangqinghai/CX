@@ -21,7 +21,7 @@ _Static_assert(sizeof(_Atomic(uintptr_t)) == sizeof(XUInt), "unknown error");
 _Static_assert(sizeof(_Atomic(XFastUInt32)) == sizeof(XUInt32), "unknown error");
 _Static_assert(sizeof(_Atomic(XFastUInt64)) == sizeof(XUInt64), "unknown error");
 
-_Static_assert(BUILD_TARGET_RT_64_BIT || BUILD_TARGET_RT_32_BIT, "unknown rt");
+_Static_assert(CX_TARGET_RT_64_BIT || CX_TARGET_RT_32_BIT, "unknown rt");
 
 _Static_assert(X_BUILD_ObjectRcFlagReadOnly == 1, "X_BUILD_ObjectRcFlagReadOnly must be 1");
 
@@ -143,7 +143,7 @@ XHashCode _XHashFloat64(XFloat64 d) {
 #define ELF_STEP32(B) T1 = (H << 4) + B; T2 = T1 & 0xF0000000; if (T2) T1 ^= (T2 >> 24); T1 &= (~T2); H = T1;
 #define ELF_STEP64(B) T1 = (H << 4) + B; T2 = T1 & 0xF000000000000000ULL; if (T2) T1 ^= (T2 >> 56); T1 &= (~T2); H = T1;
 
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
     #define ELF_STEP ELF_STEP64
 #else
     #define ELF_STEP ELF_STEP32
@@ -187,7 +187,7 @@ XHashCode XHash(XUInt8 * _Nullable bytes, XUInt length) {
     ELF_STEP(lengthBytes[2]);
     ELF_STEP(lengthBytes[3]);
 
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
     ELF_STEP(lengthBytes[4]);
     ELF_STEP(lengthBytes[5]);
     ELF_STEP(lengthBytes[6]);

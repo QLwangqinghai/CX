@@ -22,10 +22,10 @@ extern "C" {
 #endif
 
 
-#if defined(XCRYPTO_PPC64LE) ||                          \
+#if defined(CX_TARGET_CPU_PPC64LE) ||                          \
     (!defined(XCRYPTO_NO_ASM) &&                         \
-     (defined(XCRYPTO_X86) || defined(XCRYPTO_X86_64) || \
-      defined(XCRYPTO_ARM) || defined(XCRYPTO_AARCH64)))
+     (defined(CX_TARGET_CPU_X86) || defined(CX_TARGET_CPU_X86_64) || \
+      defined(CX_TARGET_CPU_ARM) || defined(CX_TARGET_CPU_AARCH64)))
 // POWER has an intrinsics-based implementation of SHA-1 and thus the functions
 // normally defined in assembly are available even with |XCRYPTO_NO_ASM| in
 // this case.
@@ -35,8 +35,8 @@ void sha1_block_data_order(uint32_t *state, const uint8_t *in,
 #endif
 
 #if !defined(XCRYPTO_NO_ASM) &&                         \
-    (defined(XCRYPTO_X86) || defined(XCRYPTO_X86_64) || \
-     defined(XCRYPTO_ARM) || defined(XCRYPTO_AARCH64))
+    (defined(CX_TARGET_CPU_X86) || defined(CX_TARGET_CPU_X86_64) || \
+     defined(CX_TARGET_CPU_ARM) || defined(CX_TARGET_CPU_AARCH64))
 #define XCRYPTO_SHA256_ASM
 #define XCRYPTO_SHA512_ASM
 void sha256_block_data_order(uint32_t *state, const uint8_t *in,

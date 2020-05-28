@@ -1,0 +1,816 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		772FEEFE248008E10051637C /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEEFD248008E10051637C /* main.c */; };
+		772FEFAB248008F40051637C /* cpu-ppc64le.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF07248008F30051637C /* cpu-ppc64le.c */; };
+		772FEFAF248008F40051637C /* mem.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF0C248008F30051637C /* mem.c */; };
+		772FEFB3248008F40051637C /* cpu-arm.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF12248008F30051637C /* cpu-arm.c */; };
+		772FEFB7248008F40051637C /* sha256-586.linux.x86.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF19248008F30051637C /* sha256-586.linux.x86.S */; };
+		772FEFB8248008F40051637C /* vpaes-x86_64.mac.x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF1A248008F30051637C /* vpaes-x86_64.mac.x86_64.S */; };
+		772FEFB9248008F40051637C /* aesni-gcm-x86_64.mac.x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF1B248008F30051637C /* aesni-gcm-x86_64.mac.x86_64.S */; };
+		772FEFC1248008F40051637C /* vpaes-x86_64.linux.x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF26248008F30051637C /* vpaes-x86_64.linux.x86_64.S */; };
+		772FEFC2248008F40051637C /* aesni-x86.linux.x86.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF27248008F30051637C /* aesni-x86.linux.x86.S */; };
+		772FEFC3248008F40051637C /* sha256-x86_64.mac.x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF28248008F30051637C /* sha256-x86_64.mac.x86_64.S */; };
+		772FEFC4248008F40051637C /* gcm_nohw.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF2B248008F30051637C /* gcm_nohw.c */; };
+		772FEFC5248008F40051637C /* cbc.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF2C248008F40051637C /* cbc.c */; };
+		772FEFC6248008F40051637C /* gcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF2D248008F40051637C /* gcm.c */; };
+		772FEFC7248008F40051637C /* ofb.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF2E248008F40051637C /* ofb.c */; };
+		772FEFC8248008F40051637C /* polyval.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF2F248008F40051637C /* polyval.c */; };
+		772FEFC9248008F40051637C /* ctr.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF30248008F40051637C /* ctr.c */; };
+		772FEFCA248008F40051637C /* cfb.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF31248008F40051637C /* cfb.c */; };
+		772FEFCB248008F40051637C /* vpaes-x86.linux.x86.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF32248008F40051637C /* vpaes-x86.linux.x86.S */; };
+		772FEFCC248008F40051637C /* md5-586.linux.x86.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF33248008F40051637C /* md5-586.linux.x86.S */; };
+		772FEFCD248008F40051637C /* sha256-armv4.linux.arm.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF34248008F40051637C /* sha256-armv4.linux.arm.S */; };
+		772FEFCE248008F40051637C /* fips_shared_support.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF35248008F40051637C /* fips_shared_support.c */; };
+		772FEFCF248008F40051637C /* sha512-armv8.ios.aarch64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF36248008F40051637C /* sha512-armv8.ios.aarch64.S */; };
+		772FEFD0248008F40051637C /* aesni-x86_64.linux.x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF37248008F40051637C /* aesni-x86_64.linux.x86_64.S */; };
+		772FEFD1248008F40051637C /* sha512-armv8.linux.aarch64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF38248008F40051637C /* sha512-armv8.linux.aarch64.S */; };
+		772FEFD4248008F40051637C /* sha1-armv8.linux.aarch64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF3C248008F40051637C /* sha1-armv8.linux.aarch64.S */; };
+		772FEFD5248008F40051637C /* md5-x86_64.linux.x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF3D248008F40051637C /* md5-x86_64.linux.x86_64.S */; };
+		772FEFD8248008F40051637C /* sha1-armv4-large.linux.arm.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF43248008F40051637C /* sha1-armv4-large.linux.arm.S */; };
+		772FEFD9248008F40051637C /* sha1-armv8.ios.aarch64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF44248008F40051637C /* sha1-armv8.ios.aarch64.S */; };
+		772FEFDC248008F40051637C /* sha256-armv4.ios.arm.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF47248008F40051637C /* sha256-armv4.ios.arm.S */; };
+		772FEFDD248008F40051637C /* sha1-armv4-large.ios.arm.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF48248008F40051637C /* sha1-armv4-large.ios.arm.S */; };
+		772FEFDE248008F40051637C /* sha256-armv8.linux.aarch64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF49248008F40051637C /* sha256-armv8.linux.aarch64.S */; };
+		772FEFE1248008F40051637C /* md5-x86_64.mac.x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF4C248008F40051637C /* md5-x86_64.mac.x86_64.S */; };
+		772FEFE2248008F40051637C /* aesv8-armx64.ios.aarch64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF4D248008F40051637C /* aesv8-armx64.ios.aarch64.S */; };
+		772FEFE3248008F40051637C /* sha256-x86_64.linux.x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF4E248008F40051637C /* sha256-x86_64.linux.x86_64.S */; };
+		772FEFE4248008F40051637C /* aesv8-armx64.linux.aarch64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF4F248008F40051637C /* aesv8-armx64.linux.aarch64.S */; };
+		772FEFE5248008F40051637C /* vpaes-armv7.ios.arm.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF50248008F40051637C /* vpaes-armv7.ios.arm.S */; };
+		772FEFE6248008F40051637C /* vpaes-armv7.linux.arm.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF51248008F40051637C /* vpaes-armv7.linux.arm.S */; };
+		772FEFE8248008F40051637C /* aesni-x86_64.mac.x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF53248008F40051637C /* aesni-x86_64.mac.x86_64.S */; };
+		772FEFEA248008F40051637C /* bsaes-armv7.ios.arm.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF55248008F40051637C /* bsaes-armv7.ios.arm.S */; };
+		772FEFEC248008F40051637C /* sha512-armv4.ios.arm.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF57248008F40051637C /* sha512-armv4.ios.arm.S */; };
+		772FEFED248008F40051637C /* sha512-armv4.linux.arm.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF58248008F40051637C /* sha512-armv4.linux.arm.S */; };
+		772FEFEE248008F40051637C /* sha1-x86_64.linux.x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF59248008F40051637C /* sha1-x86_64.linux.x86_64.S */; };
+		772FEFF0248008F40051637C /* sha1-x86_64.mac.x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF5B248008F40051637C /* sha1-x86_64.mac.x86_64.S */; };
+		772FEFF1248008F40051637C /* sha512-x86_64.linux.x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF5C248008F40051637C /* sha512-x86_64.linux.x86_64.S */; };
+		772FEFF3248008F40051637C /* sha512-x86_64.mac.x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF5E248008F40051637C /* sha512-x86_64.mac.x86_64.S */; };
+		772FEFF5248008F40051637C /* sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF62248008F40051637C /* sha1.c */; };
+		772FEFF6248008F40051637C /* sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF63248008F40051637C /* sha256.c */; };
+		772FEFF7248008F40051637C /* sha512.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF64248008F40051637C /* sha512.c */; };
+		772FEFF8248008F40051637C /* sha1-altivec.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF65248008F40051637C /* sha1-altivec.c */; };
+		772FEFF9248008F40051637C /* bsaes-armv7.linux.arm.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF66248008F40051637C /* bsaes-armv7.linux.arm.S */; };
+		772FEFFC248008F40051637C /* vpaes-armv8.linux.aarch64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF69248008F40051637C /* vpaes-armv8.linux.aarch64.S */; };
+		772FEFFF248008F40051637C /* bn-586.linux.x86.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF6C248008F40051637C /* bn-586.linux.x86.S */; };
+		772FF000248008F40051637C /* sha256-armv8.ios.aarch64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF6D248008F40051637C /* sha256-armv8.ios.aarch64.S */; };
+		772FF002248008F40051637C /* aesv8-armx32.linux.arm.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF6F248008F40051637C /* aesv8-armx32.linux.arm.S */; };
+		772FF004248008F40051637C /* aesni-gcm-x86_64.linux.x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF71248008F40051637C /* aesni-gcm-x86_64.linux.x86_64.S */; };
+		772FF006248008F40051637C /* sha1-586.linux.x86.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF73248008F40051637C /* sha1-586.linux.x86.S */; };
+		772FF00B248008F40051637C /* aesv8-armx32.ios.arm.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF78248008F40051637C /* aesv8-armx32.ios.arm.S */; };
+		772FF00C248008F40051637C /* vpaes-armv8.ios.aarch64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF79248008F40051637C /* vpaes-armv8.ios.aarch64.S */; };
+		772FF00E248008F40051637C /* aes.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF7C248008F40051637C /* aes.c */; };
+		772FF00F248008F40051637C /* aes_nohw.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF7E248008F40051637C /* aes_nohw.c */; };
+		772FF010248008F40051637C /* mode_wrappers.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF7F248008F40051637C /* mode_wrappers.c */; };
+		772FF011248008F40051637C /* key_wrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF80248008F40051637C /* key_wrap.c */; };
+		772FF013248008F40051637C /* sha512-586.linux.x86.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF82248008F40051637C /* sha512-586.linux.x86.S */; };
+		772FF014248008F40051637C /* cpu-aarch64-fuchsia.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF83248008F40051637C /* cpu-aarch64-fuchsia.c */; };
+		772FF016248008F40051637C /* cpu-arm-linux.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF85248008F40051637C /* cpu-arm-linux.c */; };
+		772FF018248008F40051637C /* cpu-aarch64-linux.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF88248008F40051637C /* cpu-aarch64-linux.c */; };
+		772FF019248008F40051637C /* crypto.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF89248008F40051637C /* crypto.c */; };
+		772FF01B248008F40051637C /* boringssl_prefix_symbols_nasm.inc in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF93248008F40051637C /* boringssl_prefix_symbols_nasm.inc */; };
+		772FF02C24800F110051637C /* ghashv8-armx64.linux.aarch64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FF01E24800F110051637C /* ghashv8-armx64.linux.aarch64.S */; };
+		772FF02D24800F110051637C /* ghash-armv4.ios.arm.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FF01F24800F110051637C /* ghash-armv4.ios.arm.S */; };
+		772FF02E24800F110051637C /* ghash-ssse3-x86.linux.x86.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FF02024800F110051637C /* ghash-ssse3-x86.linux.x86.S */; };
+		772FF02F24800F110051637C /* ghash-armv4.linux.arm.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FF02124800F110051637C /* ghash-armv4.linux.arm.S */; };
+		772FF03024800F110051637C /* ghash-ssse3-x86_64.linux.x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FF02224800F110051637C /* ghash-ssse3-x86_64.linux.x86_64.S */; };
+		772FF03124800F110051637C /* ghash-x86.linux.x86.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FF02324800F110051637C /* ghash-x86.linux.x86.S */; };
+		772FF03224800F110051637C /* ghashv8-armx32.linux.arm.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FF02424800F110051637C /* ghashv8-armx32.linux.arm.S */; };
+		772FF03324800F110051637C /* ghashv8-armx64.ios.aarch64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FF02524800F110051637C /* ghashv8-armx64.ios.aarch64.S */; };
+		772FF03424800F110051637C /* ghash-neon-armv8.ios.aarch64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FF02624800F110051637C /* ghash-neon-armv8.ios.aarch64.S */; };
+		772FF03524800F110051637C /* ghashv8-armx32.ios.arm.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FF02724800F110051637C /* ghashv8-armx32.ios.arm.S */; };
+		772FF03624800F120051637C /* ghash-x86_64.mac.x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FF02824800F110051637C /* ghash-x86_64.mac.x86_64.S */; };
+		772FF03724800F120051637C /* ghash-ssse3-x86_64.mac.x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FF02924800F110051637C /* ghash-ssse3-x86_64.mac.x86_64.S */; };
+		772FF03824800F120051637C /* ghash-x86_64.linux.x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FF02A24800F110051637C /* ghash-x86_64.linux.x86_64.S */; };
+		772FF03924800F120051637C /* ghash-neon-armv8.linux.aarch64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FF02B24800F110051637C /* ghash-neon-armv8.linux.aarch64.S */; };
+		772FF03C2480105B0051637C /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FF03B2480105B0051637C /* md5.c */; };
+		772FF05C248016640051637C /* aes.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FF03F248016640051637C /* aes.c */; };
+		772FF05D248016640051637C /* aes_nohw.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FF041248016640051637C /* aes_nohw.c */; };
+		772FF05E248016640051637C /* mode_wrappers.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FF042248016640051637C /* mode_wrappers.c */; };
+		772FF05F248016640051637C /* key_wrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FF043248016640051637C /* key_wrap.c */; };
+		772FF063248016640051637C /* sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FF049248016640051637C /* sha1.c */; };
+		772FF064248016640051637C /* sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FF04A248016640051637C /* sha256.c */; };
+		772FF065248016640051637C /* sha512.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FF04B248016640051637C /* sha512.c */; };
+		772FF066248016640051637C /* sha1-altivec.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FF04C248016640051637C /* sha1-altivec.c */; };
+		772FF06C248016640051637C /* gcm_nohw.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FF054248016640051637C /* gcm_nohw.c */; };
+		772FF06D248016640051637C /* cbc.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FF055248016640051637C /* cbc.c */; };
+		772FF06E248016640051637C /* gcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FF056248016640051637C /* gcm.c */; };
+		772FF06F248016640051637C /* ofb.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FF057248016640051637C /* ofb.c */; };
+		772FF070248016640051637C /* polyval.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FF058248016640051637C /* polyval.c */; };
+		772FF071248016640051637C /* ctr.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FF059248016640051637C /* ctr.c */; };
+		772FF072248016640051637C /* cfb.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FF05A248016640051637C /* cfb.c */; };
+		772FF076248018D50051637C /* cpu-intel.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FF075248018D50051637C /* cpu-intel.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		772FEEF8248008E10051637C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		772FEEFA248008E10051637C /* XDigest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = XDigest; sourceTree = BUILT_PRODUCTS_DIR; };
+		772FEEFD248008E10051637C /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		772FEF07248008F30051637C /* cpu-ppc64le.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "cpu-ppc64le.c"; sourceTree = "<group>"; };
+		772FEF0A248008F30051637C /* internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = internal.h; sourceTree = "<group>"; };
+		772FEF0C248008F30051637C /* mem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mem.c; sourceTree = "<group>"; };
+		772FEF12248008F30051637C /* cpu-arm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "cpu-arm.c"; sourceTree = "<group>"; };
+		772FEF13248008F30051637C /* cpu-arm-linux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "cpu-arm-linux.h"; sourceTree = "<group>"; };
+		772FEF19248008F30051637C /* sha256-586.linux.x86.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha256-586.linux.x86.S"; sourceTree = "<group>"; };
+		772FEF1A248008F30051637C /* vpaes-x86_64.mac.x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "vpaes-x86_64.mac.x86_64.S"; sourceTree = "<group>"; };
+		772FEF1B248008F30051637C /* aesni-gcm-x86_64.mac.x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "aesni-gcm-x86_64.mac.x86_64.S"; sourceTree = "<group>"; };
+		772FEF26248008F30051637C /* vpaes-x86_64.linux.x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "vpaes-x86_64.linux.x86_64.S"; sourceTree = "<group>"; };
+		772FEF27248008F30051637C /* aesni-x86.linux.x86.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "aesni-x86.linux.x86.S"; sourceTree = "<group>"; };
+		772FEF28248008F30051637C /* sha256-x86_64.mac.x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha256-x86_64.mac.x86_64.S"; sourceTree = "<group>"; };
+		772FEF2A248008F30051637C /* internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = internal.h; sourceTree = "<group>"; };
+		772FEF2B248008F30051637C /* gcm_nohw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gcm_nohw.c; sourceTree = "<group>"; };
+		772FEF2C248008F40051637C /* cbc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cbc.c; sourceTree = "<group>"; };
+		772FEF2D248008F40051637C /* gcm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gcm.c; sourceTree = "<group>"; };
+		772FEF2E248008F40051637C /* ofb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ofb.c; sourceTree = "<group>"; };
+		772FEF2F248008F40051637C /* polyval.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = polyval.c; sourceTree = "<group>"; };
+		772FEF30248008F40051637C /* ctr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ctr.c; sourceTree = "<group>"; };
+		772FEF31248008F40051637C /* cfb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cfb.c; sourceTree = "<group>"; };
+		772FEF32248008F40051637C /* vpaes-x86.linux.x86.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "vpaes-x86.linux.x86.S"; sourceTree = "<group>"; };
+		772FEF33248008F40051637C /* md5-586.linux.x86.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "md5-586.linux.x86.S"; sourceTree = "<group>"; };
+		772FEF34248008F40051637C /* sha256-armv4.linux.arm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha256-armv4.linux.arm.S"; sourceTree = "<group>"; };
+		772FEF35248008F40051637C /* fips_shared_support.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fips_shared_support.c; sourceTree = "<group>"; };
+		772FEF36248008F40051637C /* sha512-armv8.ios.aarch64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha512-armv8.ios.aarch64.S"; sourceTree = "<group>"; };
+		772FEF37248008F40051637C /* aesni-x86_64.linux.x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "aesni-x86_64.linux.x86_64.S"; sourceTree = "<group>"; };
+		772FEF38248008F40051637C /* sha512-armv8.linux.aarch64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha512-armv8.linux.aarch64.S"; sourceTree = "<group>"; };
+		772FEF3C248008F40051637C /* sha1-armv8.linux.aarch64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha1-armv8.linux.aarch64.S"; sourceTree = "<group>"; };
+		772FEF3D248008F40051637C /* md5-x86_64.linux.x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "md5-x86_64.linux.x86_64.S"; sourceTree = "<group>"; };
+		772FEF43248008F40051637C /* sha1-armv4-large.linux.arm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha1-armv4-large.linux.arm.S"; sourceTree = "<group>"; };
+		772FEF44248008F40051637C /* sha1-armv8.ios.aarch64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha1-armv8.ios.aarch64.S"; sourceTree = "<group>"; };
+		772FEF47248008F40051637C /* sha256-armv4.ios.arm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha256-armv4.ios.arm.S"; sourceTree = "<group>"; };
+		772FEF48248008F40051637C /* sha1-armv4-large.ios.arm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha1-armv4-large.ios.arm.S"; sourceTree = "<group>"; };
+		772FEF49248008F40051637C /* sha256-armv8.linux.aarch64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha256-armv8.linux.aarch64.S"; sourceTree = "<group>"; };
+		772FEF4C248008F40051637C /* md5-x86_64.mac.x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "md5-x86_64.mac.x86_64.S"; sourceTree = "<group>"; };
+		772FEF4D248008F40051637C /* aesv8-armx64.ios.aarch64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "aesv8-armx64.ios.aarch64.S"; sourceTree = "<group>"; };
+		772FEF4E248008F40051637C /* sha256-x86_64.linux.x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha256-x86_64.linux.x86_64.S"; sourceTree = "<group>"; };
+		772FEF4F248008F40051637C /* aesv8-armx64.linux.aarch64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "aesv8-armx64.linux.aarch64.S"; sourceTree = "<group>"; };
+		772FEF50248008F40051637C /* vpaes-armv7.ios.arm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "vpaes-armv7.ios.arm.S"; sourceTree = "<group>"; };
+		772FEF51248008F40051637C /* vpaes-armv7.linux.arm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "vpaes-armv7.linux.arm.S"; sourceTree = "<group>"; };
+		772FEF53248008F40051637C /* aesni-x86_64.mac.x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "aesni-x86_64.mac.x86_64.S"; sourceTree = "<group>"; };
+		772FEF55248008F40051637C /* bsaes-armv7.ios.arm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "bsaes-armv7.ios.arm.S"; sourceTree = "<group>"; };
+		772FEF57248008F40051637C /* sha512-armv4.ios.arm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha512-armv4.ios.arm.S"; sourceTree = "<group>"; };
+		772FEF58248008F40051637C /* sha512-armv4.linux.arm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha512-armv4.linux.arm.S"; sourceTree = "<group>"; };
+		772FEF59248008F40051637C /* sha1-x86_64.linux.x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha1-x86_64.linux.x86_64.S"; sourceTree = "<group>"; };
+		772FEF5B248008F40051637C /* sha1-x86_64.mac.x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha1-x86_64.mac.x86_64.S"; sourceTree = "<group>"; };
+		772FEF5C248008F40051637C /* sha512-x86_64.linux.x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha512-x86_64.linux.x86_64.S"; sourceTree = "<group>"; };
+		772FEF5E248008F40051637C /* sha512-x86_64.mac.x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha512-x86_64.mac.x86_64.S"; sourceTree = "<group>"; };
+		772FEF61248008F40051637C /* internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = internal.h; sourceTree = "<group>"; };
+		772FEF62248008F40051637C /* sha1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha1.c; sourceTree = "<group>"; };
+		772FEF63248008F40051637C /* sha256.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha256.c; sourceTree = "<group>"; };
+		772FEF64248008F40051637C /* sha512.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha512.c; sourceTree = "<group>"; };
+		772FEF65248008F40051637C /* sha1-altivec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "sha1-altivec.c"; sourceTree = "<group>"; };
+		772FEF66248008F40051637C /* bsaes-armv7.linux.arm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "bsaes-armv7.linux.arm.S"; sourceTree = "<group>"; };
+		772FEF69248008F40051637C /* vpaes-armv8.linux.aarch64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "vpaes-armv8.linux.aarch64.S"; sourceTree = "<group>"; };
+		772FEF6C248008F40051637C /* bn-586.linux.x86.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "bn-586.linux.x86.S"; sourceTree = "<group>"; };
+		772FEF6D248008F40051637C /* sha256-armv8.ios.aarch64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha256-armv8.ios.aarch64.S"; sourceTree = "<group>"; };
+		772FEF6F248008F40051637C /* aesv8-armx32.linux.arm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "aesv8-armx32.linux.arm.S"; sourceTree = "<group>"; };
+		772FEF71248008F40051637C /* aesni-gcm-x86_64.linux.x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "aesni-gcm-x86_64.linux.x86_64.S"; sourceTree = "<group>"; };
+		772FEF73248008F40051637C /* sha1-586.linux.x86.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha1-586.linux.x86.S"; sourceTree = "<group>"; };
+		772FEF78248008F40051637C /* aesv8-armx32.ios.arm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "aesv8-armx32.ios.arm.S"; sourceTree = "<group>"; };
+		772FEF79248008F40051637C /* vpaes-armv8.ios.aarch64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "vpaes-armv8.ios.aarch64.S"; sourceTree = "<group>"; };
+		772FEF7C248008F40051637C /* aes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aes.c; sourceTree = "<group>"; };
+		772FEF7D248008F40051637C /* internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = internal.h; sourceTree = "<group>"; };
+		772FEF7E248008F40051637C /* aes_nohw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aes_nohw.c; sourceTree = "<group>"; };
+		772FEF7F248008F40051637C /* mode_wrappers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mode_wrappers.c; sourceTree = "<group>"; };
+		772FEF80248008F40051637C /* key_wrap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = key_wrap.c; sourceTree = "<group>"; };
+		772FEF82248008F40051637C /* sha512-586.linux.x86.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "sha512-586.linux.x86.S"; sourceTree = "<group>"; };
+		772FEF83248008F40051637C /* cpu-aarch64-fuchsia.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "cpu-aarch64-fuchsia.c"; sourceTree = "<group>"; };
+		772FEF85248008F40051637C /* cpu-arm-linux.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "cpu-arm-linux.c"; sourceTree = "<group>"; };
+		772FEF88248008F40051637C /* cpu-aarch64-linux.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "cpu-aarch64-linux.c"; sourceTree = "<group>"; };
+		772FEF89248008F40051637C /* crypto.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = crypto.c; sourceTree = "<group>"; };
+		772FEF8B248008F40051637C /* hash.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = hash.txt; sourceTree = "<group>"; };
+		772FEF8E248008F40051637C /* CNIOBoringSSL_ossl_typ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_ossl_typ.h; sourceTree = "<group>"; };
+		772FEF8F248008F40051637C /* CNIOBoringSSL_arm_arch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_arm_arch.h; sourceTree = "<group>"; };
+		772FEF91248008F40051637C /* CNIOBoringSSL_md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_md5.h; sourceTree = "<group>"; };
+		772FEF92248008F40051637C /* CNIOBoringSSL_ripemd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_ripemd.h; sourceTree = "<group>"; };
+		772FEF93248008F40051637C /* boringssl_prefix_symbols_nasm.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = boringssl_prefix_symbols_nasm.inc; sourceTree = "<group>"; };
+		772FEF94248008F40051637C /* CNIOBoringSSL_sha.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_sha.h; sourceTree = "<group>"; };
+		772FEF97248008F40051637C /* CNIOBoringSSL_nid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_nid.h; sourceTree = "<group>"; };
+		772FEF98248008F40051637C /* XCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCrypto.h; sourceTree = "<group>"; };
+		772FEF99248008F40051637C /* CNIOBoringSSL_cmac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_cmac.h; sourceTree = "<group>"; };
+		772FEF9B248008F40051637C /* CNIOBoringSSL_mem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_mem.h; sourceTree = "<group>"; };
+		772FEF9C248008F40051637C /* CNIOBoringSSL_tls1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_tls1.h; sourceTree = "<group>"; };
+		772FEF9D248008F40051637C /* CNIOBoringSSL_srtp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_srtp.h; sourceTree = "<group>"; };
+		772FEF9F248008F40051637C /* CNIOBoringSSL_cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_cpu.h; sourceTree = "<group>"; };
+		772FEFA0248008F40051637C /* CNIOBoringSSL_digest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_digest.h; sourceTree = "<group>"; };
+		772FEFA2248008F40051637C /* CNIOBoringSSL_opensslconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_opensslconf.h; sourceTree = "<group>"; };
+		772FEFA3248008F40051637C /* CNIOBoringSSL_crypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_crypto.h; sourceTree = "<group>"; };
+		772FEFA5248008F40051637C /* CNIOBoringSSL_aes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_aes.h; sourceTree = "<group>"; };
+		772FEFA6248008F40051637C /* XCryptoBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCryptoBase.h; sourceTree = "<group>"; };
+		772FF01C248009780051637C /* XCrypto_prefix_symbols.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCrypto_prefix_symbols.h; sourceTree = "<group>"; };
+		772FF01D248009820051637C /* XCrypto_prefix_symbols_asm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCrypto_prefix_symbols_asm.h; sourceTree = "<group>"; };
+		772FF01E24800F110051637C /* ghashv8-armx64.linux.aarch64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "ghashv8-armx64.linux.aarch64.S"; sourceTree = "<group>"; };
+		772FF01F24800F110051637C /* ghash-armv4.ios.arm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "ghash-armv4.ios.arm.S"; sourceTree = "<group>"; };
+		772FF02024800F110051637C /* ghash-ssse3-x86.linux.x86.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "ghash-ssse3-x86.linux.x86.S"; sourceTree = "<group>"; };
+		772FF02124800F110051637C /* ghash-armv4.linux.arm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "ghash-armv4.linux.arm.S"; sourceTree = "<group>"; };
+		772FF02224800F110051637C /* ghash-ssse3-x86_64.linux.x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "ghash-ssse3-x86_64.linux.x86_64.S"; sourceTree = "<group>"; };
+		772FF02324800F110051637C /* ghash-x86.linux.x86.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "ghash-x86.linux.x86.S"; sourceTree = "<group>"; };
+		772FF02424800F110051637C /* ghashv8-armx32.linux.arm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "ghashv8-armx32.linux.arm.S"; sourceTree = "<group>"; };
+		772FF02524800F110051637C /* ghashv8-armx64.ios.aarch64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "ghashv8-armx64.ios.aarch64.S"; sourceTree = "<group>"; };
+		772FF02624800F110051637C /* ghash-neon-armv8.ios.aarch64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "ghash-neon-armv8.ios.aarch64.S"; sourceTree = "<group>"; };
+		772FF02724800F110051637C /* ghashv8-armx32.ios.arm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "ghashv8-armx32.ios.arm.S"; sourceTree = "<group>"; };
+		772FF02824800F110051637C /* ghash-x86_64.mac.x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "ghash-x86_64.mac.x86_64.S"; sourceTree = "<group>"; };
+		772FF02924800F110051637C /* ghash-ssse3-x86_64.mac.x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "ghash-ssse3-x86_64.mac.x86_64.S"; sourceTree = "<group>"; };
+		772FF02A24800F110051637C /* ghash-x86_64.linux.x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "ghash-x86_64.linux.x86_64.S"; sourceTree = "<group>"; };
+		772FF02B24800F110051637C /* ghash-neon-armv8.linux.aarch64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "ghash-neon-armv8.linux.aarch64.S"; sourceTree = "<group>"; };
+		772FF03A2480105B0051637C /* md32_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md32_common.h; sourceTree = "<group>"; };
+		772FF03B2480105B0051637C /* md5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = md5.c; sourceTree = "<group>"; };
+		772FF03F248016640051637C /* aes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aes.c; sourceTree = "<group>"; };
+		772FF040248016640051637C /* internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = internal.h; sourceTree = "<group>"; };
+		772FF041248016640051637C /* aes_nohw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aes_nohw.c; sourceTree = "<group>"; };
+		772FF042248016640051637C /* mode_wrappers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mode_wrappers.c; sourceTree = "<group>"; };
+		772FF043248016640051637C /* key_wrap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = key_wrap.c; sourceTree = "<group>"; };
+		772FF048248016640051637C /* internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = internal.h; sourceTree = "<group>"; };
+		772FF049248016640051637C /* sha1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha1.c; sourceTree = "<group>"; };
+		772FF04A248016640051637C /* sha256.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha256.c; sourceTree = "<group>"; };
+		772FF04B248016640051637C /* sha512.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha512.c; sourceTree = "<group>"; };
+		772FF04C248016640051637C /* sha1-altivec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "sha1-altivec.c"; sourceTree = "<group>"; };
+		772FF053248016640051637C /* internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = internal.h; sourceTree = "<group>"; };
+		772FF054248016640051637C /* gcm_nohw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gcm_nohw.c; sourceTree = "<group>"; };
+		772FF055248016640051637C /* cbc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cbc.c; sourceTree = "<group>"; };
+		772FF056248016640051637C /* gcm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gcm.c; sourceTree = "<group>"; };
+		772FF057248016640051637C /* ofb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ofb.c; sourceTree = "<group>"; };
+		772FF058248016640051637C /* polyval.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = polyval.c; sourceTree = "<group>"; };
+		772FF059248016640051637C /* ctr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ctr.c; sourceTree = "<group>"; };
+		772FF05A248016640051637C /* cfb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cfb.c; sourceTree = "<group>"; };
+		772FF075248018D50051637C /* cpu-intel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "cpu-intel.c"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		772FEEF7248008E10051637C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		772FEEF1248008E10051637C = {
+			isa = PBXGroup;
+			children = (
+				772FEF04248008F30051637C /* Sources */,
+				772FEEFC248008E10051637C /* XDigest */,
+				772FEEFB248008E10051637C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		772FEEFB248008E10051637C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				772FEEFA248008E10051637C /* XDigest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		772FEEFC248008E10051637C /* XDigest */ = {
+			isa = PBXGroup;
+			children = (
+				772FEEFD248008E10051637C /* main.c */,
+			);
+			path = XDigest;
+			sourceTree = "<group>";
+		};
+		772FEF04248008F30051637C /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				772FEF05248008F30051637C /* XCrypto */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		772FEF05248008F30051637C /* XCrypto */ = {
+			isa = PBXGroup;
+			children = (
+				772FEF06248008F30051637C /* crypto */,
+				772FEF8B248008F40051637C /* hash.txt */,
+				772FEF8C248008F40051637C /* include */,
+			);
+			path = XCrypto;
+			sourceTree = "<group>";
+		};
+		772FEF06248008F30051637C /* crypto */ = {
+			isa = PBXGroup;
+			children = (
+				772FF075248018D50051637C /* cpu-intel.c */,
+				772FEF07248008F30051637C /* cpu-ppc64le.c */,
+				772FEF0A248008F30051637C /* internal.h */,
+				772FEF0C248008F30051637C /* mem.c */,
+				772FEF12248008F30051637C /* cpu-arm.c */,
+				772FEF13248008F30051637C /* cpu-arm-linux.h */,
+				772FEF17248008F30051637C /* fipsmodule */,
+				772FEF83248008F40051637C /* cpu-aarch64-fuchsia.c */,
+				772FEF85248008F40051637C /* cpu-arm-linux.c */,
+				772FEF88248008F40051637C /* cpu-aarch64-linux.c */,
+				772FEF89248008F40051637C /* crypto.c */,
+			);
+			path = crypto;
+			sourceTree = "<group>";
+		};
+		772FEF17248008F30051637C /* fipsmodule */ = {
+			isa = PBXGroup;
+			children = (
+				772FF03E248016640051637C /* aes */,
+				772FF052248016640051637C /* modes */,
+				772FF047248016640051637C /* sha */,
+				772FF03B2480105B0051637C /* md5.c */,
+				772FF03A2480105B0051637C /* md32_common.h */,
+				772FF01F24800F110051637C /* ghash-armv4.ios.arm.S */,
+				772FF02124800F110051637C /* ghash-armv4.linux.arm.S */,
+				772FF02624800F110051637C /* ghash-neon-armv8.ios.aarch64.S */,
+				772FF02B24800F110051637C /* ghash-neon-armv8.linux.aarch64.S */,
+				772FF02224800F110051637C /* ghash-ssse3-x86_64.linux.x86_64.S */,
+				772FF02924800F110051637C /* ghash-ssse3-x86_64.mac.x86_64.S */,
+				772FF02024800F110051637C /* ghash-ssse3-x86.linux.x86.S */,
+				772FF02A24800F110051637C /* ghash-x86_64.linux.x86_64.S */,
+				772FF02824800F110051637C /* ghash-x86_64.mac.x86_64.S */,
+				772FF02324800F110051637C /* ghash-x86.linux.x86.S */,
+				772FF02724800F110051637C /* ghashv8-armx32.ios.arm.S */,
+				772FF02424800F110051637C /* ghashv8-armx32.linux.arm.S */,
+				772FF02524800F110051637C /* ghashv8-armx64.ios.aarch64.S */,
+				772FF01E24800F110051637C /* ghashv8-armx64.linux.aarch64.S */,
+				772FEF19248008F30051637C /* sha256-586.linux.x86.S */,
+				772FEF1A248008F30051637C /* vpaes-x86_64.mac.x86_64.S */,
+				772FEF1B248008F30051637C /* aesni-gcm-x86_64.mac.x86_64.S */,
+				772FEF26248008F30051637C /* vpaes-x86_64.linux.x86_64.S */,
+				772FEF27248008F30051637C /* aesni-x86.linux.x86.S */,
+				772FEF28248008F30051637C /* sha256-x86_64.mac.x86_64.S */,
+				772FEF29248008F30051637C /* modes */,
+				772FEF32248008F40051637C /* vpaes-x86.linux.x86.S */,
+				772FEF33248008F40051637C /* md5-586.linux.x86.S */,
+				772FEF34248008F40051637C /* sha256-armv4.linux.arm.S */,
+				772FEF35248008F40051637C /* fips_shared_support.c */,
+				772FEF36248008F40051637C /* sha512-armv8.ios.aarch64.S */,
+				772FEF37248008F40051637C /* aesni-x86_64.linux.x86_64.S */,
+				772FEF38248008F40051637C /* sha512-armv8.linux.aarch64.S */,
+				772FEF3C248008F40051637C /* sha1-armv8.linux.aarch64.S */,
+				772FEF3D248008F40051637C /* md5-x86_64.linux.x86_64.S */,
+				772FEF43248008F40051637C /* sha1-armv4-large.linux.arm.S */,
+				772FEF44248008F40051637C /* sha1-armv8.ios.aarch64.S */,
+				772FEF47248008F40051637C /* sha256-armv4.ios.arm.S */,
+				772FEF48248008F40051637C /* sha1-armv4-large.ios.arm.S */,
+				772FEF49248008F40051637C /* sha256-armv8.linux.aarch64.S */,
+				772FEF4C248008F40051637C /* md5-x86_64.mac.x86_64.S */,
+				772FEF4D248008F40051637C /* aesv8-armx64.ios.aarch64.S */,
+				772FEF4E248008F40051637C /* sha256-x86_64.linux.x86_64.S */,
+				772FEF4F248008F40051637C /* aesv8-armx64.linux.aarch64.S */,
+				772FEF50248008F40051637C /* vpaes-armv7.ios.arm.S */,
+				772FEF51248008F40051637C /* vpaes-armv7.linux.arm.S */,
+				772FEF53248008F40051637C /* aesni-x86_64.mac.x86_64.S */,
+				772FEF55248008F40051637C /* bsaes-armv7.ios.arm.S */,
+				772FEF57248008F40051637C /* sha512-armv4.ios.arm.S */,
+				772FEF58248008F40051637C /* sha512-armv4.linux.arm.S */,
+				772FEF59248008F40051637C /* sha1-x86_64.linux.x86_64.S */,
+				772FEF5B248008F40051637C /* sha1-x86_64.mac.x86_64.S */,
+				772FEF5C248008F40051637C /* sha512-x86_64.linux.x86_64.S */,
+				772FEF5E248008F40051637C /* sha512-x86_64.mac.x86_64.S */,
+				772FEF60248008F40051637C /* sha */,
+				772FEF66248008F40051637C /* bsaes-armv7.linux.arm.S */,
+				772FEF69248008F40051637C /* vpaes-armv8.linux.aarch64.S */,
+				772FEF6C248008F40051637C /* bn-586.linux.x86.S */,
+				772FEF6D248008F40051637C /* sha256-armv8.ios.aarch64.S */,
+				772FEF6F248008F40051637C /* aesv8-armx32.linux.arm.S */,
+				772FEF71248008F40051637C /* aesni-gcm-x86_64.linux.x86_64.S */,
+				772FEF73248008F40051637C /* sha1-586.linux.x86.S */,
+				772FEF78248008F40051637C /* aesv8-armx32.ios.arm.S */,
+				772FEF79248008F40051637C /* vpaes-armv8.ios.aarch64.S */,
+				772FEF7B248008F40051637C /* aes */,
+				772FEF82248008F40051637C /* sha512-586.linux.x86.S */,
+			);
+			path = fipsmodule;
+			sourceTree = "<group>";
+		};
+		772FEF29248008F30051637C /* modes */ = {
+			isa = PBXGroup;
+			children = (
+				772FEF2A248008F30051637C /* internal.h */,
+				772FEF2B248008F30051637C /* gcm_nohw.c */,
+				772FEF2C248008F40051637C /* cbc.c */,
+				772FEF2D248008F40051637C /* gcm.c */,
+				772FEF2E248008F40051637C /* ofb.c */,
+				772FEF2F248008F40051637C /* polyval.c */,
+				772FEF30248008F40051637C /* ctr.c */,
+				772FEF31248008F40051637C /* cfb.c */,
+			);
+			path = modes;
+			sourceTree = "<group>";
+		};
+		772FEF60248008F40051637C /* sha */ = {
+			isa = PBXGroup;
+			children = (
+				772FEF61248008F40051637C /* internal.h */,
+				772FEF62248008F40051637C /* sha1.c */,
+				772FEF63248008F40051637C /* sha256.c */,
+				772FEF64248008F40051637C /* sha512.c */,
+				772FEF65248008F40051637C /* sha1-altivec.c */,
+			);
+			path = sha;
+			sourceTree = "<group>";
+		};
+		772FEF7B248008F40051637C /* aes */ = {
+			isa = PBXGroup;
+			children = (
+				772FEF7C248008F40051637C /* aes.c */,
+				772FEF7D248008F40051637C /* internal.h */,
+				772FEF7E248008F40051637C /* aes_nohw.c */,
+				772FEF7F248008F40051637C /* mode_wrappers.c */,
+				772FEF80248008F40051637C /* key_wrap.c */,
+			);
+			path = aes;
+			sourceTree = "<group>";
+		};
+		772FEF8C248008F40051637C /* include */ = {
+			isa = PBXGroup;
+			children = (
+				772FF01D248009820051637C /* XCrypto_prefix_symbols_asm.h */,
+				772FF01C248009780051637C /* XCrypto_prefix_symbols.h */,
+				772FEF8E248008F40051637C /* CNIOBoringSSL_ossl_typ.h */,
+				772FEF8F248008F40051637C /* CNIOBoringSSL_arm_arch.h */,
+				772FEF91248008F40051637C /* CNIOBoringSSL_md5.h */,
+				772FEF92248008F40051637C /* CNIOBoringSSL_ripemd.h */,
+				772FEF93248008F40051637C /* boringssl_prefix_symbols_nasm.inc */,
+				772FEF94248008F40051637C /* CNIOBoringSSL_sha.h */,
+				772FEF97248008F40051637C /* CNIOBoringSSL_nid.h */,
+				772FEF98248008F40051637C /* XCrypto.h */,
+				772FEF99248008F40051637C /* CNIOBoringSSL_cmac.h */,
+				772FEF9B248008F40051637C /* CNIOBoringSSL_mem.h */,
+				772FEF9C248008F40051637C /* CNIOBoringSSL_tls1.h */,
+				772FEF9D248008F40051637C /* CNIOBoringSSL_srtp.h */,
+				772FEF9F248008F40051637C /* CNIOBoringSSL_cpu.h */,
+				772FEFA0248008F40051637C /* CNIOBoringSSL_digest.h */,
+				772FEFA2248008F40051637C /* CNIOBoringSSL_opensslconf.h */,
+				772FEFA3248008F40051637C /* CNIOBoringSSL_crypto.h */,
+				772FEFA5248008F40051637C /* CNIOBoringSSL_aes.h */,
+				772FEFA6248008F40051637C /* XCryptoBase.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		772FF03E248016640051637C /* aes */ = {
+			isa = PBXGroup;
+			children = (
+				772FF03F248016640051637C /* aes.c */,
+				772FF040248016640051637C /* internal.h */,
+				772FF041248016640051637C /* aes_nohw.c */,
+				772FF042248016640051637C /* mode_wrappers.c */,
+				772FF043248016640051637C /* key_wrap.c */,
+			);
+			path = aes;
+			sourceTree = "<group>";
+		};
+		772FF047248016640051637C /* sha */ = {
+			isa = PBXGroup;
+			children = (
+				772FF048248016640051637C /* internal.h */,
+				772FF049248016640051637C /* sha1.c */,
+				772FF04A248016640051637C /* sha256.c */,
+				772FF04B248016640051637C /* sha512.c */,
+				772FF04C248016640051637C /* sha1-altivec.c */,
+			);
+			path = sha;
+			sourceTree = "<group>";
+		};
+		772FF052248016640051637C /* modes */ = {
+			isa = PBXGroup;
+			children = (
+				772FF053248016640051637C /* internal.h */,
+				772FF054248016640051637C /* gcm_nohw.c */,
+				772FF055248016640051637C /* cbc.c */,
+				772FF056248016640051637C /* gcm.c */,
+				772FF057248016640051637C /* ofb.c */,
+				772FF058248016640051637C /* polyval.c */,
+				772FF059248016640051637C /* ctr.c */,
+				772FF05A248016640051637C /* cfb.c */,
+			);
+			path = modes;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		772FEEF9248008E10051637C /* XDigest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 772FEF01248008E10051637C /* Build configuration list for PBXNativeTarget "XDigest" */;
+			buildPhases = (
+				772FEEF6248008E10051637C /* Sources */,
+				772FEEF7248008E10051637C /* Frameworks */,
+				772FEEF8248008E10051637C /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = XDigest;
+			productName = XDigest;
+			productReference = 772FEEFA248008E10051637C /* XDigest */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		772FEEF2248008E10051637C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1150;
+				ORGANIZATIONNAME = clf;
+				TargetAttributes = {
+					772FEEF9248008E10051637C = {
+						CreatedOnToolsVersion = 11.5;
+					};
+				};
+			};
+			buildConfigurationList = 772FEEF5248008E10051637C /* Build configuration list for PBXProject "XDigest" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 772FEEF1248008E10051637C;
+			productRefGroup = 772FEEFB248008E10051637C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				772FEEF9248008E10051637C /* XDigest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		772FEEF6248008E10051637C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				772FF06F248016640051637C /* ofb.c in Sources */,
+				772FF03324800F110051637C /* ghashv8-armx64.ios.aarch64.S in Sources */,
+				772FF066248016640051637C /* sha1-altivec.c in Sources */,
+				772FEFED248008F40051637C /* sha512-armv4.linux.arm.S in Sources */,
+				772FF06D248016640051637C /* cbc.c in Sources */,
+				772FF03824800F120051637C /* ghash-x86_64.linux.x86_64.S in Sources */,
+				772FF071248016640051637C /* ctr.c in Sources */,
+				772FF014248008F40051637C /* cpu-aarch64-fuchsia.c in Sources */,
+				772FEFE8248008F40051637C /* aesni-x86_64.mac.x86_64.S in Sources */,
+				772FEFCA248008F40051637C /* cfb.c in Sources */,
+				772FF02F24800F110051637C /* ghash-armv4.linux.arm.S in Sources */,
+				772FEFCD248008F40051637C /* sha256-armv4.linux.arm.S in Sources */,
+				772FEFC3248008F40051637C /* sha256-x86_64.mac.x86_64.S in Sources */,
+				772FF065248016640051637C /* sha512.c in Sources */,
+				772FEEFE248008E10051637C /* main.c in Sources */,
+				772FF004248008F40051637C /* aesni-gcm-x86_64.linux.x86_64.S in Sources */,
+				772FF06C248016640051637C /* gcm_nohw.c in Sources */,
+				772FEFC8248008F40051637C /* polyval.c in Sources */,
+				772FEFB3248008F40051637C /* cpu-arm.c in Sources */,
+				772FEFF5248008F40051637C /* sha1.c in Sources */,
+				772FEFCF248008F40051637C /* sha512-armv8.ios.aarch64.S in Sources */,
+				772FEFE2248008F40051637C /* aesv8-armx64.ios.aarch64.S in Sources */,
+				772FF000248008F40051637C /* sha256-armv8.ios.aarch64.S in Sources */,
+				772FEFAB248008F40051637C /* cpu-ppc64le.c in Sources */,
+				772FEFE5248008F40051637C /* vpaes-armv7.ios.arm.S in Sources */,
+				772FEFDC248008F40051637C /* sha256-armv4.ios.arm.S in Sources */,
+				772FEFF0248008F40051637C /* sha1-x86_64.mac.x86_64.S in Sources */,
+				772FEFCC248008F40051637C /* md5-586.linux.x86.S in Sources */,
+				772FEFE4248008F40051637C /* aesv8-armx64.linux.aarch64.S in Sources */,
+				772FF03224800F110051637C /* ghashv8-armx32.linux.arm.S in Sources */,
+				772FEFE3248008F40051637C /* sha256-x86_64.linux.x86_64.S in Sources */,
+				772FF02E24800F110051637C /* ghash-ssse3-x86.linux.x86.S in Sources */,
+				772FF02C24800F110051637C /* ghashv8-armx64.linux.aarch64.S in Sources */,
+				772FEFAF248008F40051637C /* mem.c in Sources */,
+				772FF016248008F40051637C /* cpu-arm-linux.c in Sources */,
+				772FF03124800F110051637C /* ghash-x86.linux.x86.S in Sources */,
+				772FF063248016640051637C /* sha1.c in Sources */,
+				772FEFF6248008F40051637C /* sha256.c in Sources */,
+				772FF05E248016640051637C /* mode_wrappers.c in Sources */,
+				772FEFC1248008F40051637C /* vpaes-x86_64.linux.x86_64.S in Sources */,
+				772FEFDE248008F40051637C /* sha256-armv8.linux.aarch64.S in Sources */,
+				772FEFF1248008F40051637C /* sha512-x86_64.linux.x86_64.S in Sources */,
+				772FF05F248016640051637C /* key_wrap.c in Sources */,
+				772FF03624800F120051637C /* ghash-x86_64.mac.x86_64.S in Sources */,
+				772FEFB7248008F40051637C /* sha256-586.linux.x86.S in Sources */,
+				772FEFFC248008F40051637C /* vpaes-armv8.linux.aarch64.S in Sources */,
+				772FEFF3248008F40051637C /* sha512-x86_64.mac.x86_64.S in Sources */,
+				772FEFC4248008F40051637C /* gcm_nohw.c in Sources */,
+				772FF03524800F110051637C /* ghashv8-armx32.ios.arm.S in Sources */,
+				772FF064248016640051637C /* sha256.c in Sources */,
+				772FF006248008F40051637C /* sha1-586.linux.x86.S in Sources */,
+				772FF00B248008F40051637C /* aesv8-armx32.ios.arm.S in Sources */,
+				772FF019248008F40051637C /* crypto.c in Sources */,
+				772FEFC7248008F40051637C /* ofb.c in Sources */,
+				772FEFE6248008F40051637C /* vpaes-armv7.linux.arm.S in Sources */,
+				772FF070248016640051637C /* polyval.c in Sources */,
+				772FEFF9248008F40051637C /* bsaes-armv7.linux.arm.S in Sources */,
+				772FEFB9248008F40051637C /* aesni-gcm-x86_64.mac.x86_64.S in Sources */,
+				772FF00C248008F40051637C /* vpaes-armv8.ios.aarch64.S in Sources */,
+				772FEFF7248008F40051637C /* sha512.c in Sources */,
+				772FEFD4248008F40051637C /* sha1-armv8.linux.aarch64.S in Sources */,
+				772FEFC5248008F40051637C /* cbc.c in Sources */,
+				772FEFEE248008F40051637C /* sha1-x86_64.linux.x86_64.S in Sources */,
+				772FEFD1248008F40051637C /* sha512-armv8.linux.aarch64.S in Sources */,
+				772FEFDD248008F40051637C /* sha1-armv4-large.ios.arm.S in Sources */,
+				772FEFEA248008F40051637C /* bsaes-armv7.ios.arm.S in Sources */,
+				772FEFD8248008F40051637C /* sha1-armv4-large.linux.arm.S in Sources */,
+				772FF01B248008F40051637C /* boringssl_prefix_symbols_nasm.inc in Sources */,
+				772FF03724800F120051637C /* ghash-ssse3-x86_64.mac.x86_64.S in Sources */,
+				772FEFD0248008F40051637C /* aesni-x86_64.linux.x86_64.S in Sources */,
+				772FEFEC248008F40051637C /* sha512-armv4.ios.arm.S in Sources */,
+				772FF05C248016640051637C /* aes.c in Sources */,
+				772FF03924800F120051637C /* ghash-neon-armv8.linux.aarch64.S in Sources */,
+				772FEFD9248008F40051637C /* sha1-armv8.ios.aarch64.S in Sources */,
+				772FF076248018D50051637C /* cpu-intel.c in Sources */,
+				772FF010248008F40051637C /* mode_wrappers.c in Sources */,
+				772FF05D248016640051637C /* aes_nohw.c in Sources */,
+				772FF013248008F40051637C /* sha512-586.linux.x86.S in Sources */,
+				772FEFB8248008F40051637C /* vpaes-x86_64.mac.x86_64.S in Sources */,
+				772FF03024800F110051637C /* ghash-ssse3-x86_64.linux.x86_64.S in Sources */,
+				772FF02D24800F110051637C /* ghash-armv4.ios.arm.S in Sources */,
+				772FEFC6248008F40051637C /* gcm.c in Sources */,
+				772FF00F248008F40051637C /* aes_nohw.c in Sources */,
+				772FF00E248008F40051637C /* aes.c in Sources */,
+				772FEFCB248008F40051637C /* vpaes-x86.linux.x86.S in Sources */,
+				772FF03424800F110051637C /* ghash-neon-armv8.ios.aarch64.S in Sources */,
+				772FF002248008F40051637C /* aesv8-armx32.linux.arm.S in Sources */,
+				772FF011248008F40051637C /* key_wrap.c in Sources */,
+				772FEFCE248008F40051637C /* fips_shared_support.c in Sources */,
+				772FF018248008F40051637C /* cpu-aarch64-linux.c in Sources */,
+				772FEFF8248008F40051637C /* sha1-altivec.c in Sources */,
+				772FEFC2248008F40051637C /* aesni-x86.linux.x86.S in Sources */,
+				772FEFC9248008F40051637C /* ctr.c in Sources */,
+				772FEFFF248008F40051637C /* bn-586.linux.x86.S in Sources */,
+				772FEFE1248008F40051637C /* md5-x86_64.mac.x86_64.S in Sources */,
+				772FF06E248016640051637C /* gcm.c in Sources */,
+				772FF072248016640051637C /* cfb.c in Sources */,
+				772FF03C2480105B0051637C /* md5.c in Sources */,
+				772FEFD5248008F40051637C /* md5-x86_64.linux.x86_64.S in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		772FEEFF248008E10051637C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		772FEF00248008E10051637C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		772FEF02248008E10051637C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		772FEF03248008E10051637C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		772FEEF5248008E10051637C /* Build configuration list for PBXProject "XDigest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				772FEEFF248008E10051637C /* Debug */,
+				772FEF00248008E10051637C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		772FEF01248008E10051637C /* Build configuration list for PBXNativeTarget "XDigest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				772FEF02248008E10051637C /* Debug */,
+				772FEF03248008E10051637C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 772FEEF2248008E10051637C /* Project object */;
+}

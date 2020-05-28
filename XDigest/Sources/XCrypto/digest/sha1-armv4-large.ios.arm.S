@@ -35,8 +35,8 @@ _sha1_block_data_order:
 #if __ARM_MAX_ARCH__>=7
 Lsha1_block:
 	adr	r3,Lsha1_block
-	ldr	r12,LXCRYPTO_ARMcap
-	ldr	r12,[r3,r12]		@ XCRYPTO_ARMcap_P
+	ldr	r12,LCX_TARGET_CPU_ARMcap
+	ldr	r12,[r3,r12]		@ CX_TARGET_CPU_ARMcap_P
 #ifdef	__APPLE__
 	ldr	r12,[r12]
 #endif
@@ -503,8 +503,8 @@ LK_20_39:.word	0x6ed9eba1
 LK_40_59:.word	0x8f1bbcdc
 LK_60_79:.word	0xca62c1d6
 #if __ARM_MAX_ARCH__>=7
-LXCRYPTO_ARMcap:
-.word	XCRYPTO_ARMcap_P-Lsha1_block
+LCX_TARGET_CPU_ARMcap:
+.word	CX_TARGET_CPU_ARMcap_P-Lsha1_block
 #endif
 .byte	83,72,65,49,32,98,108,111,99,107,32,116,114,97,110,115,102,111,114,109,32,102,111,114,32,65,82,77,118,52,47,78,69,79,78,47,65,82,77,118,56,44,32,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
 .align	2
@@ -1510,12 +1510,12 @@ Loop_v8:
 
 #endif
 #if __ARM_MAX_ARCH__>=7
-.comm	_XCRYPTO_ARMcap_P,4
+.comm	_CX_TARGET_CPU_ARMcap_P,4
 .non_lazy_symbol_pointer
-XCRYPTO_ARMcap_P:
-.indirect_symbol	_XCRYPTO_ARMcap_P
+CX_TARGET_CPU_ARMcap_P:
+.indirect_symbol	_CX_TARGET_CPU_ARMcap_P
 .long	0
-.private_extern	_XCRYPTO_ARMcap_P
+.private_extern	_CX_TARGET_CPU_ARMcap_P
 #endif
 #endif  // !XCRYPTO_NO_ASM
 #endif  // defined(__arm__) && defined(__APPLE__)

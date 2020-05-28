@@ -165,7 +165,7 @@ const _XValue _XValueEmpty = {
 const XValue _Nonnull XValueEmpty = (XValue)&_XValueEmpty;
 
 static inline XSize __XValueSizeAligned(XSize size) {
-    #if BUILD_TARGET_RT_64_BIT
+    #if CX_TARGET_RT_64_BIT
         XSize s = (size + 7) & (~X_BUILD_UInt(0x7));
     #else
         XSize s = (size + 3) & (~X_BUILD_UInt(0x3));
@@ -229,7 +229,7 @@ XHashCode XValueHash(XValue _Nonnull ref) {
         atomic_store(&(valueRef->content.hashCode), code);
     }
     
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
     XHashCode hashCode = valueRef->content.contentSize;
     hashCode = (hashCode << 31ULL) + code;    
     return hashCode;
@@ -244,7 +244,7 @@ const XSize XPackageSizeMax = X_BUILD_PackageSizeMax;
 
 
 static inline XSize __XPackageContentSizeAligned(XSize size) {
-#if BUILD_TARGET_RT_64_BIT
+#if CX_TARGET_RT_64_BIT
     XSize s = (size + 7) & (~X_BUILD_UInt(0x7));
 #else
     XSize s = (size + 3) & (~X_BUILD_UInt(0x3));
@@ -337,7 +337,7 @@ void XRefRelease(XRef _Nonnull ref) {
 XSize _XNumberContentDeinit(XPtr _Nonnull content) {
     XSize contentSize = sizeof(_XNumberContent_t);
 
-    #if BUILD_TARGET_RT_64_BIT
+    #if CX_TARGET_RT_64_BIT
     _XNumberContent_t * tmp = (_XNumberContent_t *)content;
     if (XNumberTypeSInt64 == tmp->type || XNumberTypeUInt64 == tmp->type || XNumberTypeFloat64 == tmp->type) {
         contentSize += sizeof(XUInt64);

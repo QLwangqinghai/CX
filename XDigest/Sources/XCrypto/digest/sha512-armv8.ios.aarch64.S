@@ -1078,8 +1078,8 @@ LK512:
 .align	2
 .align	2
 #ifndef	__KERNEL__
-.comm	_XCRYPTO_ARMcap_P,4,4
-.private_extern	_XCRYPTO_ARMcap_P
+.comm	_CX_TARGET_CPU_ARMcap_P,4,4
+.private_extern	_CX_TARGET_CPU_ARMcap_P
 #endif
 #endif  // !XCRYPTO_NO_ASM
 #endif  // defined(__aarch64__) && defined(__APPLE__)

@@ -16,7 +16,7 @@ extern "C" {
 #include <stdlib.h>
 
 
-#if X_TARGET_OS_WINDOWS
+#if CX_TARGET_OS_WINDOWS
 #include <malloc.h>
 static inline XPtr _Nonnull XAlignedAllocate(XSize size, XSize alignment) {
     assert(size > 0);

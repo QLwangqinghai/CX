@@ -9,14 +9,14 @@
 #include <sys/time.h>
 
 
-#if X_TARGET_OS_DARWIN
+#if CX_TARGET_OS_DARWIN
 
 #include <mach-o/dyld.h>
 int XProcessExecutablePath(char * _Nonnull buf, uint32_t * _Nonnull bufsize) {
     return _NSGetExecutablePath(buf, bufsize);
 }
 
-#elif X_TARGET_OS_LINUX
+#elif CX_TARGET_OS_LINUX
 
 #include <unistd.h>
 int XProcessExecutablePath(char* buf, uint32_t * bufsize) {

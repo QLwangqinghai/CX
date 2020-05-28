@@ -10,7 +10,7 @@
 
 
 
-#if X_TARGET_OS_DARWIN
+#if CX_TARGET_OS_DARWIN
 
 #include <stdlib.h>
 #include <mach/mach_time.h>
@@ -23,7 +23,7 @@ XTimeInterval XDeviceUptime(void) {
     return t / 1000 * timeBaseInfo.numer / timeBaseInfo.denom;
 }
 
-#elif X_TARGET_OS_LINUX || X_TARGET_OS_BSD || X_TARGET_OS_ANDROID
+#elif CX_TARGET_OS_LINUX || CX_TARGET_OS_BSD || CX_TARGET_OS_ANDROID
 
 #include <string.h>
 #include <sys/time.h>
@@ -43,7 +43,7 @@ XTimeInterval XDeviceUptime(void) {
 
 XUInt XDeviceProcessorCount(void) {
     int32_t pcnt;
-#if X_TARGET_OS_WINDOWS
+#if CX_TARGET_OS_WINDOWS
     SYSTEM_INFO sysInfo;
     GetSystemInfo(&sysInfo);
     DWORD_PTR activeProcessorMask = sysInfo.dwActiveProcessorMask;
@@ -53,14 +53,14 @@ XUInt XDeviceProcessorCount(void) {
     v = (v & 0x3333333333333333ULL) + ((v >> 2) & 0x3333333333333333ULL);
     v = (v + (v >> 4)) & 0xf0f0f0f0f0f0f0fULL;
     pcnt = (v * 0x0101010101010101ULL) >> ((sizeof(v) - 1) * 8);
-#elif X_TARGET_OS_DARWIN
+#elif CX_TARGET_OS_DARWIN
     int32_t mib[] = {CTL_HW, HW_AVAILCPU};
     size_t len = sizeof(pcnt);
     int32_t result = sysctl(mib, sizeof(mib) / sizeof(int32_t), &pcnt, &len, NULL, 0);
     if (result != 0) {
         pcnt = 0;
     }
-#elif X_TARGET_OS_LINUX
+#elif CX_TARGET_OS_LINUX
     pcnt = sysconf(_SC_NPROCESSORS_ONLN);
 #else
     // Assume the worst
@@ -70,7 +70,7 @@ XUInt XDeviceProcessorCount(void) {
 }
 
 
-#if X_TARGET_OS_DARWIN
+#if CX_TARGET_OS_DARWIN
 #include <sys/sysctl.h>
 XSize XDeviceCachelineSize(void) {
     
@@ -85,7 +85,7 @@ XSize XDeviceCachelineSize(void) {
         return 64;
     }
 }
-#elif X_TARGET_OS_WINDOWS
+#elif CX_TARGET_OS_WINDOWS
 
 #include <stdlib.h>
 #include <windows.h>
@@ -110,7 +110,7 @@ XSize XDeviceCachelineSize() {
     return line_size;
 }
 
-#elif X_TARGET_OS_LINUX || X_TARGET_OS_ANDROID
+#elif CX_TARGET_OS_LINUX || CX_TARGET_OS_ANDROID
 
 #include <stdio.h>
 XSize XDeviceCachelineSize() {

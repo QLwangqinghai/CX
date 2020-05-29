@@ -78,7 +78,7 @@
 // Include a BoringSSL-only header so consumers including this header without
 // setting up include paths do not accidentally pick up the system
 // opensslconf.h.
-#include "CNIOBoringSSL_opensslconf.h"
+//#include "CNIOBoringSSL_opensslconf.h"
 
 #if defined(BORINGSSL_PREFIX)
 #include "XCrypto_prefix_symbols.h"

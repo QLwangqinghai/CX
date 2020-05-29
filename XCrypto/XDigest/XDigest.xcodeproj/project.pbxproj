@@ -207,7 +207,6 @@
 		772FEF9F248008F40051637C /* CNIOBoringSSL_cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_cpu.h; sourceTree = "<group>"; };
 		772FEFA0248008F40051637C /* CNIOBoringSSL_digest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_digest.h; sourceTree = "<group>"; };
 		772FEFA2248008F40051637C /* CNIOBoringSSL_opensslconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_opensslconf.h; sourceTree = "<group>"; };
-		772FEFA3248008F40051637C /* CNIOBoringSSL_crypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_crypto.h; sourceTree = "<group>"; };
 		772FEFA5248008F40051637C /* XCryptoAes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCryptoAes.h; sourceTree = "<group>"; };
 		772FEFA6248008F40051637C /* XCryptoBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCryptoBase.h; sourceTree = "<group>"; };
 		772FF01C248009780051637C /* XCrypto_prefix_symbols.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCrypto_prefix_symbols.h; sourceTree = "<group>"; };
@@ -451,7 +450,6 @@
 				772FEF9F248008F40051637C /* CNIOBoringSSL_cpu.h */,
 				772FEFA0248008F40051637C /* CNIOBoringSSL_digest.h */,
 				772FEFA2248008F40051637C /* CNIOBoringSSL_opensslconf.h */,
-				772FEFA3248008F40051637C /* CNIOBoringSSL_crypto.h */,
 				772FEFA5248008F40051637C /* XCryptoAes.h */,
 				772FEFA6248008F40051637C /* XCryptoBase.h */,
 			);

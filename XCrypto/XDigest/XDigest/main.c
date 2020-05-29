@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include "XCrypto.h"
 
-#include "CNIOBoringSSL_crypto.h"
 
 #include "CNIOBoringSSL_cpu.h"
 

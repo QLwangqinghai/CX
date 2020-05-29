@@ -50,13 +50,14 @@
  * (eay@cryptsoft.com).  This product includes software written by Tim
  * Hudson (tjh@cryptsoft.com). */
 
-#ifndef OPENSSL_HEADER_BASE_H
-#define OPENSSL_HEADER_BASE_H
+#ifndef XCryptoBase_h
+#define XCryptoBase_h
+
 #if defined(__APPLE__) && defined(__i386__)
-#define XCRYPTO_NO_ASM
+#define OPENSSL_NO_ASM
 #endif
 
-#define XCRYPTO_PREFIX XCrypto
+#define BORINGSSL_PREFIX XCrypto
 
 
 // This file should be the first included by all BoringSSL headers.
@@ -77,8 +78,9 @@
 // Include a BoringSSL-only header so consumers including this header without
 // setting up include paths do not accidentally pick up the system
 // opensslconf.h.
+//#include "CNIOBoringSSL_opensslconf.h"
 
-#if defined(XCRYPTO_PREFIX)
+#if defined(BORINGSSL_PREFIX)
 #include "XCrypto_prefix_symbols.h"
 #endif
 
@@ -88,8 +90,43 @@ extern "C" {
 
 
 
+#if defined(__x86_64) || defined(_M_AMD64) || defined(_M_X64)
+#define XCRYPTO_64_BIT
+#define XCRYPTO_X86_64
+#elif defined(__x86) || defined(__i386) || defined(__i386__) || defined(_M_IX86)
+#define XCRYPTO_32_BIT
+#define OPENSSL_X86
+#elif defined(__aarch64__)
+#define XCRYPTO_64_BIT
+#define OPENSSL_AARCH64
+#elif defined(__arm) || defined(__arm__) || defined(_M_ARM)
+#define XCRYPTO_32_BIT
+#define XCRYPTO_ARM
+#elif (defined(__PPC64__) || defined(__powerpc64__)) && defined(_LITTLE_ENDIAN)
+#define XCRYPTO_64_BIT
+#define XCRYPTO_PPC64LE
+#elif defined(__mips__) && !defined(__LP64__)
+#define XCRYPTO_32_BIT
+#define OPENSSL_MIPS
+#elif defined(__mips__) && defined(__LP64__)
+#define XCRYPTO_64_BIT
+#define XCRYPTO_MIPS64
+#elif defined(__pnacl__)
+#define XCRYPTO_32_BIT
+#define XCRYPTO_PNACL
+#elif defined(__wasm__)
+#define XCRYPTO_32_BIT
+#elif defined(__asmjs__)
+#define XCRYPTO_32_BIT
+#elif defined(__myriad2__)
+#define XCRYPTO_32_BIT
+#else
+
+#error "Unknown target CPU"
+#endif
+
 #if defined(__APPLE__)
-#define XCRYPTO_APPLE
+#define OPENSSL_APPLE
 // Note |TARGET_OS_MAC| is set for all Apple OS variants. |TARGET_OS_OSX|
 // targets macOS specifically.
 #if defined(TARGET_OS_OSX) && TARGET_OS_OSX
@@ -113,67 +150,35 @@ extern "C" {
 #endif
 
 #if defined(TRUSTY)
-#define XCRYPTO_TRUSTY
+#define OPENSSL_TRUSTY
+#define OPENSSL_NO_THREADS_CORRUPT_MEMORY_AND_LEAK_SECRETS_IF_THREADED
 #endif
 
 #if defined(__ANDROID_API__)
 #define XCRYPTO_ANDROID
 #endif
 
-#include <assert.h>
-#include <string.h>
-
-
-#if defined(__GNUC__) && __GNUC__ >= 2
-static inline uint16_t CRYPTO_bswap2(uint16_t x) {
-  return __builtin_bswap16(x);
-}
-
-static inline uint32_t CRYPTO_bswap4(uint32_t x) {
-  return __builtin_bswap32(x);
-}
-
-static inline uint64_t CRYPTO_bswap8(uint64_t x) {
-  return __builtin_bswap64(x);
-}
-#elif defined(_MSC_VER)
-OPENSSL_MSVC_PRAGMA(warning(push, 3))
-#include <stdlib.h>
-OPENSSL_MSVC_PRAGMA(warning(pop))
-#pragma intrinsic(_byteswap_uint64, _byteswap_ulong, _byteswap_ushort)
-static inline uint16_t CRYPTO_bswap2(uint16_t x) {
-  return _byteswap_ushort(x);
-}
-
-static inline uint32_t CRYPTO_bswap4(uint32_t x) {
-  return _byteswap_ulong(x);
-}
-
-static inline uint64_t CRYPTO_bswap8(uint64_t x) {
-  return _byteswap_uint64(x);
-}
-#else
-static inline uint16_t CRYPTO_bswap2(uint16_t x) {
-  return (x >> 8) | (x << 8);
-}
-
-static inline uint32_t CRYPTO_bswap4(uint32_t x) {
-  x = (x >> 16) | (x << 16);
-  x = ((x & 0xff00ff00) >> 8) | ((x & 0x00ff00ff) << 8);
-  return x;
-}
-
-static inline uint64_t CRYPTO_bswap8(uint64_t x) {
-  return CRYPTO_bswap4(x >> 32) | (((uint64_t)CRYPTO_bswap4(x)) << 32);
-}
+// BoringSSL requires platform's locking APIs to make internal global state
+// thread-safe, including the PRNG. On some single-threaded embedded platforms,
+// locking APIs may not exist, so this dependency may be disabled with the
+// following build flag.
+//
+// IMPORTANT: Doing so means the consumer promises the library will never be
+// used in any multi-threaded context. It causes BoringSSL to be globally
+// thread-unsafe. Setting it inappropriately will subtly and unpredictably
+// corrupt memory and leak secret keys.
+//
+// Do not set this flag on any platform where threads are possible. BoringSSL
+// maintainers will not provide support for any consumers that do so. Changes
+// which break such unsupported configurations will not be reverted.
+#if !defined(OPENSSL_NO_THREADS_CORRUPT_MEMORY_AND_LEAK_SECRETS_IF_THREADED)
+#define OPENSSL_THREADS
 #endif
 
+#define OPENSSL_IS_BORINGSSL
+#define OPENSSL_VERSION_NUMBER 0x1010007f
+#define SSLEAY_VERSION_NUMBER OPENSSL_VERSION_NUMBER
 
-#define OPENSSL_memcpy memcpy
-#define OPENSSL_memset memset
-static inline void OPENSSL_cleanse(void *ptr, size_t len) {
-    bzero(ptr, len);
-}
 // BORINGSSL_API_VERSION is a positive integer that increments as BoringSSL
 // changes over time. The value itself is not meaningful. It will be incremented
 // whenever is convenient to coordinate an API change with consumers. This will
@@ -289,8 +294,8 @@ static inline void OPENSSL_cleanse(void *ptr, size_t len) {
 
 #if defined(OPENSSL_ASM_INCOMPATIBLE)
 #undef OPENSSL_ASM_INCOMPATIBLE
-#if !defined(XCRYPTO_NO_ASM)
-#define XCRYPTO_NO_ASM
+#if !defined(OPENSSL_NO_ASM)
+#define OPENSSL_NO_ASM
 #endif
 #endif  // OPENSSL_ASM_INCOMPATIBLE
 
@@ -391,7 +396,11 @@ typedef struct sha_state_st SHA_CTX;
 typedef struct spake2_ctx_st SPAKE2_CTX;
 typedef struct srtp_protection_profile_st SRTP_PROTECTION_PROFILE;
 
+
+
+
 typedef void *OPENSSL_BLOCK;
+
 
 #if defined(__cplusplus) || (defined(_MSC_VER) && !defined(__clang__))
 // In C++ and non-clang MSVC, |static_assert| is a keyword.
@@ -408,14 +417,12 @@ typedef void *OPENSSL_BLOCK;
 
 #if defined(__cplusplus)
 }  // extern C
-#elif !defined(BORINGSSL_NO_CXX)
-#define BORINGSSL_NO_CXX
 #endif
 
-#if defined(XCRYPTO_PREFIX)
+#if defined(BORINGSSL_PREFIX)
 #define BSSL_NAMESPACE_BEGIN \
   namespace bssl {           \
-  inline namespace XCRYPTO_PREFIX {
+  inline namespace BORINGSSL_PREFIX {
 #define BSSL_NAMESPACE_END \
   }                        \
   }
@@ -424,12 +431,5 @@ typedef void *OPENSSL_BLOCK;
 #define BSSL_NAMESPACE_END }
 #endif
 
-// MSVC doesn't set __cplusplus to 201103 to indicate C++11 support (see
-// https://connect.microsoft.com/VisualStudio/feedback/details/763051/a-value-of-predefined-macro-cplusplus-is-still-199711l)
-// so MSVC is just assumed to support C++11.
-#if !defined(BORINGSSL_NO_CXX) && __cplusplus < 201103L && !defined(_MSC_VER)
-#define BORINGSSL_NO_CXX
-#endif
 
-
-#endif  // OPENSSL_HEADER_BASE_H
+#endif  // XCryptoBase_h

@@ -224,53 +224,6 @@ dealloc:;
 }
 
 
-_WeakPackage * _Nonnull _XWeakPackageRetain(_WeakPackage * _Nonnull WeakPackage) {
-//    if (rcInfo < X_BUILD_RcBase + X_BUILD_RcOne) {
-//        XAssert(false, __func__, releaseError);
-//    }
-
-    
-    
-    return WeakPackage;
-//    _Atomic(XFastUInt) * rcInfoPtr = &(WeakPackage->_runtime.rcInfo);
-//    XFastUInt rcInfo = 0;
-//    XFastUInt newRcInfo = 0;
-//    static const char * releaseError = "ref";
-//
-//    do {
-//        rcInfo = atomic_load(rcInfoPtr);
-//        if (rcInfo < X_BUILD_RcBase + X_BUILD_RcOne) {
-//            XAssert(false, __func__, releaseError);
-//        }
-//        if (rcInfo >= X_BUILD_RcMax) {
-//            return;
-//        } else {
-//            newRcInfo = rcInfo - X_BUILD_RcOne;
-//        }
-//    } while (!atomic_compare_exchange_strong(rcInfoPtr, &rcInfo, newRcInfo));
-//
-//    if (rcInfo < X_BUILD_CompressedRcBase + X_BUILD_CompressedRcOne) {
-//        //will dealloc
-//        uintptr_t table = atomic_load(&(WeakPackage->content.table));
-//
-//        if ((uintptr_t)NULL != table) {
-//            newRcInfo -= X_BUILD_CompressedRcOne;
-//        }
-//    }
-//    if (rcInfo < X_BUILD_RcWillDealloc) {
-//        //do dealloc
-//
-//    } else if (rcInfo < X_BUILD_CompressedRcBase + X_BUILD_RcOne) {
-//        //will dealloc
-//        uintptr_t value = atomic_load(&(WeakPackage->content.value));
-//        if ((uintptr_t)NULL == value) {
-//
-//        }
-//    }
-}
-
-
-
 void _XWeakTableTryRemove(_XWeakTable * _Nonnull table, XObject _Nonnull value) {
     _WeakPackage * WeakPackage = _XWeakTableGetItem(table, (uintptr_t)value);
     if (WeakPackage) {

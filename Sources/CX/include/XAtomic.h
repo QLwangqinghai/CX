@@ -15,9 +15,8 @@ extern "C" {
 
 #include "XType.h"
 
-    
+
 #include <stdatomic.h>
-    
 
 
 

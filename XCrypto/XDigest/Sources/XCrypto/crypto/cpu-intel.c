@@ -54,7 +54,7 @@
  * copied and put under another distribution licence
  * [including the GNU Public Licence.] */
 
-#include "CNIOBoringSSL_cpu.h"
+#include "XCrypto_cpu.h"
 
 
 #if !defined(OPENSSL_NO_ASM) && (defined(OPENSSL_X86) || defined(XCRYPTO_X86_64))

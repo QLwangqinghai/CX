@@ -16,12 +16,10 @@
 
 #include "XCryptoBase.h"
 #include "XCryptoAes.h"
-#include "CNIOBoringSSL_arm_arch.h"
 #include "XCrypto_prefix_symbols.h"
 #include "XCrypto_prefix_symbols_asm.h"
 #include "CNIOBoringSSL_cmac.h"
-#include "CNIOBoringSSL_cpu.h"
-#include "CNIOBoringSSL_md5.h"
-#include "CNIOBoringSSL_sha.h"
+#include "XCryptoMd5.h"
+#include "XCryptoSha.h"
 
 #endif  // XCrypto_h

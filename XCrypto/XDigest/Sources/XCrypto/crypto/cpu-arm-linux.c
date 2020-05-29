@@ -12,7 +12,7 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
 
-#include "CNIOBoringSSL_cpu.h"
+#include "XCrypto_cpu.h"
 
 #if defined(XCRYPTO_ARM) && !defined(OPENSSL_STATIC_ARMCAP)
 #include <errno.h>
@@ -20,7 +20,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "CNIOBoringSSL_arm_arch.h"
+#include "XCrypto_arm_arch.h"
 #include "CNIOBoringSSL_mem.h"
 
 #include "cpu-arm-linux.h"

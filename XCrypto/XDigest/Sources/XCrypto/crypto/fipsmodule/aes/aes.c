@@ -50,7 +50,7 @@
 
 #include <assert.h>
 
-#include "CNIOBoringSSL_cpu.h"
+#include "XCrypto_cpu.h"
 
 #include "XCryptoAesInternal.h"
 #include "../modes/internal.h"

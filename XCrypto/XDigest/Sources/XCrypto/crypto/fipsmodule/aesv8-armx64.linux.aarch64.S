@@ -15,7 +15,7 @@
 #if defined(BORINGSSL_PREFIX)
 #include "XCrypto_prefix_symbols_asm.h"
 #endif
-#include "CNIOBoringSSL_arm_arch.h"
+#include "XCrypto_arm_arch.h"
 
 #if __ARM_MAX_ARCH__>=7
 .text

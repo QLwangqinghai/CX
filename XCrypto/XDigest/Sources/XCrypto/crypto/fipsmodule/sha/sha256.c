@@ -54,7 +54,7 @@
  * copied and put under another distribution licence
  * [including the GNU Public Licence.] */
 
-#include "CNIOBoringSSL_sha.h"
+#include "XCryptoSha.h"
 
 #include <string.h>
 

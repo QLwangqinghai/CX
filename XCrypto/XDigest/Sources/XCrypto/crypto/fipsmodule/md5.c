@@ -54,7 +54,7 @@
  * copied and put under another distribution licence
  * [including the GNU Public Licence.] */
 
-#include "CNIOBoringSSL_md5.h"
+#include "XCryptoMd5.h"
 
 #include <string.h>
 

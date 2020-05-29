@@ -66,7 +66,7 @@
 @ Add CBC, CTR and XTS subroutines and adapt for kernel use; courtesy of Ard.
 
 #ifndef __KERNEL__
-# include "CNIOBoringSSL_arm_arch.h"
+# include "XCrypto_arm_arch.h"
 
 # define VFP_ABI_PUSH	vstmdb	sp!,{d8-d15}
 # define VFP_ABI_POP	vldmia	sp!,{d8-d15}

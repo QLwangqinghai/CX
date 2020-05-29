@@ -50,8 +50,8 @@
  * (eay@cryptsoft.com).  This product includes software written by Tim
  * Hudson (tjh@cryptsoft.com). */
 #if __arm__ || __arm64__ || __aarch64__
-#ifndef OPENSSL_HEADER_ARM_ARCH_H
-#define OPENSSL_HEADER_ARM_ARCH_H
+#ifndef XCrypto_arm_arch_h
+#define XCrypto_arm_arch_h
 
 #if !defined(__ARM_ARCH__)
 # if defined(__CC_ARM)
@@ -118,5 +118,5 @@
 #define ARMV8_PMULL (1 << 5)
 
 
-#endif  // OPENSSL_HEADER_ARM_ARCH_H
+#endif  // XCrypto_arm_arch_h
 #endif  // __arm__ || __arm64__ || __aarch64__

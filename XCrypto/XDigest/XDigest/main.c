@@ -10,7 +10,7 @@
 #include "XCrypto.h"
 
 
-#include "CNIOBoringSSL_cpu.h"
+#include "XCrypto_cpu.h"
 
 #include "internal.h"
 

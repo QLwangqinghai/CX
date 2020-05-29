@@ -54,7 +54,7 @@
 //	and the gap is only 40-90%.
 
 #ifndef	__KERNEL__
-# include "CNIOBoringSSL_arm_arch.h"
+# include "XCrypto_arm_arch.h"
 #endif
 
 .text

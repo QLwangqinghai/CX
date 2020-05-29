@@ -17,7 +17,7 @@
 
 #include <stdlib.h>
 
-#include "CNIOBoringSSL_cpu.h"
+#include "XCrypto_cpu.h"
 
 #if defined(__cplusplus)
 extern "C" {

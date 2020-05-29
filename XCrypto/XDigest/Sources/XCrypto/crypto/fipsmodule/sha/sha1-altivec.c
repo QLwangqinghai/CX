@@ -63,7 +63,7 @@
 // This code used the generic SHA-1 from OpenSSL as a basis and AltiVec
 // optimisations were added on top.
 
-#include "CNIOBoringSSL_sha.h"
+#include "XCryptoSha.h"
 
 #if defined(XCRYPTO_PPC64LE)
 

@@ -52,7 +52,7 @@
 #include <string.h>
 
 #include "CNIOBoringSSL_mem.h"
-#include "CNIOBoringSSL_cpu.h"
+#include "XCrypto_cpu.h"
 
 #include "internal.h"
 #include "../../internal.h"

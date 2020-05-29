@@ -14,7 +14,7 @@
 
 #include "XCrypto.h"
 
-#include "CNIOBoringSSL_cpu.h"
+#include "XCrypto_cpu.h"
 
 #include "internal.h"
 
@@ -81,7 +81,7 @@ HIDDEN unsigned long XCRYPTO_PPC64LE_hwcap2 = 0;
 
 #elif defined(XCRYPTO_ARM) || defined(OPENSSL_AARCH64)
 
-#include "CNIOBoringSSL_arm_arch.h"
+#include "XCrypto_arm_arch.h"
 
 #if defined(OPENSSL_STATIC_ARMCAP)
 

@@ -46,7 +46,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  * ==================================================================== */
 
-#include "CNIOBoringSSL_aes.h"
+#include "XCryptoAes.h"
 
 #include <assert.h>
 #include <limits.h>

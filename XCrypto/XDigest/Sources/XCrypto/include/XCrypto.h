@@ -11,12 +11,12 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 //===----------------------------------------------------------------------===//
-#ifndef C_NIO_BORINGSSL_H
-#define C_NIO_BORINGSSL_H
+#ifndef XCrypto_h
+#define XCrypto_h
 
-#include "CNIOBoringSSL_aes.h"
-#include "CNIOBoringSSL_arm_arch.h"
 #include "XCryptoBase.h"
+#include "XCryptoAes.h"
+#include "CNIOBoringSSL_arm_arch.h"
 #include "XCrypto_prefix_symbols.h"
 #include "XCrypto_prefix_symbols_asm.h"
 #include "CNIOBoringSSL_cmac.h"
@@ -24,4 +24,4 @@
 #include "CNIOBoringSSL_md5.h"
 #include "CNIOBoringSSL_sha.h"
 
-#endif  // C_NIO_BORINGSSL_H
+#endif  // XCrypto_h

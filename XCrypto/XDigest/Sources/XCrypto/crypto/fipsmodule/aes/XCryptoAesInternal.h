@@ -12,8 +12,8 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
 
-#ifndef OPENSSL_HEADER_AES_INTERNAL_H
-#define OPENSSL_HEADER_AES_INTERNAL_H
+#ifndef XCryptoAesInternal_h
+#define XCryptoAesInternal_h
 
 #include <stdlib.h>
 
@@ -235,4 +235,4 @@ void aes_nohw_cbc_encrypt(const uint8_t *in, uint8_t *out, size_t len,
 }  // extern C
 #endif
 
-#endif  // OPENSSL_HEADER_AES_INTERNAL_H
+#endif  // XCryptoAesInternal_h

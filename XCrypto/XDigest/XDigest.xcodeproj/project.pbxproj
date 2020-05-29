@@ -74,7 +74,6 @@
 		772FF016248008F40051637C /* cpu-arm-linux.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF85248008F40051637C /* cpu-arm-linux.c */; };
 		772FF018248008F40051637C /* cpu-aarch64-linux.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF88248008F40051637C /* cpu-aarch64-linux.c */; };
 		772FF019248008F40051637C /* crypto.c in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF89248008F40051637C /* crypto.c */; };
-		772FF01B248008F40051637C /* boringssl_prefix_symbols_nasm.inc in Sources */ = {isa = PBXBuildFile; fileRef = 772FEF93248008F40051637C /* boringssl_prefix_symbols_nasm.inc */; };
 		772FF02C24800F110051637C /* ghashv8-armx64.linux.aarch64.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FF01E24800F110051637C /* ghashv8-armx64.linux.aarch64.S */; };
 		772FF02D24800F110051637C /* ghash-armv4.ios.arm.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FF01F24800F110051637C /* ghash-armv4.ios.arm.S */; };
 		772FF02E24800F110051637C /* ghash-ssse3-x86.linux.x86.S in Sources */ = {isa = PBXBuildFile; fileRef = 772FF02024800F110051637C /* ghash-ssse3-x86.linux.x86.S */; };
@@ -194,12 +193,10 @@
 		772FEF85248008F40051637C /* cpu-arm-linux.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "cpu-arm-linux.c"; sourceTree = "<group>"; };
 		772FEF88248008F40051637C /* cpu-aarch64-linux.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "cpu-aarch64-linux.c"; sourceTree = "<group>"; };
 		772FEF89248008F40051637C /* crypto.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = crypto.c; sourceTree = "<group>"; };
-		772FEF8B248008F40051637C /* hash.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = hash.txt; sourceTree = "<group>"; };
 		772FEF8E248008F40051637C /* CNIOBoringSSL_ossl_typ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_ossl_typ.h; sourceTree = "<group>"; };
 		772FEF8F248008F40051637C /* CNIOBoringSSL_arm_arch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_arm_arch.h; sourceTree = "<group>"; };
 		772FEF91248008F40051637C /* CNIOBoringSSL_md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_md5.h; sourceTree = "<group>"; };
 		772FEF92248008F40051637C /* CNIOBoringSSL_ripemd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_ripemd.h; sourceTree = "<group>"; };
-		772FEF93248008F40051637C /* boringssl_prefix_symbols_nasm.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = boringssl_prefix_symbols_nasm.inc; sourceTree = "<group>"; };
 		772FEF94248008F40051637C /* CNIOBoringSSL_sha.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_sha.h; sourceTree = "<group>"; };
 		772FEF97248008F40051637C /* CNIOBoringSSL_nid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_nid.h; sourceTree = "<group>"; };
 		772FEF98248008F40051637C /* XCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCrypto.h; sourceTree = "<group>"; };
@@ -211,7 +208,7 @@
 		772FEFA0248008F40051637C /* CNIOBoringSSL_digest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_digest.h; sourceTree = "<group>"; };
 		772FEFA2248008F40051637C /* CNIOBoringSSL_opensslconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_opensslconf.h; sourceTree = "<group>"; };
 		772FEFA3248008F40051637C /* CNIOBoringSSL_crypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_crypto.h; sourceTree = "<group>"; };
-		772FEFA5248008F40051637C /* CNIOBoringSSL_aes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_aes.h; sourceTree = "<group>"; };
+		772FEFA5248008F40051637C /* XCryptoAes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCryptoAes.h; sourceTree = "<group>"; };
 		772FEFA6248008F40051637C /* XCryptoBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCryptoBase.h; sourceTree = "<group>"; };
 		772FF01C248009780051637C /* XCrypto_prefix_symbols.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCrypto_prefix_symbols.h; sourceTree = "<group>"; };
 		772FF01D248009820051637C /* XCrypto_prefix_symbols_asm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCrypto_prefix_symbols_asm.h; sourceTree = "<group>"; };
@@ -232,7 +229,7 @@
 		772FF03A2480105B0051637C /* md32_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md32_common.h; sourceTree = "<group>"; };
 		772FF03B2480105B0051637C /* md5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = md5.c; sourceTree = "<group>"; };
 		772FF03F248016640051637C /* aes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aes.c; sourceTree = "<group>"; };
-		772FF040248016640051637C /* internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = internal.h; sourceTree = "<group>"; };
+		772FF040248016640051637C /* XCryptoAesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCryptoAesInternal.h; sourceTree = "<group>"; };
 		772FF041248016640051637C /* aes_nohw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aes_nohw.c; sourceTree = "<group>"; };
 		772FF042248016640051637C /* mode_wrappers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mode_wrappers.c; sourceTree = "<group>"; };
 		772FF043248016640051637C /* key_wrap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = key_wrap.c; sourceTree = "<group>"; };
@@ -300,7 +297,6 @@
 			isa = PBXGroup;
 			children = (
 				772FEF06248008F30051637C /* crypto */,
-				772FEF8B248008F40051637C /* hash.txt */,
 				772FEF8C248008F40051637C /* include */,
 			);
 			path = XCrypto;
@@ -445,7 +441,6 @@
 				772FEF8F248008F40051637C /* CNIOBoringSSL_arm_arch.h */,
 				772FEF91248008F40051637C /* CNIOBoringSSL_md5.h */,
 				772FEF92248008F40051637C /* CNIOBoringSSL_ripemd.h */,
-				772FEF93248008F40051637C /* boringssl_prefix_symbols_nasm.inc */,
 				772FEF94248008F40051637C /* CNIOBoringSSL_sha.h */,
 				772FEF97248008F40051637C /* CNIOBoringSSL_nid.h */,
 				772FEF98248008F40051637C /* XCrypto.h */,
@@ -457,7 +452,7 @@
 				772FEFA0248008F40051637C /* CNIOBoringSSL_digest.h */,
 				772FEFA2248008F40051637C /* CNIOBoringSSL_opensslconf.h */,
 				772FEFA3248008F40051637C /* CNIOBoringSSL_crypto.h */,
-				772FEFA5248008F40051637C /* CNIOBoringSSL_aes.h */,
+				772FEFA5248008F40051637C /* XCryptoAes.h */,
 				772FEFA6248008F40051637C /* XCryptoBase.h */,
 			);
 			path = include;
@@ -467,7 +462,7 @@
 			isa = PBXGroup;
 			children = (
 				772FF03F248016640051637C /* aes.c */,
-				772FF040248016640051637C /* internal.h */,
+				772FF040248016640051637C /* XCryptoAesInternal.h */,
 				772FF041248016640051637C /* aes_nohw.c */,
 				772FF042248016640051637C /* mode_wrappers.c */,
 				772FF043248016640051637C /* key_wrap.c */,
@@ -626,7 +621,6 @@
 				772FEFDD248008F40051637C /* sha1-armv4-large.ios.arm.S in Sources */,
 				772FEFEA248008F40051637C /* bsaes-armv7.ios.arm.S in Sources */,
 				772FEFD8248008F40051637C /* sha1-armv4-large.linux.arm.S in Sources */,
-				772FF01B248008F40051637C /* boringssl_prefix_symbols_nasm.inc in Sources */,
 				772FF03724800F120051637C /* ghash-ssse3-x86_64.mac.x86_64.S in Sources */,
 				772FEFD0248008F40051637C /* aesni-x86_64.linux.x86_64.S in Sources */,
 				772FEFEC248008F40051637C /* sha512-armv4.ios.arm.S in Sources */,

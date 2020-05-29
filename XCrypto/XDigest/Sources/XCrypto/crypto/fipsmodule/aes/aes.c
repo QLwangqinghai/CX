@@ -46,13 +46,13 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  * ==================================================================== */
 
-#include "CNIOBoringSSL_aes.h"
+#include "XCryptoAes.h"
 
 #include <assert.h>
 
 #include "CNIOBoringSSL_cpu.h"
 
-#include "internal.h"
+#include "XCryptoAesInternal.h"
 #include "../modes/internal.h"
 
 

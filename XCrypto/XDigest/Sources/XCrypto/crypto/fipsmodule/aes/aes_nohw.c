@@ -12,7 +12,8 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
 
-#include "CNIOBoringSSL_aes.h"
+#include "XCryptoBase.h"
+#include "XCryptoAes.h"
 
 #include <assert.h>
 #include <string.h>

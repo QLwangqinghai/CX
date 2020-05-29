@@ -112,12 +112,12 @@ uint32_t *OPENSSL_get_armcap_pointer_for_test(void) {
 }
 #endif
 
-static void do_library_init(void) __attribute__ ((constructor));
 
-// do_library_init is the actual initialization function. If
-// BORINGSSL_NO_STATIC_INITIALIZER isn't defined, this is set as a static
-// initializer. Otherwise, it is called by CRYPTO_library_init.
-static void do_library_init(void) {
+#endif
+
+#if defined(NEED_CPUID)
+
+__attribute__((constructor)) void do_library_init(void) {
  // WARNING: this function may only configure the capability variables. See the
  // note above about the linker bug.
 #if defined(NEED_CPUID)
@@ -125,8 +125,5 @@ static void do_library_init(void) {
 #endif
 }
 
-
-
 #endif
-
 

@@ -50,8 +50,9 @@
  * (eay@cryptsoft.com).  This product includes software written by Tim
  * Hudson (tjh@cryptsoft.com). */
 
-#ifndef OPENSSL_HEADER_BASE_H
-#define OPENSSL_HEADER_BASE_H
+#ifndef XCryptoBase_h
+#define XCryptoBase_h
+
 #if defined(__APPLE__) && defined(__i386__)
 #define OPENSSL_NO_ASM
 #endif
@@ -548,4 +549,4 @@ BSSL_NAMESPACE_END
 
 #endif  // !BORINGSSL_NO_CXX
 
-#endif  // OPENSSL_HEADER_BASE_H
+#endif  // XCryptoBase_h

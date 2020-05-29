@@ -51,7 +51,7 @@
 
 #include "XCryptoBase.h"
 
-#include "CNIOBoringSSL_aes.h"
+#include "XCryptoAes.h"
 #include "CNIOBoringSSL_cpu.h"
 
 #include <stdlib.h>

@@ -75,17 +75,6 @@ OPENSSL_EXPORT int CMAC_Final(CMAC_CTX *ctx, uint8_t *out, size_t *out_len);
 
 #if defined(__cplusplus)
 }  // extern C
-
-extern "C++" {
-
-BSSL_NAMESPACE_BEGIN
-
-BORINGSSL_MAKE_DELETER(CMAC_CTX, CMAC_CTX_free)
-
-BSSL_NAMESPACE_END
-
-}  // extern C++
-
 #endif
 
 #endif  // OPENSSL_HEADER_CMAC_H

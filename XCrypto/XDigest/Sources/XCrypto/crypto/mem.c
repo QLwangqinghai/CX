@@ -54,7 +54,7 @@
  * copied and put under another distribution licence
  * [including the GNU Public Licence.] */
 
-#include "CNIOBoringSSL_mem.h"
+#include "XCrypto_mem.h"
 
 #include <assert.h>
 #include <stdarg.h>

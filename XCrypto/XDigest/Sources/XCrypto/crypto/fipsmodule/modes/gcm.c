@@ -51,7 +51,7 @@
 #include <assert.h>
 #include <string.h>
 
-#include "CNIOBoringSSL_mem.h"
+#include "XCrypto_mem.h"
 #include "XCrypto_cpu.h"
 
 #include "internal.h"

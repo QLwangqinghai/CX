@@ -305,23 +305,6 @@ struct env_md_ctx_st {
 
 #if defined(__cplusplus)
 }  // extern C
-
-#if !defined(BORINGSSL_NO_CXX)
-extern "C++" {
-
-BSSL_NAMESPACE_BEGIN
-
-BORINGSSL_MAKE_DELETER(EVP_MD_CTX, EVP_MD_CTX_free)
-
-using ScopedEVP_MD_CTX =
-    internal::StackAllocated<EVP_MD_CTX, int, EVP_MD_CTX_init,
-                             EVP_MD_CTX_cleanup>;
-
-BSSL_NAMESPACE_END
-
-}  // extern C++
-#endif
-
 #endif
 
 #define DIGEST_R_INPUT_NOT_INITIALIZED 100

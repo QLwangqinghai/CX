@@ -199,7 +199,6 @@
 		772FEF97248008F40051637C /* CNIOBoringSSL_nid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_nid.h; sourceTree = "<group>"; };
 		772FEF98248008F40051637C /* XCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCrypto.h; sourceTree = "<group>"; };
 		772FEF99248008F40051637C /* CNIOBoringSSL_cmac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_cmac.h; sourceTree = "<group>"; };
-		772FEF9B248008F40051637C /* CNIOBoringSSL_mem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_mem.h; sourceTree = "<group>"; };
 		772FEF9C248008F40051637C /* CNIOBoringSSL_tls1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_tls1.h; sourceTree = "<group>"; };
 		772FEF9D248008F40051637C /* CNIOBoringSSL_srtp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_srtp.h; sourceTree = "<group>"; };
 		772FEFA0248008F40051637C /* CNIOBoringSSL_digest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CNIOBoringSSL_digest.h; sourceTree = "<group>"; };
@@ -244,6 +243,7 @@
 		772FF075248018D50051637C /* cpu-intel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "cpu-intel.c"; sourceTree = "<group>"; };
 		D66C92282481049900AEABAF /* XCrypto_arm_arch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCrypto_arm_arch.h; sourceTree = "<group>"; };
 		D66C92292481050D00AEABAF /* XCrypto_cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCrypto_cpu.h; sourceTree = "<group>"; };
+		D66C922A24810F1B00AEABAF /* XCrypto_mem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCrypto_mem.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -302,6 +302,7 @@
 		772FEF06248008F30051637C /* crypto */ = {
 			isa = PBXGroup;
 			children = (
+				D66C922A24810F1B00AEABAF /* XCrypto_mem.h */,
 				D66C92292481050D00AEABAF /* XCrypto_cpu.h */,
 				D66C92282481049900AEABAF /* XCrypto_arm_arch.h */,
 				772FF075248018D50051637C /* cpu-intel.c */,
@@ -442,7 +443,6 @@
 				772FEF97248008F40051637C /* CNIOBoringSSL_nid.h */,
 				772FEF98248008F40051637C /* XCrypto.h */,
 				772FEF99248008F40051637C /* CNIOBoringSSL_cmac.h */,
-				772FEF9B248008F40051637C /* CNIOBoringSSL_mem.h */,
 				772FEF9C248008F40051637C /* CNIOBoringSSL_tls1.h */,
 				772FEF9D248008F40051637C /* CNIOBoringSSL_srtp.h */,
 				772FEFA0248008F40051637C /* CNIOBoringSSL_digest.h */,

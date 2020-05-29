@@ -58,7 +58,7 @@
 
 #include <string.h>
 
-#include "CNIOBoringSSL_mem.h"
+#include "XCrypto_mem.h"
 
 #include "XCryptoBase.h"
 #include "../internal.h"

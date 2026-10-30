@@ -41,9 +41,6 @@
 		D68FEC6F309370FF0098A7A5 /* XObjectInternal.c in Sources */ = {isa = PBXBuildFile; fileRef = D68FEC41309370FF0098A7A5 /* XObjectInternal.c */; };
 		D68FEC70309370FF0098A7A5 /* XONCoder.c in Sources */ = {isa = PBXBuildFile; fileRef = D68FEC42309370FF0098A7A5 /* XONCoder.c */; };
 		D68FEC71309370FF0098A7A5 /* XRuntime.c in Sources */ = {isa = PBXBuildFile; fileRef = D68FEC43309370FF0098A7A5 /* XRuntime.c */; };
-		D68FEC72309370FF0098A7A5 /* CX.md in Resources */ = {isa = PBXBuildFile; fileRef = D68FEC45309370FF0098A7A5 /* CX.md */; };
-		D68FEC73309370FF0098A7A5 /* sqlite3.md in Resources */ = {isa = PBXBuildFile; fileRef = D68FEC46309370FF0098A7A5 /* sqlite3.md */; };
-		D68FEC74309370FF0098A7A5 /* net.md in Resources */ = {isa = PBXBuildFile; fileRef = D68FEC47309370FF0098A7A5 /* net.md */; };
 		D68FEC75309370FF0098A7A5 /* XAllocator.c in Sources */ = {isa = PBXBuildFile; fileRef = D68FEC49309370FF0098A7A5 /* XAllocator.c */; };
 		D68FEC76309370FF0098A7A5 /* XInit.c in Sources */ = {isa = PBXBuildFile; fileRef = D68FEC4A309370FF0098A7A5 /* XInit.c */; };
 		D68FEC77309370FF0098A7A5 /* XZone.c in Sources */ = {isa = PBXBuildFile; fileRef = D68FEC4B309370FF0098A7A5 /* XZone.c */; };
@@ -103,9 +100,6 @@
 		D68FEC41309370FF0098A7A5 /* XObjectInternal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = XObjectInternal.c; sourceTree = "<group>"; };
 		D68FEC42309370FF0098A7A5 /* XONCoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = XONCoder.c; sourceTree = "<group>"; };
 		D68FEC43309370FF0098A7A5 /* XRuntime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = XRuntime.c; sourceTree = "<group>"; };
-		D68FEC45309370FF0098A7A5 /* CX.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = CX.md; sourceTree = "<group>"; };
-		D68FEC46309370FF0098A7A5 /* sqlite3.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = sqlite3.md; sourceTree = "<group>"; };
-		D68FEC47309370FF0098A7A5 /* net.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = net.md; sourceTree = "<group>"; };
 		D68FEC49309370FF0098A7A5 /* XAllocator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = XAllocator.c; sourceTree = "<group>"; };
 		D68FEC4A309370FF0098A7A5 /* XInit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = XInit.c; sourceTree = "<group>"; };
 		D68FEC4B309370FF0098A7A5 /* XZone.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = XZone.c; sourceTree = "<group>"; };
@@ -119,6 +113,8 @@
 		D68FEC85309379DA0098A7A5 /* CXTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CXTests.m; sourceTree = "<group>"; };
 		D68FEC8D30937C500098A7A5 /* CXCase.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CXCase.c; sourceTree = "<group>"; };
 		D68FEC8E30937C500098A7A5 /* CXCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CXCase.h; sourceTree = "<group>"; };
+		D68FEC963094877A0098A7A5 /* CX.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; name = CX.docc; path = CX/CX.docc; sourceTree = "<group>"; };
+		D68FEC97309487F70098A7A5 /* CX.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = CX.podspec; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,8 +139,10 @@
 		D68FEBBB30932BB30098A7A5 = {
 			isa = PBXGroup;
 			children = (
+				D68FEC97309487F70098A7A5 /* CX.podspec */,
 				D68FEC7D309376270098A7A5 /* Package.swift */,
 				D68FEBE030932BDA0098A7A5 /* CX */,
+				D68FEC963094877A0098A7A5 /* CX.docc */,
 				D68FEC84309379DA0098A7A5 /* CXTests */,
 				D68FEBC530932BB30098A7A5 /* Products */,
 			);
@@ -174,7 +172,6 @@
 				D68FEC20309370FE0098A7A5 /* include */,
 				D68FEC30309370FF0098A7A5 /* internal */,
 				D68FEC35309370FF0098A7A5 /* Object */,
-				D68FEC44309370FF0098A7A5 /* doc */,
 				D68FEC48309370FF0098A7A5 /* Base */,
 			);
 			name = CX;
@@ -233,16 +230,6 @@
 				D68FEC43309370FF0098A7A5 /* XRuntime.c */,
 			);
 			path = Object;
-			sourceTree = "<group>";
-		};
-		D68FEC44309370FF0098A7A5 /* doc */ = {
-			isa = PBXGroup;
-			children = (
-				D68FEC45309370FF0098A7A5 /* CX.md */,
-				D68FEC46309370FF0098A7A5 /* sqlite3.md */,
-				D68FEC47309370FF0098A7A5 /* net.md */,
-			);
-			path = doc;
 			sourceTree = "<group>";
 		};
 		D68FEC48309370FF0098A7A5 /* Base */ = {
@@ -379,9 +366,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D68FEC73309370FF0098A7A5 /* sqlite3.md in Resources */,
-				D68FEC74309370FF0098A7A5 /* net.md in Resources */,
-				D68FEC72309370FF0098A7A5 /* CX.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

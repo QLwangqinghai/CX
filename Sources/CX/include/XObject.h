@@ -418,26 +418,6 @@ extern bool_t XBoolGetValue(XBoolRef _Nonnull ref);
 
 #pragma mark - XMessage
 
-// 添加到XMessage的Object都会执行copy操作
-typedef union {
-    XMessageRef _Nullable message;
-    XArrayRef _Nullable array;
-    XDataRef _Nullable data;
-    XStringRef _Nullable string;
-    microsecond_t timeValue;
-    bool_t boolValue;
-    int64_t sintValue;
-    uint64_t uintValue;
-    double floatValue;
-} XMessageValue_u;
-
-typedef struct {
-    int32_t key;
-    int16_t type;
-    int16_t subtype;
-    XMessageValue_u value;
-} XMessageElement2_s;
-
 typedef struct {
     int32_t key;
     XObjectRef _Nullable value;
@@ -476,9 +456,11 @@ extern void XMutableMessageRemoveObject(XMessageRef _Nonnull self, int32_t key, 
 
 extern XMessageRef _Nonnull XMessageBuilderCreateWithCount(XObjectOption option, ssize_t count);
 
-/// object的所有权转移到message
+/// object的所有权转移到message, 调用顺序key从小到大
 extern XMessageElement_s XMessageBuilderReplaceWithRetainedValue(XObjectRef _Nonnull self, ssize_t index, int32_t key, XObjectRef _Nullable value);
-extern void XMessageBuilderFinich(XObjectRef _Nonnull self);
+
+/// XMessageBuilder -> XMessage
+extern void XMessageBuilderComplete(XObjectRef _Nonnull self);
 
 
 #pragma mark - XArray
@@ -546,7 +528,9 @@ extern XArrayRef _Nonnull XArrayBuilderCreateWithCount(XObjectOption option, ssi
 
 /// object的所有权转移到array
 extern XObjectRef _Nullable XArrayBuilderReplaceWithRetainedValue(XArrayRef _Nonnull array, ssize_t index, XObjectRef _Nullable object);
-extern void XArrayBuilderFinich(XArrayRef _Nonnull array);
+
+/// XArrayBuilder -> XArray
+extern void XArrayBuilderComplete(XArrayRef _Nonnull array);
 
 #pragma mark - collection hash
 

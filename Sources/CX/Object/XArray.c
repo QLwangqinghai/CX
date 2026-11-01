@@ -470,7 +470,7 @@ XObjectRef _Nullable XArrayBuilderReplaceWithRetainedValue(XArrayRef _Nonnull ar
     return old;
 }
 
-void XArrayBuilderFinich(XArrayRef _Nonnull array) {
+void XArrayBuilderComplete(XArrayRef _Nonnull array) {
     XAssert(XObjectGetClass(array) == XArrayClass, "");
     XAssert(XObjectGetLayout(array) == __XCollectionLayoutImmutableBuilder, "");
     XObjectResetLayout(array, __XCollectionLayoutImmutable);

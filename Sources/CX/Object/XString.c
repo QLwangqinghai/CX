@@ -107,7 +107,7 @@ static inline void __XStringInlineInitData(uint8_t * _Nonnull dst, const uint8_t
     memset(dst + length, 0, capacity - length);
 }
 XStringRef _Nonnull __XStringSmallCreate(XObjectOption flag, const uint8_t * _Nonnull buffer, size_t length, size_t unicodeCount, size_t hashCode) {
-    XAssert(length <= X_BUILD_XStringDataSmallCapacityMax - 1, "");
+    XAssert(length <= X_BUILD_XStringDataSmallCapacityMax, "");
     size_t capacity = __XDataStringInlineSizeAlign(length);
     _XString_o * result = __XClassStringAllocateInstance(flag, _XStringLayoutSmall, sizeof(_XString_o) + sizeof(_XStringInlineContent_s) + capacity);
     _XStringInlineContent_s * content = (_XStringInlineContent_s *)result->content;
@@ -130,7 +130,7 @@ XStringRef _Nonnull __XStringLargeCreate(XObjectOption flag, const uint8_t * _No
 }
 
 XStringRef _Nonnull __XStringInlineCreate(XObjectOption flag, const uint8_t * _Nonnull buffer, size_t length, size_t unicodeCount, size_t hashCode) {
-    if (length <= X_BUILD_XStringDataSmallCapacityMax - 1) {
+    if (length <= X_BUILD_XStringDataSmallCapacityMax) {
         return __XStringSmallCreate(flag, buffer, length, unicodeCount, hashCode);
     } else {
         return __XStringLargeCreate(flag, buffer, length, unicodeCount, hashCode);

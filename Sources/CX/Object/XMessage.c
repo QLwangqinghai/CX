@@ -254,7 +254,7 @@ XMessageElement_s XMessageBuilderReplaceWithRetainedValue(XObjectRef _Nonnull se
     XObjectRelease(value);
     return old;
 }
-void XMessageBuilderFinich(XObjectRef _Nonnull self) {
+void XMessageBuilderComplete(XObjectRef _Nonnull self) {
     XAssert(XObjectGetClass(self) == XMessageClass, "");
     XAssert(XObjectGetLayout(self) == __XCollectionLayoutImmutableBuilder, "");
     _XImmutableMessage_o * _Nonnull message = (_XImmutableMessage_o *)self;

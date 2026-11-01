@@ -353,11 +353,13 @@ const XCFloat144_s * _Nonnull XCFloat144NegativeInfinity = &__XCFloat144Negative
 
 /// 负无穷
 bool_t XCFloat144IsNegativeInfinity(const XCFloat144_s * _Nonnull f) {
+    abort();
     return false;
 }
 
 /// 正无穷
 bool_t XCFloat144IsPositiveInfinity(const XCFloat144_s * _Nonnull f) {
+    abort();
     return false;
 }
 

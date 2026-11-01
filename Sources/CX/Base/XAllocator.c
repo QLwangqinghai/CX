@@ -84,7 +84,11 @@ void XZoneCacheInit(XZoneCache_s * _Nonnull cache, size_t objectSize, size_t cou
         XMEntity_s * entity = (XMEntity_s *)ptr;
         atomic_store(&(entity->_runtime), (size_fast_t)0);
         ptr += alignSize;
-        atomic_store(&(entity->next), (uintptr_t)ptr);
+        if (i == count - 1) {
+            atomic_store(&(entity->next), (uintptr_t)NULL);
+        } else {
+            atomic_store(&(entity->next), (uintptr_t)ptr);
+        }
     }
     atomic_store(&(cache->head), head);
 }

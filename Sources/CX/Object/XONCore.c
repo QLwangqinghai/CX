@@ -1139,6 +1139,10 @@ XONError_e XONDecodeTime(const uint8_t * _Nonnull bytes, ssize_t capacity, ssize
     if (*location > capacity - count) {
         return XONErrorNotEnough;
     }
+    if (0 == count) {
+        *time = 0;
+        return XONErrorNone;
+    }
     uint64_t encodedValue = __XONDecodeTrimLeadingZeroByteIntFromBuffer(bytes + *location, count);
     *location += count;
     int64_t microsecond = XONSInt64ZigzagDecode(encodedValue);

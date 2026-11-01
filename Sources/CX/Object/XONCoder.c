@@ -55,7 +55,7 @@ XStringRef _Nullable XONDecodeBufferReadString(XDecodeBuffer_s * _Nonnull buffer
     if (buffer->error != XONErrorNone) {
         return NULL;
     }
-    if (buffer->location <= buffer->capacity - count) {
+    if (buffer->location > buffer->capacity - count) {
         buffer->error = XONErrorNotEnough;
         return NULL;
     }
@@ -64,6 +64,7 @@ XStringRef _Nullable XONDecodeBufferReadString(XDecodeBuffer_s * _Nonnull buffer
         buffer->error = XONErrorStringContent;
         return NULL;
     }
+    buffer->location += count;
     return string;
 }
 XDateRef _Nullable XONDecodeBufferReadData(XDecodeBuffer_s * _Nonnull buffer, uint32_t layout) {
@@ -71,15 +72,29 @@ XDateRef _Nullable XONDecodeBufferReadData(XDecodeBuffer_s * _Nonnull buffer, ui
     if (buffer->error != XONErrorNone) {
         return NULL;
     }
-    if (buffer->location <= buffer->capacity - length) {
+    if (buffer->location > buffer->capacity - length) {
         buffer->error = XONErrorNotEnough;
         return NULL;
     }
-    return XDataCreate(0, buffer->bytes + buffer->location, length);
+    XDataRef data = XDataCreate(0, buffer->bytes + buffer->location, length);
+    buffer->location += length;
+    return data;
 }
+XObjectRef _Nullable __XONDecodeBufferRead1(XDecodeBuffer_s * _Nonnull buffer);
 
 
 XObjectRef _Nullable __XONDecodeBufferRead(XDecodeBuffer_s * _Nonnull buffer) {
+    int64_t location = buffer->location;
+    
+    XObjectRef result = __XONDecodeBufferRead1(buffer);
+    if (NULL == result) {
+        if (buffer->location - location != 1) {
+            printf("--------%ld\n", buffer->error);
+        }
+    }
+    return result;
+}
+XObjectRef _Nullable __XONDecodeBufferRead1(XDecodeBuffer_s * _Nonnull buffer) {
     if (buffer->error != XONErrorNone) {
         return NULL;
     }
@@ -114,7 +129,7 @@ XObjectRef _Nullable __XONDecodeBufferRead(XDecodeBuffer_s * _Nonnull buffer) {
                     return XDateInvalid;
                 }
                 case XONSimpleValueTime0: {
-                    return XONDecodeBufferReadTimeval(buffer, 0);
+                    return XDateCreate(0, 0);
                 }
                 case XONSimpleValueTime1: {
                     return XONDecodeBufferReadTimeval(buffer, 1);
@@ -224,7 +239,7 @@ XObjectRef _Nullable __XONDecodeBufferRead(XDecodeBuffer_s * _Nonnull buffer) {
                     XMessageBuilderReplaceWithRetainedValue(message, i, key, obj);
                     lastKey = key;
                 }
-                XMessageBuilderFinich(message);
+                XMessageBuilderComplete(message);
                 return message;
             } else {
                 buffer->error = XONErrorNone;
@@ -252,7 +267,7 @@ XObjectRef _Nullable __XONDecodeBufferRead(XDecodeBuffer_s * _Nonnull buffer) {
                     }
                     XArrayBuilderReplaceWithRetainedValue(array, i, obj);
                 }
-                XArrayBuilderFinich(array);
+                XArrayBuilderComplete(array);
                 return array;
             } else {
                 return XArrayCreateWithValues(0, 0);

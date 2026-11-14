@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D60E07B830A043F900C06F18 /* CX.h in Headers */ = {isa = PBXBuildFile; fileRef = D60E07B730A043F900C06F18 /* CX.h */; };
 		D68FEBE330932BDA0098A7A5 /* CX.docc in Sources */ = {isa = PBXBuildFile; fileRef = D68FEBE230932BDA0098A7A5 /* CX.docc */; };
 		D68FEC51309370FF0098A7A5 /* XONCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = D68FEC21309370FE0098A7A5 /* XONCoder.h */; };
 		D68FEC52309370FF0098A7A5 /* XCore.h in Headers */ = {isa = PBXBuildFile; fileRef = D68FEC22309370FE0098A7A5 /* XCore.h */; };
@@ -65,6 +66,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D60E07B730A043F900C06F18 /* CX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CX.h; sourceTree = "<group>"; };
 		D68FEBDF30932BDA0098A7A5 /* CX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D68FEBE230932BDA0098A7A5 /* CX.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = CX.docc; sourceTree = "<group>"; };
 		D68FEC21309370FE0098A7A5 /* XONCoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XONCoder.h; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 				D68FEC2D309370FF0098A7A5 /* XONCore.h */,
 				D68FEC2E309370FF0098A7A5 /* XRingBuffer.h */,
 				D68FEC2F309370FF0098A7A5 /* XDeque.h */,
+				D60E07B730A043F900C06F18 /* CX.h */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -277,6 +280,7 @@
 				D68FEC52309370FF0098A7A5 /* XCore.h in Headers */,
 				D68FEC59309370FF0098A7A5 /* XObject.h in Headers */,
 				D68FEC5F309370FF0098A7A5 /* XDeque.h in Headers */,
+				D60E07B830A043F900C06F18 /* CX.h in Headers */,
 				D68FEC62309370FF0098A7A5 /* XRuntimeInternal.h in Headers */,
 				D68FEC5E309370FF0098A7A5 /* XRingBuffer.h in Headers */,
 				D68FEC63309370FF0098A7A5 /* XNumberInternal.h in Headers */,

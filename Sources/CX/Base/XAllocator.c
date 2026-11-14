@@ -154,6 +154,7 @@ typedef struct {
     size_t block4;
 } XZoneConfig_s;
 
+// 8k * (12 + 8 + 12) * 8
 // 4m / 8k / 16 = 32
 static XZoneConfig_s __XZoneConfigShared = {
     .block2 = 6 * 8 * 1024,

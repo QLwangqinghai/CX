@@ -358,7 +358,7 @@ static inline void XSliceListElementAppendItem(XSliceListElement_s * _Nonnull el
     XAssert(element->count < element->capacity, "");
     size_t location = (element->offset + element->count) % element->capacity;
     element->count += 1;
-    XPtr p = (XPtr)(element->payload + location * element->itemSize);;
+    XPtr p = (XPtr)(element->payload + location * element->itemSize);
     memcpy(p, entity, element->itemSize);
 }
 
@@ -528,26 +528,36 @@ struct __XEncodeBuffer {
     // append
     // finish
     
-    void (* _Nonnull reserveSize)(XEncodeBuffer_s * _Nonnull buffer, ssize_t minCapacity);
+    void (* _Nonnull reserveCapacity)(XEncodeBuffer_s * _Nonnull buffer, ssize_t minCapacity);
     void (* _Nonnull fitSize)(XEncodeBuffer_s * _Nonnull buffer);
     void (* _Nonnull deallocator)(XEncodeBuffer_s * _Nonnull buffer);
     ssize_t error;
 };
 
-static inline void XEncodeBufferReserveSize(XEncodeBuffer_s * _Nonnull buffer, ssize_t minCapacity) {
-    buffer->reserveSize(buffer, minCapacity);
+static inline void XEncodeBufferReserveCapacity(XEncodeBuffer_s * _Nonnull buffer, ssize_t minCapacity) {
+    buffer->reserveCapacity(buffer, minCapacity);
 }
 static inline void XEncodeBufferFitSize(XEncodeBuffer_s * _Nonnull buffer) {
     buffer->fitSize(buffer);
 }
-static inline void XEncodeBufferDeinit(XEncodeBuffer_s * _Nonnull buffer) {
+static inline void XEncodeBufferDeallocate(XEncodeBuffer_s * _Nonnull buffer) {
     buffer->deallocator(buffer);
     bzero(buffer, sizeof(XEncodeBuffer_s));
 }
+static inline void XEncodeBufferExpandCapacity(XEncodeBuffer_s * _Nonnull buffer, ssize_t size) {
+    if (buffer->capacity < size) {
+        XEncodeBufferReserveCapacity(buffer, size);
+    }
+}
+
 
 extern void _XEncodeBufferDefaultRealloc(XEncodeBuffer_s * _Nonnull buffer, ssize_t minCapacity);
 extern void _XEncodeBufferDefaultDealloc(XEncodeBuffer_s * _Nonnull buffer);
 extern void _XEncodeBufferDefaultFitSize(XEncodeBuffer_s * _Nonnull buffer);
+
+extern void XEncodeBufferEncodeXNumberUInt(XEncodeBuffer_s * _Nonnull buffer, uint64_t n);
+extern void XEncodeBufferEncodeXNumberFloat(XEncodeBuffer_s * _Nonnull buffer, double n);
+
 
 static inline XEncodeBuffer_s XEncodeBufferMakeDefault(void) {
     XEncodeBuffer_s buffer = {
@@ -555,7 +565,7 @@ static inline XEncodeBuffer_s XEncodeBufferMakeDefault(void) {
         .bytes = NULL,
         .capacity = 0,
         .location = 0,
-        .reserveSize = _XEncodeBufferDefaultRealloc,
+        .reserveCapacity = _XEncodeBufferDefaultRealloc,
         .fitSize = _XEncodeBufferDefaultFitSize,
         .deallocator = _XEncodeBufferDefaultDealloc,
         .error = 0,
@@ -605,7 +615,7 @@ static inline XDecodeBuffer_s XDecodeBufferMakeDefault(void * _Nullable context,
     return buffer;
 }
 
-static inline void XDecodeBufferDeinit(XDecodeBuffer_s * _Nonnull buffer) {
+static inline void XDecodeBufferDeallocate(XDecodeBuffer_s * _Nonnull buffer) {
     if (buffer->deallocator) {
         buffer->deallocator(buffer->context, buffer->bytes, buffer->capacity);
     }

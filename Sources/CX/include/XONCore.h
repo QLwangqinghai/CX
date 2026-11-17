@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include "XCoreBase.h"
 
 #define XONTypeLength 1
 
@@ -199,128 +200,24 @@ extern XONError_e XONNumberToUInt64(const XONNumberNormalContent_s * _Nonnull co
 extern void test(void);
 //extern XONError_e XONDecodeNumber64(const uint8_t * _Nonnull bytes, ssize_t capacity, ssize_t * _Nonnull location, ssize_t format, ssize_t count, XONNumberValue_s * _Nonnull number);
 
-
-//#pragma mark - XONBuffer
-//
-////open var hasBytesAvailable: Bool { get }
-////ssize_t (* _Nonnull read)(XONOuputBuffer_s * _Nonnull buffer, uint8_t * _Nonnull bytes, ssize_t length);
-//
-////open var hasSpaceAvailable: Bool { get }
-////ssize_t (* _Nonnull write)(XONOuputBuffer_s * _Nonnull buffer, const uint8_t * _Nonnull bytes, ssize_t length);
-//
-//struct __XONBuffer;
-//typedef struct __XONBuffer XONBuffer_s;
-//struct __XONBuffer {
-//    void * _Nonnull context;
-//
-//    // read
-//    ssize_t (* _Nonnull write)(void * _Nonnull context, const void * _Nonnull bytes, ssize_t length);
-//    ssize_t (* _Nonnull read)(void * _Nonnull context, void * _Nonnull bytes, ssize_t length);
-//};
-//
-//#pragma mark - XONOuputBuffer
-//
-//struct __XONOuputBuffer;
-//typedef struct __XONOuputBuffer XONOuputBuffer_s;
-//struct __XONOuputBuffer {
-//    void * _Nullable context;
-//    uint8_t * _Nullable bytes;
-//    ssize_t capacity;
-//    ssize_t location;
-//    // read
-//    void (* _Nonnull write)(XONOuputBuffer_s * _Nonnull buffer, uint8_t * _Nonnull bytes, ssize_t length);
-//    void (* _Nonnull fitSize)(XONOuputBuffer_s * _Nonnull buffer);
-//    void (* _Nonnull deallocator)(XONOuputBuffer_s * _Nonnull buffer);
-//};
-//
-//static inline void XONEncodeBufferReserveCapacity(XONEncodeBuffer_s * _Nonnull buffer, ssize_t minCapacity) {
-//    buffer->reserveCapacity(buffer, minCapacity);
-//}
-//static inline void XONEncodeBufferFitSize(XONEncodeBuffer_s * _Nonnull buffer) {
-//    buffer->fitSize(buffer);
-//}
-//static inline void XONEncodeBufferDeallocate(XONEncodeBuffer_s * _Nonnull buffer) {
-//    buffer->deallocator(buffer);
-//}
-//
-//// TODO: 预算长度
-//extern void _XONEncodeBufferDefaultRealloc(XONEncodeBuffer_s * _Nonnull buffer, ssize_t minCapacity);
-//extern void _XONEncodeBufferDefaultDealloc(XONEncodeBuffer_s * _Nonnull buffer);
-//extern void _XONEncodeBufferDefaultFitSize(XONEncodeBuffer_s * _Nonnull buffer);
-//
-//static inline XONEncodeBuffer_s XONEncodeBufferMakeDefault(void) {
-//    XONEncodeBuffer_s buffer = {
-//        .context = NULL,
-//        .bytes = NULL,
-//        .capacity = 0,
-//        .location = 0,
-//        .reserveCapacity = _XONEncodeBufferDefaultRealloc,
-//        .fitSize = _XONEncodeBufferDefaultFitSize,
-//        .deallocator = _XONEncodeBufferDefaultDealloc,
-//    };
-//    return buffer;
-//}
-
-#pragma mark - EncodeBuffer
-
-struct __XONEncodeBuffer;
-typedef struct __XONEncodeBuffer XONEncodeBuffer_s;
-struct __XONEncodeBuffer {
-    void * _Nullable context;
-    uint8_t * _Nullable bytes;
-    ssize_t capacity;
-    ssize_t location;
-    void (* _Nonnull reserveCapacity)(XONEncodeBuffer_s * _Nonnull buffer, ssize_t minCapacity);
-    void (* _Nonnull fitSize)(XONEncodeBuffer_s * _Nonnull buffer);
-    void (* _Nonnull deallocator)(XONEncodeBuffer_s * _Nonnull buffer);
-};
-
-static inline void XONEncodeBufferReserveCapacity(XONEncodeBuffer_s * _Nonnull buffer, ssize_t minCapacity) {
-    buffer->reserveCapacity(buffer, minCapacity);
-}
-static inline void XONEncodeBufferFitSize(XONEncodeBuffer_s * _Nonnull buffer) {
-    buffer->fitSize(buffer);
-}
-static inline void XONEncodeBufferDeallocate(XONEncodeBuffer_s * _Nonnull buffer) {
-    buffer->deallocator(buffer);
-}
-
-// TODO: 预算长度
-extern void _XONEncodeBufferDefaultRealloc(XONEncodeBuffer_s * _Nonnull buffer, ssize_t minCapacity);
-extern void _XONEncodeBufferDefaultDealloc(XONEncodeBuffer_s * _Nonnull buffer);
-extern void _XONEncodeBufferDefaultFitSize(XONEncodeBuffer_s * _Nonnull buffer);
-
-static inline XONEncodeBuffer_s XONEncodeBufferMakeDefault(void) {
-    XONEncodeBuffer_s buffer = {
-        .context = NULL,
-        .bytes = NULL,
-        .capacity = 0,
-        .location = 0,
-        .reserveCapacity = _XONEncodeBufferDefaultRealloc,
-        .fitSize = _XONEncodeBufferDefaultFitSize,
-        .deallocator = _XONEncodeBufferDefaultDealloc,
-    };
-    return buffer;
-}
-
 #pragma mark - Encode
 
-extern XONError_e XONEncodeNull(XONEncodeBuffer_s * _Nonnull buffer);
-extern XONError_e XONEncodeBool(XONEncodeBuffer_s * _Nonnull buffer, _Bool value);
+extern XONError_e XONEncodeNull(XEncodeBuffer_s * _Nonnull buffer);
+extern XONError_e XONEncodeBool(XEncodeBuffer_s * _Nonnull buffer, _Bool value);
 
-extern XONError_e XONEncodeNumberUInt64(XONEncodeBuffer_s * _Nonnull buffer, uint64_t value);
-extern XONError_e XONEncodeNumberSInt64(XONEncodeBuffer_s * _Nonnull buffer, int64_t value);
-extern XONError_e XONEncodeNumberDouble(XONEncodeBuffer_s * _Nonnull buffer, double value);
+extern XONError_e XONEncodeNumberUInt64(XEncodeBuffer_s * _Nonnull buffer, uint64_t value);
+extern XONError_e XONEncodeNumberSInt64(XEncodeBuffer_s * _Nonnull buffer, int64_t value);
+extern XONError_e XONEncodeNumberDouble(XEncodeBuffer_s * _Nonnull buffer, double value);
 
-extern XONError_e XONEncodeTime(XONEncodeBuffer_s * _Nonnull buffer, XTimestamp microsecond);
+extern XONError_e XONEncodeTime(XEncodeBuffer_s * _Nonnull buffer, XTimestamp microsecond);
 
-extern XONError_e XONEncodeFieldKeyOffset(XONEncodeBuffer_s * _Nonnull buffer, uint32_t offset);
-extern XONError_e XONEncodeMessageHeader(XONEncodeBuffer_s * _Nonnull buffer, ssize_t count);
-extern XONError_e XONEncodeArrayHeader(XONEncodeBuffer_s * _Nonnull buffer, ssize_t count);
-extern XONError_e XONEncodeDataHeader(XONEncodeBuffer_s * _Nonnull buffer, ssize_t count);
-extern XONError_e XONEncodeStringHeader(XONEncodeBuffer_s * _Nonnull buffer, ssize_t count);
-extern XONError_e XONEncodeBody(XONEncodeBuffer_s * _Nonnull buffer, const void * _Nonnull data, ssize_t count);
-extern XONError_e XONEncodeData(XONEncodeBuffer_s * _Nonnull buffer, const void * _Nullable data, ssize_t count);
-extern XONError_e XONEncodeString(XONEncodeBuffer_s * _Nonnull buffer, const void * _Nullable cString, ssize_t count);
+extern XONError_e XONEncodeFieldKeyOffset(XEncodeBuffer_s * _Nonnull buffer, uint32_t offset);
+extern XONError_e XONEncodeMessageHeader(XEncodeBuffer_s * _Nonnull buffer, ssize_t count);
+extern XONError_e XONEncodeArrayHeader(XEncodeBuffer_s * _Nonnull buffer, ssize_t count);
+extern XONError_e XONEncodeDataHeader(XEncodeBuffer_s * _Nonnull buffer, ssize_t count);
+extern XONError_e XONEncodeStringHeader(XEncodeBuffer_s * _Nonnull buffer, ssize_t count);
+extern XONError_e XONEncodeBody(XEncodeBuffer_s * _Nonnull buffer, const void * _Nonnull data, ssize_t count);
+extern XONError_e XONEncodeData(XEncodeBuffer_s * _Nonnull buffer, const void * _Nullable data, ssize_t count);
+extern XONError_e XONEncodeString(XEncodeBuffer_s * _Nonnull buffer, const void * _Nullable cString, ssize_t count);
 
 #endif /* XONCore_h */

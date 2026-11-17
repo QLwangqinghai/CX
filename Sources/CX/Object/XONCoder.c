@@ -300,7 +300,7 @@ XObjectRef _Nullable XONDecodeWithData(XDataRef _Nonnull data, XONError_e * _Nul
     if (error) {
         *error = (XONError_e)buffer.error;
     }
-    XDecodeBufferDeinit(&buffer);
+    XDecodeBufferDeallocate(&buffer);
     return object;
 }
 
@@ -310,23 +310,23 @@ XObjectRef _Nullable XONDecode(const void * _Nonnull bytes, ssize_t length, XONE
     if (error) {
         *error = (XONError_e)buffer.error;
     }
-    XDecodeBufferDeinit(&buffer);
+    XDecodeBufferDeallocate(&buffer);
     return object;
 }
 
 
 
 
-XONError_e __XONEncode(XONEncodeBuffer_s * _Nonnull buffer, XObjectRef _Nullable object);
+XONError_e __XONEncode(XEncodeBuffer_s * _Nonnull buffer, XObjectRef _Nullable object);
 
 typedef struct __XONEncodeMessageContext {
-    XONEncodeBuffer_s * _Nonnull buffer;
+    XEncodeBuffer_s * _Nonnull buffer;
     uint32_t prevKey;
     int error;
 } XONEncodeMessageContext_s;
 
 typedef struct __XONEncodeArrayContext {
-    XONEncodeBuffer_s * _Nonnull buffer;
+    XEncodeBuffer_s * _Nonnull buffer;
     size_t index;
     int error;
 } XONEncodeArrayContext_s;
@@ -348,7 +348,7 @@ void _XMessageEnumerateEncodeXON(int32_t key, XObjectRef _Nullable value, void *
     }
 }
 
-XONError_e __XONEncode(XONEncodeBuffer_s * _Nonnull buffer, XObjectRef _Nullable object) {
+XONError_e __XONEncode(XEncodeBuffer_s * _Nonnull buffer, XObjectRef _Nullable object) {
     if (NULL == object) {
         return XONEncodeNull(buffer);
     } else {
@@ -387,7 +387,7 @@ XONError_e __XONEncode(XONEncodeBuffer_s * _Nonnull buffer, XObjectRef _Nullable
             if (XONErrorNone != error) {
                 return error;
             }
-            XONEncodeBufferReserveCapacity(buffer, buffer->location + length);
+            XEncodeBufferReserveCapacity(buffer, buffer->location + length);
             //XONEncodeBody
             XStringGetBytes(object, 0, length, buffer->bytes + buffer->location);
             buffer->location += length;
@@ -398,7 +398,7 @@ XONError_e __XONEncode(XONEncodeBuffer_s * _Nonnull buffer, XObjectRef _Nullable
             if (XONErrorNone != error) {
                 return error;
             }
-            XONEncodeBufferReserveCapacity(buffer, buffer->location + count);
+            XEncodeBufferReserveCapacity(buffer, buffer->location + count);
             //XONEncodeBody
             XDataGetBytes(object, 0, count, buffer->bytes + buffer->location);
             buffer->location += count;
@@ -433,14 +433,14 @@ XONError_e __XONEncode(XONEncodeBuffer_s * _Nonnull buffer, XObjectRef _Nullable
 }
 
 XDataRef _Nullable XONEncode(XObjectRef _Nullable object, XONError_e * _Nullable error) {
-    XONEncodeBuffer_s buffer = XONEncodeBufferMakeDefault();
+    XEncodeBuffer_s buffer = XEncodeBufferMakeDefault();
     XONError_e e = __XONEncode(&buffer, object);
     if (error) {
         *error = e;
     }
     if (XONErrorNone == e) {
         XDataRef r = XDataCreate(0, buffer.bytes, buffer.location);
-        XONEncodeBufferDeallocate(&buffer);
+        XEncodeBufferDeallocate(&buffer);
         return r;
     } else {
         return NULL;

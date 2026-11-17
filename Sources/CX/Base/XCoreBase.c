@@ -1423,6 +1423,7 @@ ssize_t XCRoundUpSize(ssize_t minSize) {
     return size;
 }
 
+
 #pragma mark - XBuffer
 
 XBuffer_s * _Nonnull XBufferCreate(ssize_t info, ssize_t minCapacity) {
@@ -1455,7 +1456,6 @@ void XBufferDestroy(XBuffer_s * _Nonnull buffer) {
 }
 
 #pragma mark - XEncodeBuffer
-
 void _XEncodeBufferDefaultRealloc(XEncodeBuffer_s * _Nonnull buffer, ssize_t minCapacity) {
     XAssert(minCapacity >= 0, "");
     XAssert(buffer, "");
@@ -1483,6 +1483,13 @@ void _XEncodeBufferDefaultFitSize(XEncodeBuffer_s * _Nonnull buffer) {
         buffer->bytes = (uint8_t *)ptr;
         buffer->capacity = buffer->location;
     }
+}
+
+void XEncodeBufferEncodeXNumberUInt(XEncodeBuffer_s * _Nonnull buffer, uint64_t n) {
+    
+}
+void XEncodeBufferEncodeXNumberFloat(XEncodeBuffer_s * _Nonnull buffer, double n) {
+    
 }
 
 //void _XEncodeBufferDataBufferRealloc(XEncodeBuffer_s * _Nonnull buffer, ssize_t minCapacity) {

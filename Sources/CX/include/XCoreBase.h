@@ -124,8 +124,19 @@ static inline void XByte8Reset(XByte8 * _Nonnull bytes, const uint8_t * _Nonnull
     assert(bytes);
     memcpy(bytes->content, buffer, 8);
 }
+static inline void XByte16GetUInt64(XByte16 byte, uint64_t * _Nonnull high, uint64_t * _Nonnull low) {
+    XByte16 r = {};
+    *high = UInt64MakeWithBigEndianBytes(r.content);
+    *low = UInt64MakeWithBigEndianBytes(r.content + 8);
+}
 
-
+static inline XByte16 XByte16MakeWithUInt64(uint64_t high, uint64_t low) {
+    XByte16 r = {};
+    UInt64ToBigEndianBytes(high, r.content);
+    UInt64ToBigEndianBytes(low, r.content + 8);
+    return r;
+}
+    
 static inline bool_t XByte16Equal(const XByte16 * _Nonnull lhs, const XByte16 * _Nonnull rhs) {
     assert(lhs);
     assert(rhs);
@@ -239,6 +250,17 @@ typedef struct {
     size_t count;
     const uint8_t * _Nullable bytes;
 } XConstByteVector;
+static inline XConstByteVector XConstByteVectorMake(const uint8_t * _Nullable bytes, size_t count) {
+    if (count > 0) {
+        XAssert(bytes, "");
+    }
+    XConstByteVector result = {
+        .count = count,
+        .bytes = bytes
+    };
+    return result;
+}
+
 
 typedef struct {
     size_t count;
